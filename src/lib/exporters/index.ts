@@ -2,6 +2,8 @@ import type { StatementResult } from '../parse';
 import type { Transaction } from '../parse/transactions';
 import { toCsv, type Delimiter } from './csv';
 import { formatDate, type DateFormat } from './dates';
+import { DEFAULT_EXPORT_LOCALE, getExportLocale, type ExportLocale } from '../../i18n/locales';
+import { formatAmountPlain } from '../../i18n/format';
 
 export type Preset = 'xlsx' | 'csv' | 'quickbooks' | 'xero';
 
@@ -69,6 +71,8 @@ export const PRESETS: Record<Preset, PresetDefinition> = {
 
 export interface ExportOptions {
   preset: Preset;
+  /** BCP-47 export locale, e.g. de-DE. Drives decimals, delimiter and dates. */
+  exportLocale?: string;
   dateFormat?: DateFormat;
   delimiter?: Delimiter;
   /** Add a UTF-8 BOM so Excel on Windows reads accented merchant names. */
@@ -105,32 +109,58 @@ function baseNameFor(sourceName: string | undefined, preset: Preset): string {
   return `${stem || 'bank-statement'}-transactions`;
 }
 
-/** Tabular rows (strings) for the chosen preset — shared by CSV and the UI preview. */
+function resolveLocale(options: ExportOptions): ExportLocale {
+  return getExportLocale(options.exportLocale ?? DEFAULT_EXPORT_LOCALE);
+}
+
+function resolveDateFormat(options: ExportOptions, locale: ExportLocale): DateFormat {
+  // The locale's own convention wins over the preset's, because the preset is a
+  // guess about which importer is being used, while the locale is a statement of
+  // fact about the user's machine.
+  return options.dateFormat ?? locale.dateFormat;
+}
+
+/**
+ * Tabular rows (strings) for the chosen preset — shared by CSV and the UI preview.
+ *
+ * Amounts are written with the locale's decimal separator and **no thousands
+ * separators**. `-1234,56` is what a German Excel parses; `-1.234,56` is a
+ * string, and a French space separator would split the field outright.
+ */
 export function rowsForPreset(result: StatementResult, options: ExportOptions): string[][] {
   const preset = PRESETS[options.preset];
-  const dateFormat = options.dateFormat ?? preset.defaultDateFormat;
+  const locale = resolveLocale(options);
+  const dateFormat = resolveDateFormat(options, locale);
   const year = options.fallbackYear ?? 2000;
-  const money = (value: number | null): string => (value === null ? '' : value.toFixed(2));
+  const money = (value: number | null): string => formatAmountPlain(value, locale);
 
   const rows: string[][] = [preset.columns.slice()];
 
   for (const transaction of result.transactions) {
     const printedDate = formatDate(transaction.date, dateFormat, year);
     if (options.preset === 'quickbooks') {
-      rows.push([printedDate, transaction.description, signedAmount(transaction).toFixed(2)]);
+      rows.push([printedDate, transaction.description, formatAmountPlain(signedAmount(transaction), locale)]);
     } else if (options.preset === 'xero') {
-      rows.push([printedDate, signedAmount(transaction).toFixed(2), '', transaction.description, '']);
+      rows.push([printedDate, formatAmountPlain(signedAmount(transaction), locale), '', transaction.description, '']);
     } else if (options.preset === 'csv') {
       rows.push([
         printedDate,
         transaction.description,
         money(transaction.debit),
         money(transaction.credit),
-        transaction.amount.toFixed(2),
+        formatAmountPlain(transaction.amount, locale),
         money(transaction.balance),
       ]);
     } else {
-      rows.push([printedDate, transaction.description, money(transaction.debit), money(transaction.credit), transaction.amount.toFixed(2), money(transaction.balance), transaction.flags.join('; ')]);
+      rows.push([
+        printedDate,
+        transaction.description,
+        money(transaction.debit),
+        money(transaction.credit),
+        formatAmountPlain(transaction.amount, locale),
+        money(transaction.balance),
+        transaction.flags.join('; '),
+      ]);
     }
   }
 
@@ -139,22 +169,27 @@ export function rowsForPreset(result: StatementResult, options: ExportOptions): 
 
 export async function buildExport(result: StatementResult, options: ExportOptions): Promise<ExportArtifact> {
   const preset = PRESETS[options.preset];
+  const locale = resolveLocale(options);
   const fileName = `${baseNameFor(options.sourceName, options.preset)}.${preset.extension}`;
 
   if (options.preset === 'xlsx') {
-    // Dynamic import keeps ~400 kB of SheetJS out of the initial page load.
+    // Dynamic import keeps the XLSX writer out of the initial page load.
+    // The workbook keeps raw numbers and real dates, so Excel applies the
+    // reader's own locale — the one format that cannot be got wrong.
     const { buildXlsx } = await import('./xlsx');
     return {
       preset: options.preset,
       fileName,
       mimeType: preset.mimeType,
       rowCount: result.transactions.length,
-      bytes: await buildXlsx(result, options.sourceName ?? 'statement.pdf'),
+      bytes: await buildXlsx(result, options.sourceName ?? 'statement.pdf', resolveDateFormat(options, locale)),
     };
   }
 
   const text = toCsv(rowsForPreset(result, options), {
-    delimiter: options.delimiter ?? ',',
+    // A decimal comma forces a semicolon delimiter: comma-delimited data with
+    // comma decimals is unparseable by the Excel builds those users run.
+    delimiter: options.delimiter ?? locale.csvDelimiter,
     bom: options.bom ?? true,
   });
 
@@ -168,4 +203,4 @@ export async function buildExport(result: StatementResult, options: ExportOption
 }
 
 export { toCsv, formatDate };
-export type { DateFormat, Delimiter };
+export type { DateFormat, Delimiter, ExportLocale };

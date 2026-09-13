@@ -150,8 +150,7 @@ async function main() {
     check('scanned PDF is refused with an explanation', /text layer|scan/i.test(errorText), errorText.slice(0, 90));
 
     // OFX path.
-    await page.locator('button', { hasText: 'Try another file' }).click();
-    const ofxPath = path.join(root, '.smoke.ofx');
+    await page.locator('button', { hasText: 'Try another file' }).click();    const ofxPath = path.join(root, '.smoke.ofx');
     fs.writeFileSync(
       ofxPath,
       'OFXHEADER:100\n<OFX><BANKMSGSRSV1><STMTTRNRS><STMTRS><CURDEF>USD<BANKTRANLIST>\n' +
@@ -164,6 +163,58 @@ async function main() {
     const ofxRows = await page.locator('.converter table.data tbody tr').count();
     check('OFX file converts through the same UI', ofxRows === 2, `${ofxRows} rows`);
     fs.rmSync(ofxPath, { force: true });
+
+    /* ---------------------------------------------------------------- i18n */
+
+    await page.goto(`${BASE}/de/`, { waitUntil: 'networkidle' });
+    const htmlLang = await page.getAttribute('html', 'lang');
+    check('German page declares lang="de"', htmlLang === 'de', String(htmlLang));
+
+    const alternates = await page.locator('link[rel=alternate]').evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute('hreflang')).filter(Boolean),
+    );
+    check(
+      'German page emits hreflang for all six locales plus x-default',
+      ['en', 'de', 'es', 'fr', 'pt', 'hi', 'x-default'].every((code) => alternates.includes(code)),
+      alternates.join(','),
+    );
+
+    await page.setInputFiles('input[type=file]', path.join(root, 'fixtures/pdf/euro-decimal.pdf'));
+    await page.waitForSelector('.converter table.data tbody tr', { timeout: 45_000 });
+
+    const germanBadge = await page.locator('.converter__head .badge').first().innerText();
+    check('converter UI is actually translated on /de/', /Zeilen stimmen überein/.test(germanBadge), germanBadge);
+
+    const germanHeaders = (await page.locator('.converter table.data thead th').allInnerTexts()).map((text) =>
+      text.toLowerCase(),
+    );
+    check(
+      'table headers are translated',
+      germanHeaders.includes('datum') && germanHeaders.includes('saldo'),
+      germanHeaders.join('|'),
+    );
+
+    // The whole point: a German user's downloaded file must be semicolon-
+    // delimited with comma decimals, or their Excel shows one column.
+    await page.selectOption('#preset', 'quickbooks');
+    const [deDownload] = await Promise.all([
+      page.waitForEvent('download', { timeout: 30_000 }),
+      page.locator('.download-bar__actions button').first().click(),
+    ]);
+    const dePath = path.join(root, '.smoke-de.csv');
+    await deDownload.saveAs(dePath);
+    const deText = fs.readFileSync(dePath, 'utf8').replace(/^\uFEFF/, '');
+    const deLines = deText.split('\r\n').filter(Boolean);
+    check('German CSV declares Date;Description;Amount', deLines[0] === 'Date;Description;Amount', deLines[0]);
+    check('German CSV uses semicolons (three fields per line)', deLines[1].split(';').length === 3, deLines[1]);
+    check('German CSV uses a comma decimal and a German date', /^\d{2}\.\d{2}\.\d{4};.*;-?\d+,\d{2}$/.test(deLines[1]), deLines[1]);
+    fs.rmSync(dePath, { force: true });
+
+    // Switchback: the German page must still offer Swiss German, whose digits
+    // are dot-decimal with an apostrophe separator — the opposite convention.
+    await page.selectOption('#export-locale', 'de-CH');
+    const swissHeaders = (await page.locator('.converter table.data thead th').allInnerTexts()).join('|');
+    check('German page offers Swiss German as an alternative format', /saldo/i.test(swissHeaders), swissHeaders);
 
     console.log('');
   } finally {

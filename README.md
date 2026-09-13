@@ -115,6 +115,64 @@ the whole pipeline is unit-testable in Node and cannot accidentally depend on th
 
 ---
 
+## Languages
+
+Six interface languages, and — separately — sixteen **export locales**.
+
+Those are different problems and conflating them breaks the product:
+
+| | What it changes | Example |
+|---|---|---|
+| UI language (`en`, `de`, `es`, `fr`, `pt`, `hi`) | What the interface says | `Deutsch`, `हिन्दी` |
+| Export locale (`de-DE`, `es-MX`, `en-IN`, …) | How numbers, dates and CSV separators are written | `1.234,56` vs `1,234.56` |
+
+A German user needs a German interface **and** a file German Excel can open. A
+German interface with `-1234.56` in a comma-delimited CSV is unusable: German
+Excel reads `,` as the decimal separator, so the whole file lands in one column.
+
+So the rules the code enforces (and `tests/locales.spec.ts` asserts):
+
+- **A decimal comma forces a semicolon delimiter.** Comma-delimited data with
+  comma decimals cannot be parsed by the Excel builds those users run.
+- **Exported numbers never carry thousands separators.** `-1234,56`, not
+  `-1.234,56`. A French grouping separator is a space, which would split the
+  field outright; grouping is display-only for that reason.
+- **A comma is only quoted when it is the delimiter.** RFC 4180 quoting applied
+  literally is how `405,81` becomes `"405,81"` and arrives in Excel as *text*.
+- **Indian English is a format, not a translation.** `en-IN` is English with
+  lakh/crore grouping (`12,34,567.89`). Translating the interface would never
+  have fixed that.
+- **XLSX writes typed values**, so Excel applies the reader's own locale — the
+  one output format that cannot get a decimal separator wrong.
+
+### Adding a language
+
+1. Add the locale to `LOCALES` and its export formats to `EXPORT_LOCALES` in
+   `src/i18n/locales.ts`.
+2. Add a dictionary to `src/i18n/ui.ts`. English is the source of truth and every
+   dictionary is typed as complete, so **a missing key is a compile error** — a
+   half-translated UI cannot ship.
+3. Add homepage content to `src/i18n/home.ts` and a one-line page under
+   `src/pages/<code>/index.astro`.
+
+Localised homepages are deliberately **not** translations of the English page:
+they name the banks of that market, state that market's number and date
+conventions, and target the queries people actually type there. A flat
+translation would be thin content competing with itself.
+
+### Translation status
+
+`LOCALES[code].translationStatus` is `needs-review` for every non-English
+locale. The structure and the market facts are deliberate; **the prose needs a
+native speaker's pass before it is worth promoting.** The status is data, not a
+comment, so it can gate a release later.
+
+Deeper pages (`/bank-statement-to-csv`, `/quickbooks-csv`, …) are English-only.
+They are not listed as alternates on other locales — `hreflang` pointing at a
+404 wastes crawl budget, so alternates are opt-in per page via the
+`translations` prop on `Base.astro`, and the sitemap integration only emits
+`xhtml:link` for paths that really exist in more than one language.
+
 ## Configuration
 
 Copy `.env.example` to `.env`:

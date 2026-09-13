@@ -1,5 +1,6 @@
 ---
 import Converter from './converter/Converter.tsx';
+import { DEFAULT_LOCALE, type LocaleCode } from '../i18n';
 
 /**
  * Hero + converter, shared by every tool page.
@@ -9,9 +10,10 @@ import Converter from './converter/Converter.tsx';
  */
 export interface Props {
   eyebrow?: string;
+  locale?: LocaleCode;
 }
 
-const { eyebrow } = Astro.props;
+const { eyebrow, locale = DEFAULT_LOCALE } = Astro.props;
 const affiliateUrl = import.meta.env.PUBLIC_AFFILIATE_OCR_URL || undefined;
 ---
 
@@ -22,7 +24,7 @@ const affiliateUrl = import.meta.env.PUBLIC_AFFILIATE_OCR_URL || undefined;
       <slot />
     </div>
     <div style="margin-top:1.6rem">
-      <Converter client:load affiliateUrl={affiliateUrl} compact />
+      <Converter client:load locale={locale} affiliateUrl={affiliateUrl} compact />
     </div>
   </div>
 </section>

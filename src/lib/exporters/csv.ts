@@ -15,11 +15,16 @@ export interface CsvOptions {
   newline?: '\r\n' | '\n';
 }
 
-const NEEDS_QUOTING = /[",\r\n\t]/;
-
+/**
+ * RFC 4180 quoting: only the delimiter, a quote or a line break forces quotes.
+ *
+ * The comma is deliberately *not* special by itself. A semicolon-delimited file
+ * for a German user contains amounts like `405,81`, and quoting those to
+ * `"405,81"` is how a numeric column arrives in Excel as text.
+ */
 export function escapeCsvField(value: string, delimiter: Delimiter): string {
   if (value === '') return '';
-  const needsQuotes = NEEDS_QUOTING.test(value) || value.includes(delimiter);
+  const needsQuotes = value.includes(delimiter) || /["\r\n]/.test(value);
   if (!needsQuotes) return value;
   return `"${value.replace(/"/g, '""')}"`;
 }

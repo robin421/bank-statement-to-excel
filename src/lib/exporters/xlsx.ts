@@ -1,17 +1,29 @@
 import writeXlsxFile, { type Sheet } from 'write-excel-file/universal';
 import type { StatementResult } from '../parse';
 import type { Transaction } from '../parse/transactions';
-import { toDateObject } from './dates';
+import { toDateObject, type DateFormat } from './dates';
 
-const DATE_FORMAT_CODE = 'yyyy-mm-dd';
 const MONEY_FORMAT_CODE = '#,##0.00';
+
+/**
+ * Excel format code for each supported date style.
+ * The cell value is a real date, so this only controls how Excel draws it —
+ * which means a wrong guess is cosmetic, never a misread date.
+ */
+const EXCEL_DATE_FORMAT: Record<DateFormat, string> = {
+  'YYYY-MM-DD': 'yyyy-mm-dd',
+  'DD/MM/YYYY': 'dd/mm/yyyy',
+  'MM/DD/YYYY': 'mm/dd/yyyy',
+  'DD.MM.YYYY': 'dd.mm.yyyy',
+  'DD-MMM-YYYY': 'dd-mmm-yyyy',
+};
 
 function headerCell(text: string) {
   return { value: text, fontWeight: 'bold' as const, backgroundColor: '#F4F2EC', bottomBorderStyle: 'thin' as const };
 }
 
-function dateCell(value: Date | null) {
-  return value ? { value, type: Date, format: DATE_FORMAT_CODE } : null;
+function dateCell(value: Date | null, formatCode: string) {
+  return value ? { value, type: Date, format: formatCode } : null;
 }
 
 function moneyCell(value: number | null) {
@@ -37,13 +49,22 @@ const TRANSACTION_HEADERS = ['Date', 'Description', 'Debit', 'Credit', 'Amount',
  * Uses write-excel-file rather than SheetJS: it is npm-hosted, MIT, has real
  * TypeScript types, and only writes — which is all this tool needs, and avoids
  * depending on a build-time tarball URL from a third-party CDN.
+ *
+ * Numbers and dates are written as real numbers and real dates, so Excel applies
+ * the reader's own locale for separators. That is the one output format that
+ * cannot get a decimal separator wrong.
  */
-export async function buildXlsx(result: StatementResult, sourceName = 'statement.pdf'): Promise<Uint8Array> {
+export async function buildXlsx(
+  result: StatementResult,
+  sourceName = 'statement.pdf',
+  dateFormat: DateFormat = 'YYYY-MM-DD',
+): Promise<Uint8Array> {
+  const dateFormatCode = EXCEL_DATE_FORMAT[dateFormat] ?? EXCEL_DATE_FORMAT['YYYY-MM-DD'];
   const transactionRows: unknown[][] = [TRANSACTION_HEADERS.map(headerCell)];
 
   for (const transaction of result.transactions) {
     transactionRows.push([
-      dateCell(toDateObject(transaction.date)),
+      dateCell(toDateObject(transaction.date), dateFormatCode),
       textCell(transaction.description),
       moneyCell(transaction.debit),
       moneyCell(transaction.credit),

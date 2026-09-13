@@ -1,6 +1,10 @@
 ---
 import { SITE } from '../data/site.mjs';
 
+import { DEFAULT_LOCALE, type LocaleCode } from '../i18n';
+
+const { locale = DEFAULT_LOCALE }: { locale?: LocaleCode } = Astro.props;
+
 const year = new Date().getFullYear();
 ---
 
@@ -52,7 +56,7 @@ const year = new Date().getFullYear();
         describe the statement formats the converter is tested against. Always check the converted rows against your
         original statement before using them for accounting, tax or lending purposes.
       </p>
-      <p>&copy; {year} {SITE.name}. Your statement is processed in your browser and is never uploaded to us.</p>
+      <p>&copy; {year} {SITE.name}. {locale === 'en' ? 'Your statement is processed in your browser and is never uploaded to us.' : 'Your statement is processed in your browser and is never uploaded to us.'}</p>
     </div>
   </div>
 </footer>

@@ -1,22 +1,60 @@
 ---
 import { SITE } from '../data/site.mjs';
+import { DEFAULT_LOCALE, LOCALES, LOCALE_CODES, type LocaleCode } from '../i18n';
+
+export interface Props {
+  locale?: LocaleCode;
+  /** Same-page paths per locale, so switching language keeps you on the page. */
+  translations?: Partial<Record<LocaleCode, string>>;
+}
+
+const { locale = DEFAULT_LOCALE, translations } = Astro.props;
 
 const links = [
   { href: '/bank-statement-to-csv', label: 'CSV' },
   { href: '/quickbooks-csv', label: 'QuickBooks' },
   { href: '/xero-csv', label: 'Xero' },
-  { href: '/scanned', label: 'Scanned PDFs' },
+  { href: '/scanned', label: 'Scanned' },
 ];
+
+/**
+ * Language switcher.
+ *
+ * Rendered as real anchors rather than a <select>: crawlers have to be able to
+ * follow the language alternates, and the switcher must work without
+ * JavaScript. Each link points at the same page in that language when the page
+ * exists there, and at that language's homepage when it does not — never at a
+ * URL that 404s.
+ */
+function targetFor(code: LocaleCode): string {
+  const explicit = translations?.[code];
+  if (explicit) return explicit;
+  return code === DEFAULT_LOCALE ? '/' : `/${code}/`;
+}
 ---
 
 <header class="site-header">
   <div class="page site-header__inner">
-    <a class="brand" href="/">
+    <a class="brand" href={locale === DEFAULT_LOCALE ? '/' : `/${locale}/`}>
       <span class="brand__mark" aria-hidden="true">XLS</span>
       <span>{SITE.name}</span>
     </a>
     <nav class="site-nav" aria-label="Main">
       {links.map((link) => <a href={link.href}>{link.label}</a>)}
+    </nav>
+    <nav class="locale-switcher" aria-label="Language">
+      {
+        LOCALE_CODES.map((code) => (
+          <a
+            href={targetFor(code)}
+            hreflang={LOCALES[code].htmlLang}
+            title={LOCALES[code].label}
+            aria-current={code === locale ? 'page' : undefined}
+          >
+            {code.toUpperCase()}
+          </a>
+        ))
+      }
     </nav>
   </div>
 </header>

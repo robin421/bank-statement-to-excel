@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { convertFile, type ConvertProgress } from '../../lib/pdf/convertFile';
 import { PdfNoTextLayerError, PdfPasswordRequiredError, PdfTooLargeError } from '../../lib/pdf/types';
 import { buildExport, PRESETS, type Preset } from '../../lib/exporters';
 import { DATE_FORMATS, type DateFormat } from '../../lib/exporters/dates';
 import type { StatementResult } from '../../lib/parse';
+import { DEFAULT_LOCALE, useTranslations, type LocaleCode } from '../../i18n';
+import { defaultExportLocaleFor, exportLocalesFor, getExportLocale } from '../../i18n/locales';
 import Preview from './Preview';
 
 const MAX_BYTES = 60 * 1024 * 1024;
@@ -11,7 +13,8 @@ const MAX_BYTES = 60 * 1024 * 1024;
 type Status = 'idle' | 'busy' | 'password' | 'ready' | 'error';
 
 interface Props {
-  /** Rendered above the dropzone on the homepage only. */
+  /** UI language. Defaults to English. */
+  locale?: LocaleCode;
   compact?: boolean;
   affiliateUrl?: string;
 }
@@ -22,23 +25,9 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function progressLabel(progress: ConvertProgress | null): string {
-  if (!progress) return 'Starting…';
-  switch (progress.stage) {
-    case 'reading':
-      return 'Reading the file…';
-    case 'extracting':
-      return progress.total
-        ? `Reading text from page ${progress.done ?? 0} of ${progress.total}…`
-        : 'Reading text…';
-    case 'parsing':
-      return 'Matching rows and checking the running balance…';
-    default:
-      return 'Finishing…';
-  }
-}
+export default function Converter({ locale = DEFAULT_LOCALE, compact = false, affiliateUrl }: Props) {
+  const t = useTranslations(locale);
 
-export default function Converter({ compact = false, affiliateUrl }: Props) {
   const [status, setStatus] = useState<Status>('idle');
   const [progress, setProgress] = useState<ConvertProgress | null>(null);
   const [result, setResult] = useState<StatementResult | null>(null);
@@ -48,12 +37,32 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
   const [passwordError, setPasswordError] = useState('');
   const [dragging, setDragging] = useState(false);
   const [preset, setPreset] = useState<Preset>('xlsx');
-  const [dateFormat, setDateFormat] = useState<DateFormat>('YYYY-MM-DD');
+  const [exportLocale, setExportLocale] = useState<string>(() => defaultExportLocaleFor(locale));
+  const [dateFormat, setDateFormat] = useState<DateFormat>(() => getExportLocale(defaultExportLocaleFor(locale)).dateFormat);
   const [dateOrderOverride, setDateOrderOverride] = useState<'auto' | 'MDY' | 'DMY'>('auto');
   const [preparing, setPreparing] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const pendingFile = useRef<File | null>(null);
+
+  const localeOptions = useMemo(() => exportLocalesFor(locale), [locale]);
+
+  const progressLabel = useCallback(
+    (value: ConvertProgress | null): string => {
+      if (!value) return t('status.starting');
+      switch (value.stage) {
+        case 'reading':
+          return t('status.reading');
+        case 'extracting':
+          return value.total ? t('status.extracting', { done: value.done ?? 0, total: value.total }) : t('status.extractingUnknown');
+        case 'parsing':
+          return t('status.parsing');
+        default:
+          return t('status.finishing');
+      }
+    },
+    [t],
+  );
 
   const run = useCallback(
     async (file: File, passwordAttempt?: string, order: 'auto' | 'MDY' | 'DMY' = 'auto') => {
@@ -73,8 +82,9 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
         setFileName(file.name);
         setResult(parsed);
         setStatus('ready');
-        // Every statement is different, so start from the preset's own default.
-        setDateFormat(PRESETS[preset].defaultDateFormat);
+        // Every statement is different, so start from the export locale's own
+        // date convention rather than the preset's guess.
+        setDateFormat(getExportLocale(exportLocale).dateFormat);
       } catch (caught) {
         const message = caught instanceof Error ? caught.message : String(caught);
         if (caught instanceof PdfPasswordRequiredError) {
@@ -85,12 +95,12 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
         setError(
           caught instanceof PdfTooLargeError || caught instanceof PdfNoTextLayerError
             ? message
-            : `Could not read this PDF. ${message}`,
+            : t('error.generic', { message }),
         );
         setStatus('error');
       }
     },
-    [preset],
+    [exportLocale, t],
   );
 
   const onFiles = useCallback(
@@ -98,7 +108,7 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
       const file = files?.[0];
       if (!file) return;
       if (file.size > MAX_BYTES) {
-        setError(`That file is ${formatBytes(file.size)}. The in-browser limit is ${formatBytes(MAX_BYTES)} — a bigger statement needs the batch route.`);
+        setError(`${formatBytes(file.size)} > ${formatBytes(MAX_BYTES)}`);
         setStatus('error');
         return;
       }
@@ -123,7 +133,7 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
       if (!result || preparing) return;
       setPreparing(true);
       try {
-        const artifact = await buildExport(result, { preset: which, dateFormat, sourceName: fileName });
+        const artifact = await buildExport(result, { preset: which, exportLocale, dateFormat, sourceName: fileName });
         const blob =
           artifact.bytes !== undefined
             ? new Blob([artifact.bytes as unknown as BlobPart], { type: artifact.mimeType })
@@ -143,7 +153,7 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
         setPreparing(false);
       }
     },
-    [result, dateFormat, fileName, preparing],
+    [result, exportLocale, dateFormat, fileName, preparing],
   );
 
   const reset = useCallback(() => {
@@ -162,15 +172,21 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
         <Preview
           result={result}
           fileName={fileName}
+          locale={locale}
           preset={preset}
+          exportLocale={exportLocale}
           dateFormat={dateFormat}
+          preparing={preparing}
           onPresetChange={(next) => {
             setPreset(next);
-            setDateFormat(PRESETS[next].defaultDateFormat);
+            setDateFormat(getExportLocale(exportLocale).dateFormat);
+          }}
+          onExportLocaleChange={(next) => {
+            setExportLocale(next);
+            setDateFormat(getExportLocale(next).dateFormat);
           }}
           onDateFormatChange={setDateFormat}
           onDownload={download}
-          preparing={preparing}
           onReset={reset}
           dateOrderOverride={dateOrderOverride}
           onDateOrderChange={(order) => {
@@ -195,7 +211,7 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
             data-dragging={dragging}
             role="button"
             tabIndex={0}
-            aria-label="Choose a bank statement PDF"
+            aria-label={t('dropzone.button')}
             onClick={() => inputRef.current?.click()}
             onKeyDown={(event) => {
               if (event.key === 'Enter' || event.key === ' ') {
@@ -214,20 +230,19 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
               onFiles(event.dataTransfer?.files ?? null);
             }}
           >
-            <p className="dropzone__title">Drop your bank statement here</p>
+            <p className="dropzone__title">{t('dropzone.title')}</p>
             <p className="muted small" style={{ margin: 0 }}>
-              PDF from online banking, or an OFX / QFX export — click to choose, or paste with <kbd>Ctrl</kbd>/
-              <kbd>⌘</kbd>+<kbd>V</kbd>
+              {t('dropzone.hint')}
             </p>
             <button type="button" className="btn btn--primary btn--lg" style={{ marginTop: '0.9rem' }}>
-              Choose statement file
+              {t('dropzone.button')}
             </button>
             <p className="muted small" style={{ margin: '0.35rem 0 0' }}>
-              Text-based PDF up to 60 MB / 200 pages, or .ofx / .qfx
+              {t('dropzone.limits')}
             </p>
             {!compact && (
               <a className="btn--link" href="/scanned" onClick={(event) => event.stopPropagation()}>
-                Scanned or photographed statement?
+                {t('dropzone.scanned')}
               </a>
             )}
           </div>
@@ -255,8 +270,7 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
               />
             </div>
             <p className="muted small" style={{ margin: 0 }}>
-              This runs on your device. Nothing is uploaded, so a long statement takes as long as your computer needs —
-              there is no server queue.
+              {t('status.privacyNote')}
             </p>
           </div>
         )}
@@ -271,13 +285,12 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
               if (file) void run(file, password);
             }}
           >
-            <h2 style={{ fontSize: '1.15rem', margin: 0 }}>This PDF is password protected</h2>
+            <h2 style={{ fontSize: '1.15rem', margin: 0 }}>{t('password.title')}</h2>
             <p className="muted small" style={{ margin: 0 }}>
-              Most banks use your date of birth, account number, or the last four digits of your card. The password is
-              used on your device only.
+              {t('password.hint')}
             </p>
             <div className="field" style={{ maxWidth: '22rem' }}>
-              <label htmlFor="pdf-password">PDF password</label>
+              <label htmlFor="pdf-password">{t('password.label')}</label>
               <input
                 id="pdf-password"
                 className="input"
@@ -295,10 +308,10 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
             )}
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
               <button type="submit" className="btn btn--primary">
-                Unlock and convert
+                {t('password.submit')}
               </button>
               <button type="button" className="btn btn--ghost" onClick={reset}>
-                Cancel
+                {t('password.cancel')}
               </button>
             </div>
           </form>
@@ -311,20 +324,19 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
             </p>
             {affiliateUrl && (
               <p className="small muted" style={{ margin: 0 }}>
-                Scanned statements need OCR.{' '}
+                {t('error.ocrHint')}{' '}
                 <a href={affiliateUrl} rel="sponsored noopener" target="_blank">
-                  Try an OCR service instead
-                </a>
-                , or read about{' '}
-                <a href="/scanned">why a scan cannot be read in the browser</a>.
+                  {t('error.ocrLink')}
+                </a>{' '}
+                {t('error.ocrOr')} <a href="/scanned">{t('error.ocrWhy')}</a>.
               </p>
             )}
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
               <button type="button" className="btn btn--primary" onClick={reset}>
-                Try another file
+                {t('error.tryAnother')}
               </button>
               <a className="btn btn--ghost" href="/scanned">
-                Scanned PDFs
+                {t('error.scannedLink')}
               </a>
             </div>
           </div>
@@ -344,20 +356,37 @@ export default function Converter({ compact = false, affiliateUrl }: Props) {
           <span className="tick" aria-hidden="true">
             ✓
           </span>{' '}
-          Never uploaded — conversion happens in your browser
+          {t('privacy.neverUploaded')}
         </span>
         <span>
           <span className="tick" aria-hidden="true">
             ✓
           </span>{' '}
-          No sign-up, no email
+          {t('privacy.noSignup')}
         </span>
         <span>
           <span className="tick" aria-hidden="true">
             ✓
           </span>{' '}
-          Rows checked against the statement's running balance
+          {t('privacy.balanceChecked')}
         </span>
+        {localeOptions.length > 1 && status === 'idle' && (
+          <span className="privacy-strip__locale">
+            <label htmlFor="export-locale-idle">{t('download.locale')}</label>
+            <select
+              id="export-locale-idle"
+              className="select"
+              value={exportLocale}
+              onChange={(event) => setExportLocale(event.target.value)}
+            >
+              {localeOptions.map((option) => (
+                <option key={option.code} value={option.code}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </span>
+        )}
       </div>
     </div>
   );

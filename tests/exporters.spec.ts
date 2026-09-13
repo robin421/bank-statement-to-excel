@@ -24,6 +24,20 @@ describe('csv writer', () => {
     expect(escapeCsvField('a;b', ';')).toBe('"a;b"');
   });
 
+  it('does not quote a comma inside a semicolon-delimited file', () => {
+    // This is what a German amount looks like. Quoting it to "405,81" is how a
+    // numeric column arrives in Excel as text.
+    expect(escapeCsvField('405,81', ';')).toBe('405,81');
+    expect(escapeCsvField('-1234,56', ';')).toBe('-1234,56');
+    // ...while a comma-delimited file still has to quote it.
+    expect(escapeCsvField('405,81', ',')).toBe('"405,81"');
+  });
+
+  it('quotes a field containing the actual delimiter', () => {
+    expect(escapeCsvField('a,b', ',')).toBe('"a,b"');
+    expect(escapeCsvField('a\tb', '\t')).toBe('"a\tb"');
+  });
+
   it('writes CRLF line endings and an optional BOM', () => {
     const csv = toCsv([['a', 'b'], ['1', '2']], { bom: true });
     expect(csv.startsWith('\uFEFF')).toBe(true);
