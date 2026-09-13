@@ -37,7 +37,11 @@ const noindex = props.noindex ?? false;
 const article = props.article ?? (frontmatter.published ? { published: frontmatter.published } : undefined);
 
 const origin = Astro.site ?? SITE.url;
-const canonicalUrl = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', origin).href;
+// Normalise to a trailing slash so the canonical, the hreflang alternates and
+// the sitemap all name the exact same URL. Emitting `/de` as the canonical while
+// hreflang says `/de/` splits the signal between two URLs that both serve 200.
+const pathname = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const canonicalUrl = new URL(pathname, origin).href;
 const ogTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
 
 const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;

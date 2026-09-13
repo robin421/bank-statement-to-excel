@@ -4,6 +4,7 @@
   "buildCommand": "npm run build",
   "installCommand": "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install",
   "outputDirectory": "dist",
+  "trailingSlash": true,
   "headers": [
     {
       "source": "/_astro/(.*)",
