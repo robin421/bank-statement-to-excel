@@ -1,0 +1,137 @@
+---
+import Base from '../layouts/Base.astro';
+import ConverterSection from '../components/ConverterSection.astro';
+import Faq from '../components/Faq.astro';
+import RelatedLinks from '../components/RelatedLinks.astro';
+
+const faqs = [
+  {
+    q: 'What does "extract transactions" mean here?',
+    a: 'Turning the table printed on a statement into structured rows: date, description, money in, money out and running balance. What comes out is not a wall of text but one record per transaction, typed so a spreadsheet or a script can work with it.',
+  },
+  {
+    q: 'How do I know nothing was skipped?',
+    a: 'The statement tells us. Every row prints a running balance, so the tool checks that each previous balance plus the row amount equals the balance printed on the next row. A skipped row breaks that chain, which is why a missing transaction shows up as a mismatch rather than as silence.',
+  },
+  {
+    q: 'Can I see the original line behind a row?',
+    a: 'Yes. The Excel workbook includes a Raw sheet with the source text line for every transaction, plus the balance delta and the flags for that row. If a converted figure is ever questioned, the line it came from is in the same file.',
+  },
+  {
+    q: 'What if a row cannot be read?',
+    a: 'It is flagged, not dropped. Common flags are "amount-not-found" (the amount landed on the next line), "both-debit-and-credit" (two amounts on one row), "sign-corrected" (the sign was flipped to satisfy the running balance) and a plain mismatch against the balance chain. The preview has a filter to show only flagged rows.',
+  },
+  {
+    q: 'Can I extract transactions from hundreds of statements?',
+    a: 'Not in one go, and not by uploading a folder — the browser does one file at a time and there is no server to hand work to. A batch route is planned; the current tool is for one statement at a time, however many pages it has.',
+  },
+  {
+    q: 'Does extraction work on a scanned statement?',
+    a: 'No. A scan has no text to extract, only pixels, so it needs OCR first. The tool detects that case and says so rather than producing invented rows — see the scanned statements page for what to use instead.',
+  },
+];
+
+const related = [
+  { href: '/', title: 'Bank statement to Excel', blurb: 'Convert and download the extracted rows.' },
+  { href: '/pdf-bank-statement-to-excel', title: 'PDF bank statement to Excel', blurb: 'Why table structure is the whole problem.' },
+  { href: '/ofx-qfx-to-csv', title: 'OFX / QFX to CSV', blurb: 'Skip extraction entirely when your bank exports structured data.' },
+  { href: '/scanned', title: 'Scanned statements', blurb: 'Image PDFs need OCR — here is the honest comparison.' },
+];
+---
+
+<Base
+  title="Extract Transactions from a Bank Statement PDF"
+  description="Extract transaction data from a bank statement PDF into structured rows: date, description, money in, money out and running balance — with every row verified against the statement's own balance chain."
+>
+  <ConverterSection eyebrow="Structured rows · verified · traceable">
+    <h1>Extract transactions from a bank statement PDF</h1>
+    <p class="lede">
+      Extraction is only useful if you can trust it, and trust needs evidence. Every row this tool produces is checked
+      against the running balance your statement prints, and the original text line behind each row is included in the
+      output.
+    </p>
+  </ConverterSection>
+
+  <section class="section" aria-labelledby="pipeline-heading">
+    <div class="page">
+      <h2 id="pipeline-heading">What happens between the PDF and the spreadsheet</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3 style="margin-top:0">1. Text with positions</h3>
+          <p style="margin-bottom:0">
+            The PDF's text layer is read as runs of characters, each with an x and y position and a font height. No
+            meaning yet — just geometry.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">2. Geometry becomes a table</h3>
+          <p style="margin-bottom:0">
+            Runs that share a baseline are grouped into rows. Numeric runs that share a right edge are grouped into
+            columns. That is the whole trick, and it is why the parser does not care which bank printed the statement.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">3. Columns get roles</h3>
+          <p style="margin-bottom:0">
+            Is that leftmost numeric column money-out, money-in, a signed amount, or the balance? The tool tries each
+            plausible reading and keeps the one that best explains the balance chain.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">4. The chain is checked</h3>
+          <p style="margin-bottom:0">
+            Each row's amount is tested against the difference between consecutive balances. Rows that fail are flagged
+            with the delta, so a mismatch is visible rather than assumed away.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sunken" aria-labelledby="flags-heading">
+    <div class="page">
+      <div class="grid-2">
+        <div class="prose">
+          <h2 id="flags-heading">Every flag, and what it means</h2>
+          <p>
+            A flag is not an error message. It is a short list of the specific reasons a row could not be fully verified,
+            so you know what to look at in the original PDF.
+          </p>
+          <dl>
+            <dt><code>amount-not-found</code></dt>
+            <dd>No amount was read on this row. The amount is usually on the following line — check whether it was picked up.</dd>
+            <dt><code>both-debit-and-credit</code></dt>
+            <dd>Two money values on one row. Some statements show a fee and a net on the same line; only one belongs to the transaction.</dd>
+            <dt><code>sign-corrected</code></dt>
+            <dd>The amount's sign was flipped because only the flipped value satisfies the running balance. Usually correct — occasionally a sign that really is unusual.</dd>
+            <dt><code>multiline-description</code></dt>
+            <dd>Informational only. A continuation line was folded into this row's description. Safe to ignore.</dd>
+            <dt><code>balance-not-found</code></dt>
+            <dd>The row has no balance, so it could not be checked. Common on the last row of a statement.</dd>
+          </dl>
+        </div>
+        <div>
+          <div class="card">
+            <h2 style="margin-top:0;font-size:1.05rem">Confidence, stated plainly</h2>
+            <p>
+              The result is graded rather than presented as either perfect or broken:
+            </p>
+            <ul style="padding-left:1.1em">
+              <li><strong>ok</strong> — text layer is healthy and the rows reconcile.</li>
+              <li><strong>low confidence</strong> — rows were extracted but something did not add up, or very few transactions were found.</li>
+              <li><strong>needs OCR</strong> — the PDF has no usable text. No rows are offered at all.</li>
+            </ul>
+            <p style="margin-bottom:0">
+              That last case matters most. A tool that returns plausible rows from a scan it cannot read is worse than one
+              that refuses.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Faq items={faqs} />
+
+  <RelatedLinks heading="Related" items={related} />
+</Base>

@@ -1,0 +1,132 @@
+{
+  "name": "hdfc-like",
+  "openingBalance": 4820.55,
+  "transactions": [
+    {
+      "date": "2025-01-05",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": -892.05,
+      "balance": 3928.5
+    },
+    {
+      "date": "2025-01-07",
+      "description": "REFUND BEST BUY #0442",
+      "amount": -932.27,
+      "balance": 2996.23
+    },
+    {
+      "date": "2025-01-10",
+      "description": "CITY ELECTRIC UTILITY",
+      "amount": 894.81,
+      "balance": 3891.04
+    },
+    {
+      "date": "2025-01-12",
+      "description": "CITY ELECTRIC UTILITY REF 882133",
+      "amount": -939.47,
+      "balance": 2951.57
+    },
+    {
+      "date": "2025-01-13",
+      "description": "CHECK #1042",
+      "amount": 328.71,
+      "balance": 3280.28
+    },
+    {
+      "date": "2025-01-14",
+      "description": "UPWORK ESCROW PAYOUT",
+      "amount": -730.45,
+      "balance": 2549.83
+    },
+    {
+      "date": "2025-01-17",
+      "description": "CITY ELECTRIC UTILITY",
+      "amount": -645.63,
+      "balance": 1904.2
+    },
+    {
+      "date": "2025-01-20",
+      "description": "UPWORK ESCROW PAYOUT",
+      "amount": 930.74,
+      "balance": 2834.94
+    },
+    {
+      "date": "2025-01-22",
+      "description": "AMAZON MKTPLACE PMTS REF 882138",
+      "amount": -424.24,
+      "balance": 2410.7
+    },
+    {
+      "date": "2025-01-24",
+      "description": "CHECK #1042",
+      "amount": 469.23,
+      "balance": 2879.93
+    },
+    {
+      "date": "2025-01-25",
+      "description": "INSURANCE PREMIUM AUTO",
+      "amount": -268.06,
+      "balance": 2611.87
+    },
+    {
+      "date": "2025-01-28",
+      "description": "REFUND BEST BUY #0442",
+      "amount": 70.86,
+      "balance": 2682.73
+    },
+    {
+      "date": "2025-01-30",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": 755.72,
+      "balance": 3438.45
+    },
+    {
+      "date": "2025-01-31",
+      "description": "NORTHWIND TRADING CO REF 8821313",
+      "amount": -851.98,
+      "balance": 2586.47
+    },
+    {
+      "date": "2025-02-03",
+      "description": "INSURANCE PREMIUM AUTO",
+      "amount": 803.35,
+      "balance": 3389.82
+    },
+    {
+      "date": "2025-02-05",
+      "description": "AMAZON MKTPLACE PMTS",
+      "amount": -812.97,
+      "balance": 2576.85
+    },
+    {
+      "date": "2025-02-07",
+      "description": "MOBILE DEPOSIT",
+      "amount": 124,
+      "balance": 2700.85
+    },
+    {
+      "date": "2025-02-09",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": 882.91,
+      "balance": 3583.76
+    },
+    {
+      "date": "2025-02-10",
+      "description": "WHOLE FOODS MKT #10234 REF 8821318",
+      "amount": 625.17,
+      "balance": 4208.93
+    },
+    {
+      "date": "2025-02-11",
+      "description": "RENT PAYMENT PORTAL",
+      "amount": -363.76,
+      "balance": 3845.17
+    },
+    {
+      "date": "2025-02-12",
+      "description": "MOBILE DEPOSIT",
+      "amount": -500.67,
+      "balance": 3344.5
+    }
+  ]
+}

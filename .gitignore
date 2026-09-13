@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.local
+.DS_Store
+._*
+
+# NEVER commit real bank statements (PII). Local grading only.
+fixtures/real/
+*.local.pdf

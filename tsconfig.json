@@ -1,0 +1,10 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "types": ["vitest/globals"]
+  },
+  "include": ["src", "tests", "fixtures/*.mjs", "*.mjs"],
+  "exclude": ["dist", "node_modules", ".astro"]
+}

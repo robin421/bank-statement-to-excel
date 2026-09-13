@@ -1,0 +1,78 @@
+{
+  "name": "wells-fargo-like",
+  "openingBalance": 4820.55,
+  "transactions": [
+    {
+      "date": "2025-01-09",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": -758.78,
+      "balance": 4061.77
+    },
+    {
+      "date": "2025-01-11",
+      "description": "ACME PAYROLL DEPOSIT",
+      "amount": 717.3,
+      "balance": 4779.07
+    },
+    {
+      "date": "2025-01-14",
+      "description": "AMAZON MKTPLACE PMTS",
+      "amount": -827.16,
+      "balance": 3951.91
+    },
+    {
+      "date": "2025-01-15",
+      "description": "INTEREST PAYMENT REF 882133",
+      "amount": 810.91,
+      "balance": 4762.82
+    },
+    {
+      "date": "2025-01-17",
+      "description": "NORTHWIND TRADING CO",
+      "amount": -853.34,
+      "balance": 3909.48
+    },
+    {
+      "date": "2025-01-20",
+      "description": "REFUND BEST BUY #0442",
+      "amount": -37.9,
+      "balance": 3871.58
+    },
+    {
+      "date": "2025-01-22",
+      "description": "INTEREST PAYMENT",
+      "amount": -520.62,
+      "balance": 3350.96
+    },
+    {
+      "date": "2025-01-25",
+      "description": "INTEREST PAYMENT",
+      "amount": -222.86,
+      "balance": 3128.1
+    },
+    {
+      "date": "2025-01-26",
+      "description": "UPWORK ESCROW PAYOUT REF 882138",
+      "amount": -88.69,
+      "balance": 3039.41
+    },
+    {
+      "date": "2025-01-27",
+      "description": "INTEREST PAYMENT",
+      "amount": -734.19,
+      "balance": 2305.22
+    },
+    {
+      "date": "2025-01-29",
+      "description": "AMAZON MKTPLACE PMTS",
+      "amount": 361.22,
+      "balance": 2666.44
+    },
+    {
+      "date": "2025-01-30",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": 800.88,
+      "balance": 3467.32
+    }
+  ]
+}

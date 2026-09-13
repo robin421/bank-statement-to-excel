@@ -1,0 +1,49 @@
+---
+export interface FaqItem {
+  q: string;
+  a: string;
+}
+
+export interface Props {
+  items: FaqItem[];
+  heading?: string;
+  /** Emit FAQPage JSON-LD. Off by default for repeated blocks. */
+  schema?: boolean;
+}
+
+const { items, heading = 'Questions people actually ask', schema = true } = Astro.props;
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: items.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
+---
+
+<section class="section" aria-labelledby="faq-heading">
+  <div class="page">
+    <h2 id="faq-heading">{heading}</h2>
+    <div class="faq">
+      {
+        items.map((item) => (
+          <details>
+            <summary>{item.q}</summary>
+            <div>
+              <p>{item.a}</p>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+{
+  schema && (
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />
+  )
+}

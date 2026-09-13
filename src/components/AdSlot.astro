@@ -1,0 +1,36 @@
+---
+/**
+ * AdSense slot.
+ *
+ * Deliberately renders nothing until a publisher id is configured. Ad slots on
+ * a thin tool page are the fastest way to get an AdSense application rejected,
+ * and an empty 250px hole above the fold costs conversions — so ads only ever
+ * appear below the fold, and never on a page that has no content.
+ */
+export interface Props {
+  slot?: string;
+  label?: string;
+  format?: 'auto' | 'horizontal' | 'rectangle';
+}
+
+const { label = 'Advertisement' } = Astro.props;
+const client = import.meta.env.PUBLIC_ADSENSE_CLIENT;
+---
+
+{
+  client ? (
+    <aside class="page" aria-label="Advertisement">
+      <div class="ad-slot" data-ad-client={client}>
+        <ins
+          class="adsbygoogle"
+          style="display:block;width:100%"
+          data-ad-client={client}
+          data-ad-slot={Astro.props.slot ?? ''}
+          data-ad-format={Astro.props.format ?? 'auto'}
+          data-full-width-responsive="true"
+        />
+        <script is:inline>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      </div>
+    </aside>
+  ) : null
+}

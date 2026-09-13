@@ -1,0 +1,76 @@
+---
+import Base from '../layouts/Base.astro';
+import RelatedLinks from '../components/RelatedLinks.astro';
+import { SITE } from '../data/site.mjs';
+
+const related = [
+  { href: '/', title: 'Bank statement to Excel', blurb: 'The converter itself.' },
+  { href: '/privacy', title: 'Privacy', blurb: 'What is and is not collected — including what never leaves your browser.' },
+  { href: '/terms', title: 'Terms', blurb: 'Accuracy disclaimers and the limits of the tool.' },
+  { href: '/contact', title: 'Contact', blurb: 'Report a statement layout that did not convert correctly.' },
+];
+---
+
+<Base
+  title="About"
+  description="An independent, browser-based bank statement to Excel converter. No upload, no account, and a running-balance check on every row."
+>
+  <section class="section">
+    <div class="page prose">
+      <p class="eyebrow">About</p>
+      <h1>A statement converter that shows its working</h1>
+      <p class="lede">
+        Most tools in this category ask you to upload a bank statement to an unknown server and then tell you the result
+        is accurate. This one does the work on your device and tells you how it knows.
+      </p>
+
+      <h2>What it does</h2>
+      <p>
+        It converts text-based bank statement PDFs — the ones you download from online banking — into an Excel workbook
+        or CSV, and it converts OFX and QFX exports too. It reads the layout of the page, rebuilds the table from the
+        positions and alignments of the text, and then verifies every row against the running balance the statement
+        prints.
+      </p>
+      <p>
+        That verification is the point. A bank statement is a self-checking document: on every row, the previous balance
+        plus the amount equals the balance. If that holds from the first row to the last, the rows were read correctly.
+        If it fails, you are told exactly which rows, and why.
+      </p>
+
+      <h2>What it does not do</h2>
+      <p>
+        It does not read scanned or photographed statements, and it will say so within a second rather than produce
+        plausible-looking rows from an image. It does not categorise your spending or guess at merchants. It does not
+        combine several statements into one. And it does not send your statement anywhere — there is no upload endpoint,
+        no storage and no queue, which is why the tool keeps working when you are offline.
+      </p>
+
+      <h2>How it is funded</h2>
+      <p>
+        Advertising, and referrals to OCR services for the scanned statements this tool cannot read. There is no
+        subscription, no row limit and no sign-up, and the tool is not gated behind anything. If you find it useful, the
+        honest way to support it is to use the OCR referral when you genuinely need OCR.
+      </p>
+
+      <h2>Accuracy, stated honestly</h2>
+      <p>
+        This is a conversion tool, not an audit. It converts what your statement says; it does not verify your bank's
+        arithmetic or check that the statement itself is correct. Rows that could not be verified are flagged rather than
+        presented as fact, and the Excel workbook keeps the original text line behind every row so any figure can be
+        traced back to the document.
+      </p>
+      <p>
+        Always check the converted rows against your original statement before you file, reconcile or lend against them.
+      </p>
+
+      <h2>Independence</h2>
+      <p>
+        This site is not affiliated with, endorsed by or connected to any bank, and it is not affiliated with Intuit,
+        Xero or any OCR provider. Bank and product names are used only to describe the statement formats and export
+        formats the tool supports.
+      </p>
+    </div>
+  </section>
+
+  <RelatedLinks heading="Elsewhere" items={related} />
+</Base>

@@ -1,0 +1,100 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../data/site.mjs';
+
+const updated = '18 February 2025';
+---
+
+<Base
+  title="Privacy"
+  description="How this bank statement converter handles your data: your statement is processed in your browser and never uploaded. What analytics run, what cookies are used, and how to contact us."
+>
+  <section class="section">
+    <div class="page prose">
+      <p class="eyebrow">Privacy</p>
+      <h1>Privacy policy</h1>
+      <p class="small muted">Last updated {updated}.</p>
+
+      <div class="note note--info">
+        <strong>The short version.</strong> Your bank statement is opened and converted by JavaScript running in your own
+        browser tab. It is never uploaded to us, never stored, and never seen by anyone but you. You can verify this
+        yourself in your browser's network tab while converting a file.
+      </div>
+
+      <h2>Your statement files</h2>
+      <p>
+        We do not receive your PDF, OFX or QFX files, or anything derived from them. There is no upload endpoint on this
+        site, no storage bucket and no processing queue. The conversion happens entirely on your device, and the
+        resulting spreadsheet is written directly to your downloads folder by your browser.
+      </p>
+      <p>
+        Because nothing is transmitted, there is nothing for us to delete, disclose, sell or lose. If you convert a file
+        while offline after the page has loaded, everything still works — which is the simplest possible demonstration
+        that the file is not being sent anywhere.
+      </p>
+
+      <h2>Analytics</h2>
+      <p>
+        We use Cloudflare Web Analytics, which is cookieless and does not fingerprint visitors. It records aggregate page
+        views, referrers, country and basic device information. It cannot identify you, and because it sets no cookies it
+        does not require a consent banner in the EU or UK.
+      </p>
+      <p>
+        We deliberately do not run Google Analytics or any other cookie-based analytics product on this site, and we do
+        not use session recording, heatmaps or advertising pixels to profile individual visitors.
+      </p>
+
+      <h2>Advertising</h2>
+      <p>
+        This site may display advertising supplied by Google AdSense. Where ads are shown, Google and its partners may
+        use cookies or similar technologies to serve ads based on your prior visits to this and other websites. You can
+        control personalised advertising through{' '}
+        <a href="https://adssettings.google.com" rel="noopener nofollow" target="_blank">Google Ads Settings</a>, and you
+        can opt out of third-party vendor cookies at{' '}
+        <a href="https://www.aboutads.info" rel="noopener nofollow" target="_blank">aboutads.info</a>.
+      </p>
+      <p>
+        Where required by law, we ask for consent before any non-essential cookies are set, and you can decline without
+        losing access to the converter. Advertising never has access to your statement file, because the file never
+        leaves your device.
+      </p>
+
+      <h2>Affiliate links</h2>
+      <p>
+        Some links to OCR services for scanned statements are affiliate links, marked with <code>rel="sponsored"</code>.
+        If you follow one and buy something, we may receive a commission at no extra cost to you. These links never
+        appear inside the converter, and they never receive data about the file you were working on.
+      </p>
+
+      <h2>Server logs</h2>
+      <p>
+        The site is served by a static hosting provider, which keeps standard request logs (IP address, user agent,
+        requested URL) for security and abuse prevention. Those logs relate to page requests, never to the contents of
+        any file you convert, which is not transmitted at all.
+      </p>
+
+      <h2>Children</h2>
+      <p>This site is a tool for handling financial documents and is not directed at children.</p>
+
+      <h2>Your rights</h2>
+      <p>
+        Because we do not collect personal data from the converter and use no identifying cookies, there is generally
+        nothing to access, correct or erase. If you believe we hold data about you, contact us and we will investigate and
+        respond within 30 days. If you are in the EU or UK, you also have the right to complain to your national data
+        protection authority.
+      </p>
+
+      <h2>Changes</h2>
+      <p>
+        If this policy changes — for example if a paid batch conversion service is added, which would require sending
+        files to a server — the change will be described here, with the trade-offs stated plainly, before that feature is
+        enabled.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Questions about this policy: <a href="/contact">contact us</a>.
+      </p>
+    </div>
+  </section>
+</Base>

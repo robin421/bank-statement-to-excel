@@ -1,0 +1,54 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const posts = [
+  {
+    href: '/blog/how-to-convert-bank-statement-to-excel',
+    title: 'How to convert a bank statement to Excel (without retyping it)',
+    blurb:
+      'Which file to download from your bank, how to check the conversion properly, and what to do when the numbers do not add up.',
+    date: '2025-02-18',
+    minutes: 8,
+  },
+  {
+    href: '/blog/excel-from-pdf-bank-statement',
+    title: 'Excel from a PDF bank statement: why it usually goes wrong',
+    blurb:
+      'A PDF has no table in it. Here is what generic PDF-to-Excel converters get wrong on statements, and the arithmetic that fixes it.',
+    date: '2025-02-18',
+    minutes: 7,
+  },
+];
+---
+
+<Base
+  title="Guides — Bank Statements, Excel and CSV"
+  description="Practical guides to converting bank statements into spreadsheets: which file to download, how to verify the result against the running balance, and how to import into QuickBooks or Xero."
+>
+  <section class="section">
+    <div class="page">
+      <p class="eyebrow">Guides</p>
+      <h1>Converting statements, and checking the result</h1>
+      <p class="lede">
+        Short, practical guides. Every one of them assumes you will want to verify the output rather than trust it, and
+        shows you how.
+      </p>
+
+      <ul class="related" style="margin-top:2rem">
+        {
+          posts.map((post) => (
+            <li>
+              <a href={post.href}>
+                <strong>{post.title}</strong>
+                <span>{post.blurb}</span>
+                <span class="small muted" style="display:block;margin-top:0.5rem">
+                  {post.minutes} min read
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,39 @@
+---
+import Base from '../../layouts/Base.astro';
+import { BANKS } from '../../data/keywords';
+---
+
+<Base
+  title="Bank Statement to Excel by Bank — Layout Notes"
+  description="Convert bank statements from Chase, Bank of America, Wells Fargo, HDFC, ICICI, HSBC and Barclays to Excel or CSV, with notes on how each bank's statement is laid out."
+>
+  <section class="section">
+    <div class="page">
+      <p class="eyebrow">By bank</p>
+      <h1>Bank statement to Excel, by bank</h1>
+      <p class="lede">
+        The converter is layout-driven rather than bank-specific, so it does not need a per-bank profile to work. What
+        these pages add is the detail that helps you check the output: how each bank lays out dates, signs and columns,
+        and what tends to go wrong.
+      </p>
+
+      <ul class="related" style="margin-top:2rem">
+        {
+          BANKS.map((bank) => (
+            <li>
+              <a href={`/banks/${bank.slug}`}>
+                <strong>{bank.name}</strong>
+                <span>{bank.layoutNotes[0]}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="note note--info" style="margin-top:2rem;max-width:60ch">
+        <strong>Not affiliated with any bank.</strong> Bank names appear here only to describe statement layouts. Every
+        conversion happens in your browser and no bank is involved in it.
+      </div>
+    </div>
+  </section>
+</Base>

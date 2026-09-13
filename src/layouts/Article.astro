@@ -1,0 +1,87 @@
+---
+import Base from './Base.astro';
+
+/**
+ * Blog post layout.
+ *
+ * Markdown pages do not get an H1 from the content (posts start at H2), and they
+ * carry publish metadata that the Article schema needs — so both live here rather
+ * than being repeated in every post's frontmatter.
+ */
+export interface Props {
+  title?: string;
+  description?: string;
+  published?: string;
+  modified?: string;
+  readingTime?: string;
+  /** Markdown pages receive their frontmatter here as well as spread onto props. */
+  frontmatter?: Record<string, string | undefined>;
+}
+
+const props = Astro.props as Props;
+const frontmatter = props.frontmatter ?? {};
+
+const title = props.title ?? frontmatter.title ?? '';
+const description = props.description ?? frontmatter.description ?? '';
+const readingTime = props.readingTime ?? frontmatter.readingTime;
+
+// YAML parses an unquoted `2025-02-18` into a Date, so accept both shapes and
+// normalise to an ISO day before doing anything with it.
+const publishedRaw = props.published ?? frontmatter.published ?? '';
+const published = (publishedRaw instanceof Date ? publishedRaw.toISOString() : String(publishedRaw)).slice(0, 10);
+const modifiedRaw = props.modified ?? frontmatter.modified;
+const modified = modifiedRaw ? (modifiedRaw instanceof Date ? modifiedRaw.toISOString() : String(modifiedRaw)).slice(0, 10) : undefined;
+
+const formatted = new Date(`${published}T00:00:00Z`).toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+---
+
+<Base
+  title={title}
+  description={description}
+  article={{ published, modified }}
+  schema={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: `${Astro.site ?? ''}/` },
+        { '@type': 'ListItem', position: 2, name: 'Guides', item: `${Astro.site ?? ''}/blog` },
+        { '@type': 'ListItem', position: 3, name: title },
+      ],
+    },
+  ]}
+>
+  <article>
+    <header class="section section--tight">
+      <div class="page">
+        <p class="eyebrow">
+          <a href="/blog" style="color:inherit;text-decoration:none">Guides</a>
+        </p>
+        <h1 style="max-width:34ch">{title}</h1>
+        <p class="lede">{description}</p>
+        <p class="small muted" style="margin-top:1rem">
+          <time datetime={published}>{formatted}</time>
+          {readingTime && <> · {readingTime}</>}
+        </p>
+      </div>
+    </header>
+
+    <div class="section" style="padding-top:0">
+      <div class="page prose">
+        <slot />
+      </div>
+    </div>
+  </article>
+
+  <div class="page" style="padding-bottom:2rem">
+    <div class="note note--info" style="max-width:var(--measure)">
+      <strong>Convert a statement now.</strong> The <a href="/">bank statement to Excel converter</a> runs in your
+      browser and checks every row against the statement's running balance before you download.
+    </div>
+  </div>
+</Base>

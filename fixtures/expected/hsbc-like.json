@@ -1,0 +1,144 @@
+{
+  "name": "hsbc-like",
+  "openingBalance": 4820.55,
+  "transactions": [
+    {
+      "date": "2025-01-05",
+      "description": "INTEREST PAYMENT",
+      "amount": -537.93,
+      "balance": 4282.62
+    },
+    {
+      "date": "2025-01-08",
+      "description": "AMAZON MKTPLACE PMTS",
+      "amount": 115.72,
+      "balance": 4398.34
+    },
+    {
+      "date": "2025-01-11",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": -142.53,
+      "balance": 4255.81
+    },
+    {
+      "date": "2025-01-14",
+      "description": "CHECK #1042 REF 882133",
+      "amount": -111.9,
+      "balance": 4143.91
+    },
+    {
+      "date": "2025-01-15",
+      "description": "NORTHWIND TRADING CO",
+      "amount": 534.21,
+      "balance": 4678.12
+    },
+    {
+      "date": "2025-01-17",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": 71.42,
+      "balance": 4749.54
+    },
+    {
+      "date": "2025-01-19",
+      "description": "CITY ELECTRIC UTILITY",
+      "amount": 517.22,
+      "balance": 5266.76
+    },
+    {
+      "date": "2025-01-21",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": -859.61,
+      "balance": 4407.15
+    },
+    {
+      "date": "2025-01-24",
+      "description": "MOBILE DEPOSIT REF 882138",
+      "amount": 928.46,
+      "balance": 5335.61
+    },
+    {
+      "date": "2025-01-26",
+      "description": "CITY ELECTRIC UTILITY",
+      "amount": 376.68,
+      "balance": 5712.29
+    },
+    {
+      "date": "2025-01-28",
+      "description": "ATM WITHDRAWAL 4821 MAIN ST",
+      "amount": 658.02,
+      "balance": 6370.31
+    },
+    {
+      "date": "2025-01-30",
+      "description": "WHOLE FOODS MKT #10234",
+      "amount": 203.31,
+      "balance": 6573.62
+    },
+    {
+      "date": "2025-02-02",
+      "description": "MOBILE DEPOSIT",
+      "amount": -880.85,
+      "balance": 5692.77
+    },
+    {
+      "date": "2025-02-05",
+      "description": "AMAZON MKTPLACE PMTS REF 8821313",
+      "amount": -637.62,
+      "balance": 5055.15
+    },
+    {
+      "date": "2025-02-06",
+      "description": "MOBILE DEPOSIT",
+      "amount": 20.39,
+      "balance": 5075.54
+    },
+    {
+      "date": "2025-02-07",
+      "description": "WHOLE FOODS MKT #10234",
+      "amount": 469.58,
+      "balance": 5545.12
+    },
+    {
+      "date": "2025-02-10",
+      "description": "SERVICE FEE - MONTHLY",
+      "amount": -812.93,
+      "balance": 4732.19
+    },
+    {
+      "date": "2025-02-11",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": -193.3,
+      "balance": 4538.89
+    },
+    {
+      "date": "2025-02-14",
+      "description": "CHECK #1042 REF 8821318",
+      "amount": 800.29,
+      "balance": 5339.18
+    },
+    {
+      "date": "2025-02-16",
+      "description": "INTEREST PAYMENT",
+      "amount": 845.15,
+      "balance": 6184.33
+    },
+    {
+      "date": "2025-02-17",
+      "description": "SERVICE FEE - MONTHLY",
+      "amount": -707.78,
+      "balance": 5476.55
+    },
+    {
+      "date": "2025-02-18",
+      "description": "CHECK #1042",
+      "amount": -918.05,
+      "balance": 4558.5
+    },
+    {
+      "date": "2025-02-19",
+      "description": "CHECK #1042",
+      "amount": -619.99,
+      "balance": 3938.51
+    }
+  ]
+}

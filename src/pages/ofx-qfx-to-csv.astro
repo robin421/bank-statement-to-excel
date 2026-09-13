@@ -1,0 +1,141 @@
+---
+import Base from '../layouts/Base.astro';
+import ConverterSection from '../components/ConverterSection.astro';
+import Faq from '../components/Faq.astro';
+import RelatedLinks from '../components/RelatedLinks.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const faqs = [
+  {
+    q: 'What is the difference between OFX and QFX?',
+    a: 'QFX is Quicken\'s dialect of OFX. The structure is the same — a list of transactions with dates, amounts and descriptions — with a Quicken-specific header. Both are read the same way here, and the converter detects the format from the file contents rather than the extension, because banks frequently mislabel exports.',
+  },
+  {
+    q: 'Why is OFX better than a PDF?',
+    a: 'The data is already structured. There is no layout to infer, no right-aligned numbers to cluster, no risk of a scan, and the dates are unambiguous — an OFX timestamp is YYYYMMDD, so there is no day/month versus month/day question at all. If your bank offers it, it is the better input.',
+  },
+  {
+    q: 'Where does the balance column come from?',
+    a: 'OFX files contain a ledger balance and each transaction amount, but not a running balance per row. The converter derives one by working backwards from the ledger balance, then checks the arithmetic forward. That is the same verification the PDF path uses, applied to structured data.',
+  },
+  {
+    q: 'Does it work on QIF or QBO files?',
+    a: 'No. QIF and the QuickBooks QBO backup format are different structures. OFX 1.x (the SGML-style flavour with unclosed tags) and OFX 2.x (proper XML) are both supported, which covers what banks actually export.',
+  },
+  {
+    q: 'Is the file uploaded anywhere?',
+    a: 'No. The OFX text is read in your browser and never leaves it. That matters more than usual here, because an OFX file has no password protection at all — many PDF statements do, but OFX exports are plain text with your account number in them.',
+  },
+  {
+    q: 'Can I get Excel out of it instead of CSV?',
+    a: 'Yes. The same output presets apply: a three-sheet Excel workbook with typed dates and numbers, a generic CSV with separate debit and credit columns, and import-ready files for QuickBooks Online and Xero.',
+  },
+];
+
+const related = [
+  { href: '/', title: 'Bank statement to Excel', blurb: 'The PDF route, for statements you cannot export as OFX.' },
+  { href: '/bank-statement-to-csv', title: 'Bank statement to CSV', blurb: 'CSV output details: delimiters, encoding, dates.' },
+  { href: '/xero-csv', title: 'Xero statement import', blurb: 'Xero imports OFX natively — often the best route.' },
+  { href: '/quickbooks-csv', title: 'QuickBooks Online', blurb: 'If you need the three-column CSV shape instead.' },
+];
+---
+
+<Base
+  title="OFX / QFX to CSV and Excel — Convert Bank Exports"
+  description="Convert OFX and QFX bank exports to CSV or Excel in your browser. No OCR, no layout guessing, no upload — and a running balance derived from the statement's own ledger balance so the rows can be checked."
+>
+  <ConverterSection eyebrow="OFX · QFX · no OCR · no upload">
+    <h1>OFX / QFX to CSV and Excel</h1>
+    <p class="lede">
+      If your bank can export your transactions as OFX or QFX, start there. The data is already structured, the dates are
+      unambiguous, and there is nothing to recognise. Drop the file in and take a spreadsheet out.
+    </p>
+  </ConverterSection>
+
+  <section class="section" aria-labelledby="why-heading">
+    <div class="page">
+      <div class="grid-2">
+        <div class="prose">
+          <h2 id="why-heading">Why OFX is the easier input</h2>
+          <p>
+            Every difficulty in reading a bank statement PDF comes from the fact that a PDF has no table — only text at
+            coordinates. An OFX file has no such problem. Each transaction is already labelled:
+          </p>
+          <pre
+            style="overflow:auto;background:var(--paper-sunken);border:1px solid var(--rule);border-radius:6px;padding:0.9rem 1rem;font-size:0.78rem;line-height:1.65"
+          ><code>&lt;STMTTRN&gt;
+&lt;TRNTYPE&gt;DEBIT
+&lt;DTPOSTED&gt;20250106000000
+&lt;TRNAMT&gt;-806.84
+&lt;NAME&gt;INSURANCE PREMIUM AUTO
+&lt;MEMO&gt;ANNUAL POLICY
+&lt;/STMTTRN&gt;</code></pre>
+          <p class="small muted">
+            No columns to find, no signs to infer, and <code>20250106</code> cannot be misread as the 1st of June.
+          </p>
+        </div>
+        <div>
+          <h2>The running balance, derived</h2>
+          <p>
+            OFX gives you a closing ledger balance and a list of amounts, but not the balance after each row. The
+            converter reconstructs it: start from the closing balance and walk backwards through the amounts, then verify
+            forward.
+          </p>
+          <p>
+            Two things come out of that. You get a Balance column you can reconcile in a spreadsheet, and you get the
+            same self-check the PDF path uses — if the arithmetic does not close, you are told rather than handed a
+            silently wrong column.
+          </p>
+          <div class="card" style="margin-top:1.2rem">
+            <h3 style="margin-top:0;font-size:1rem">Also handled</h3>
+            <ul class="callout-list" style="margin:0">
+              <li><span class="icon" aria-hidden="true">✓</span><span>OFX 1.x (SGML, unclosed tags) and OFX 2.x (XML)</span></li>
+              <li><span class="icon" aria-hidden="true">✓</span><span>QFX, Quicken's dialect</span></li>
+              <li><span class="icon" aria-hidden="true">✓</span><span>Files named <code>.txt</code> or with the wrong extension — the format is detected from the contents</span></li>
+              <li><span class="icon" aria-hidden="true">✓</span><span>HTML entities such as <code>&amp;amp;</code> in merchant names</span></li>
+              <li><span class="icon" aria-hidden="true">✓</span><span>Memo and cheque number folded into the description</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <AdSlot slot="ofx-mid" />
+
+  <section class="section section--sunken" aria-labelledby="where-heading">
+    <div class="page prose">
+      <h2 id="where-heading">Where to find your OFX export</h2>
+      <p>
+        Wording varies by bank, but it is usually one of: <em>Download transactions</em>, <em>Export</em>,{' '}
+        <em>Money in Excel</em>, or a file-type dropdown offering <strong>OFX</strong>, <strong>QFX</strong>,{' '}
+        <strong>QIF</strong> or <strong>CSV</strong> next to the date range. Three notes from experience:
+      </p>
+      <ul>
+        <li>
+          <strong>Pick the widest date range your bank allows.</strong> Many cap an export at 90 days, which means several
+          exports for a year — each one converts separately.
+        </li>
+        <li>
+          <strong>Prefer OFX or QFX over CSV</strong> when both are offered. Bank-produced CSVs often have inconsistent
+          date or amount formatting between exports; OFX is a fixed specification.
+        </li>
+        <li>
+          <strong>Treat the file as sensitive.</strong> Unlike an encrypted statement PDF, an OFX file is plain text and
+          usually contains your full account number. It is not uploaded here, but be careful where you email or store it.
+        </li>
+      </ul>
+      <h3>Which output should you take?</h3>
+      <ul>
+        <li><strong>Excel workbook</strong> — to look at it, sort it, or hand it to an accountant. Typed dates and numbers, plus a Summary of the balance check and a Raw sheet.</li>
+        <li><strong>Generic CSV</strong> — to feed a script, a database, or a spreadsheet import wizard.</li>
+        <li><strong>QuickBooks Online CSV</strong> — Date, Description, Amount with outflows negative.</li>
+        <li><strong>Xero CSV</strong> — the required <code>*Date</code> and <code>*Amount</code> header set. Xero also imports OFX directly, which may be simpler still.</li>
+      </ul>
+    </div>
+  </section>
+
+  <Faq items={faqs} />
+
+  <RelatedLinks heading="Related" items={related} />
+</Base>

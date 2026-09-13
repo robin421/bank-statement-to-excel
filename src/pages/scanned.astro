@@ -1,0 +1,174 @@
+---
+import Base from '../layouts/Base.astro';
+import ConverterSection from '../components/ConverterSection.astro';
+import Faq from '../components/Faq.astro';
+import RelatedLinks from '../components/RelatedLinks.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const affiliateUrl = import.meta.env.PUBLIC_AFFILIATE_OCR_URL || '';
+
+const faqs = [
+  {
+    q: 'Why can a scanned statement not be converted here?',
+    a: 'A scan is a picture. There is no text inside it to read — only pixels arranged to look like text. Turning those pixels into characters is OCR, which needs a recognition model. A statement downloaded from online banking is very different: it carries a real text layer, so it can be read exactly and instantly.',
+  },
+  {
+    q: 'How do I tell whether my statement is a scan?',
+    a: 'Try selecting a line of text with your mouse in any PDF viewer. If you can highlight individual words, it is text and this tool will read it. If dragging selects a whole rectangle like an image, or nothing at all, it is a scan. You can also just drop it here — the converter detects the missing text layer and says so instead of guessing.',
+  },
+  {
+    q: 'The best fix: get the right file from your bank',
+    a: 'Almost every bank that gives you a scanned-looking statement also offers a proper download. Log in, open the statement, and look for a download button rather than viewing it in the browser — the in-browser viewer is often an image, while the download is a text PDF or a CSV. Check too whether your bank exports OFX or QFX; those formats contain structured data and need no OCR at all.',
+  },
+  {
+    q: 'If OCR really is the only option, what should I look for?',
+    a: 'Any OCR tool can recognise characters. What you need is one that reconstructs the table: rows, columns, and the relationship between an amount and the balance on the same line. Most general OCR produces a wall of text that you then have to parse yourself. If you must use one, prefer a tool that outputs a table or spreadsheet rather than plain text, keep the output as a draft, and reconcile the totals against your statement before you rely on it.',
+  },
+  {
+    q: 'Can I check OCR output against the statement?',
+    a: 'Yes, and you should — that is what the running balance is for. Add up the amounts in order and confirm that each step matches the balance printed on the corresponding statement line. A single misread digit breaks the chain, which makes the balance column an excellent error detector for OCR output as well as for this tool.',
+  },
+  {
+    q: 'Will this site ever do OCR?',
+    a: 'Not in the browser for free. Accurate OCR on a dense table needs real compute, and running it client-side would be slow enough to be useless. If demand justifies it, a paid batch route with proper OCR on a server is the honest way to do it — with the privacy trade-offs stated up front.',
+  },
+];
+
+const related = [
+  { href: '/', title: 'Convert a text-based statement', blurb: 'The main converter, for PDFs downloaded from online banking.' },
+  { href: '/ofx-qfx-to-csv', title: 'OFX / QFX to CSV', blurb: 'Structured bank exports — no OCR, no layout guessing.' },
+  { href: '/extract-transactions', title: 'Extract transactions', blurb: 'How extraction and balance verification work.' },
+  { href: '/blog/how-to-convert-bank-statement-to-excel', title: 'How to convert a statement to Excel', blurb: 'The full walkthrough, including which download to pick.' },
+];
+---
+
+<Base
+  title="Scanned Bank Statement to Excel — What Actually Works"
+  description="Scanned bank statements need OCR, not a PDF converter. Here is how to tell a scan from a text PDF, how to get the right file from your bank, and what to do if OCR is the only option."
+>
+  <ConverterSection eyebrow="Honest limits · what to do instead">
+    <h1>Scanned bank statement to Excel</h1>
+    <p class="lede">
+      This tool cannot read a scan, and it will tell you so within a second rather than inventing rows. The good news:
+      most "scanned" statements are not scans at all — they are text PDFs that merely looked like images. Here is how to
+      tell, and what to do in each case.
+    </p>
+  </ConverterSection>
+
+  <section class="section" aria-labelledby="check-heading">
+    <div class="page">
+      <div class="grid-2">
+        <div class="prose">
+          <h2 id="check-heading">First: is it actually a scan?</h2>
+          <p>
+            Open the PDF and try to highlight a single word in the middle of a transaction line. Two outcomes:
+          </p>
+          <ul class="callout-list">
+            <li>
+              <span class="icon" aria-hidden="true">✓</span>
+              <span>
+                <strong>You can select the words.</strong> It has a text layer. Drop it into the converter on this page
+                and it will be read exactly — scans are not the problem here, the download was.
+              </span>
+            </li>
+            <li>
+              <span class="icon icon--no" aria-hidden="true">✕</span>
+              <span>
+                <strong>Nothing highlights, or a whole block highlights as one.</strong> It is an image. OCR is needed,
+                and no amount of PDF parsing will help.
+              </span>
+            </li>
+          </ul>
+          <p>
+            A surprising share of "my statement is scanned" cases are the first kind. Banks often serve an image preview
+            in the browser while the actual download is a proper text PDF, so it is worth checking the download button
+            before assuming the worst.
+          </p>
+        </div>
+        <div class="card">
+          <h2 style="margin-top:0;font-size:1.05rem">The fastest fix is usually not OCR</h2>
+          <p>In rough order of how much work they save you:</p>
+          <ol style="padding-left:1.15em;margin-bottom:0">
+            <li>
+              <strong>Download the statement instead of viewing it.</strong> The in-browser viewer is frequently an image;
+              the file behind the download button frequently is not.
+            </li>
+            <li>
+              <strong>Look for CSV, OFX or QFX export.</strong> Many banks offer a transaction export that contains
+              structured data. That is strictly better than any PDF, scan or not — and this site converts OFX and QFX
+              too.
+            </li>
+            <li>
+              <strong>Ask the bank for a different format.</strong> For statements older than the online banking window,
+              a phone call often produces a text PDF by email.
+            </li>
+            <li>
+              <strong>Only then reach for OCR</strong>, and treat the output as a draft to be reconciled.
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {
+    affiliateUrl && (
+      <section class="section section--tight">
+        <div class="page">
+          <div class="card" style="border-color:var(--accent);background:var(--accent-soft)">
+            <h2 style="margin-top:0">OCR service for scanned statements</h2>
+            <p>
+              If the file is genuinely an image, an OCR service with table reconstruction is the practical route. We do
+              not run one ourselves — this is a paid referral, and it is the only way this site stays free for the
+              text-based statements it can handle properly.
+            </p>
+            <a class="btn btn--primary" href={affiliateUrl} rel="sponsored noopener" target="_blank">
+              Compare OCR services
+            </a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <AdSlot slot="scanned-mid" />
+
+  <section class="section section--sunken" aria-labelledby="ocr-heading">
+    <div class="page prose">
+      <h2 id="ocr-heading">If you do end up using OCR</h2>
+      <p>
+        Character recognition is the easy half. The hard half is knowing which characters belong to which column, and
+        that is where most OCR output on bank statements falls apart.
+      </p>
+      <h3>What to look for</h3>
+      <ul>
+        <li><strong>Table output, not text output.</strong> If the result is paragraphs of text, you have swapped one parsing problem for another.</li>
+        <li><strong>Balance and amount kept on the same row.</strong> A tool that puts the running balance on its own line has lost the relationship that makes verification possible.</li>
+        <li><strong>Visible confidence.</strong> Per-row or per-field confidence scores tell you where to look; a single global percentage does not.</li>
+        <li><strong>A downloadable spreadsheet.</strong> Anything you then have to copy out of a web page is a transcription error waiting to happen.</li>
+      </ul>
+      <h3>Verify it before you use it</h3>
+      <p>
+        OCR errors are quiet. A <code>5</code> read as a <code>6</code> changes a figure without changing its shape. The
+        defence is the same arithmetic this site uses on text PDFs: walk down the running balance column, adding each
+        amount, and confirm every step matches what the statement prints. One wrong digit breaks the chain at that row,
+        so the balance column localises the error for you.
+      </p>
+      <p>
+        If the totals reconcile to the statement's closing balance and every intermediate step agrees, the OCR is
+        probably sound. If a single row breaks the chain and the next row restores it, that one row is wrong — check the
+        original image for that line.
+      </p>
+      <h3>What not to do</h3>
+      <ul>
+        <li>Do not paste OCR output straight into accounting software without reconciling it.</li>
+        <li>Do not upload statements to a service that keeps them, if you can avoid it — statements contain your account number, address and full transaction history.</li>
+        <li>Do not assume a high overall confidence score means every row is right. Dense digits are exactly where models fail.</li>
+      </ul>
+    </div>
+  </section>
+
+  <Faq items={faqs} />
+
+  <RelatedLinks heading="Related" items={related} />
+</Base>

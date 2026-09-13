@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import RelatedLinks from '../components/RelatedLinks.astro';
+
+const related = [
+  { href: '/', title: 'Bank statement to Excel', blurb: 'Convert a text-based statement PDF.' },
+  { href: '/ofx-qfx-to-csv', title: 'OFX / QFX to CSV', blurb: 'Structured bank exports, no layout guessing.' },
+  { href: '/scanned', title: 'Scanned statements', blurb: 'Why a scan needs OCR, and what to use.' },
+  { href: '/blog', title: 'Guides', blurb: 'How to convert and how to check the result.' },
+];
+---
+
+<Base
+  title="Page Not Found"
+  description="That page does not exist. Convert a bank statement PDF to Excel or CSV from the homepage."
+  noindex
+>
+  <section class="section">
+    <div class="page prose">
+      <p class="eyebrow">404</p>
+      <h1>That page does not exist</h1>
+      <p class="lede">
+        The link may be old, or the address may have a typo. The converter itself is on the homepage.
+      </p>
+      <p>
+        <a class="btn btn--primary" href="/">Convert a bank statement</a>
+      </p>
+    </div>
+  </section>
+
+  <RelatedLinks heading="Popular pages" items={related} />
+</Base>

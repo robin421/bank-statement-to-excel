@@ -1,0 +1,108 @@
+{
+  "name": "parens-negative",
+  "openingBalance": 4820.55,
+  "transactions": [
+    {
+      "date": "2025-01-05",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": -913.11,
+      "balance": 3907.44
+    },
+    {
+      "date": "2025-01-08",
+      "description": "INSURANCE PREMIUM AUTO",
+      "amount": 375.92,
+      "balance": 4283.36
+    },
+    {
+      "date": "2025-01-10",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": 814.86,
+      "balance": 5098.22
+    },
+    {
+      "date": "2025-01-11",
+      "description": "INTEREST PAYMENT REF 882133",
+      "amount": -570.06,
+      "balance": 4528.16
+    },
+    {
+      "date": "2025-01-12",
+      "description": "RENT PAYMENT PORTAL",
+      "amount": 889.98,
+      "balance": 5418.14
+    },
+    {
+      "date": "2025-01-14",
+      "description": "INTEREST PAYMENT",
+      "amount": -680.44,
+      "balance": 4737.7
+    },
+    {
+      "date": "2025-01-15",
+      "description": "INTEREST PAYMENT",
+      "amount": 83.6,
+      "balance": 4821.3
+    },
+    {
+      "date": "2025-01-18",
+      "description": "RENT PAYMENT PORTAL",
+      "amount": 47.21,
+      "balance": 4868.51
+    },
+    {
+      "date": "2025-01-21",
+      "description": "CITY ELECTRIC UTILITY REF 882138",
+      "amount": -33.42,
+      "balance": 4835.09
+    },
+    {
+      "date": "2025-01-22",
+      "description": "INSURANCE PREMIUM AUTO",
+      "amount": -893.13,
+      "balance": 3941.96
+    },
+    {
+      "date": "2025-01-25",
+      "description": "SERVICE FEE - MONTHLY",
+      "amount": -432.55,
+      "balance": 3509.41
+    },
+    {
+      "date": "2025-01-28",
+      "description": "UPWORK ESCROW PAYOUT",
+      "amount": 707.19,
+      "balance": 4216.6
+    },
+    {
+      "date": "2025-01-30",
+      "description": "WHOLE FOODS MKT #10234",
+      "amount": -487.04,
+      "balance": 3729.56
+    },
+    {
+      "date": "2025-01-31",
+      "description": "SERVICE FEE - MONTHLY REF 8821313",
+      "amount": 874.61,
+      "balance": 4604.17
+    },
+    {
+      "date": "2025-02-03",
+      "description": "ACME PAYROLL DEPOSIT",
+      "amount": -637.23,
+      "balance": 3966.94
+    },
+    {
+      "date": "2025-02-04",
+      "description": "CHECK #1042",
+      "amount": 483.78,
+      "balance": 4450.72
+    },
+    {
+      "date": "2025-02-05",
+      "description": "CITY ELECTRIC UTILITY",
+      "amount": -626.83,
+      "balance": 3823.89
+    }
+  ]
+}

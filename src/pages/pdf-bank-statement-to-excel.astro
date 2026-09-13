@@ -1,0 +1,147 @@
+---
+import Base from '../layouts/Base.astro';
+import ConverterSection from '../components/ConverterSection.astro';
+import Faq from '../components/Faq.astro';
+import RelatedLinks from '../components/RelatedLinks.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const faqs = [
+  {
+    q: 'Why does a normal PDF-to-Excel converter produce garbage here?',
+    a: 'Because a PDF has no table. It has text positioned at coordinates. A general converter has to guess how those coordinates form rows and columns, and it guesses from whitespace. Bank statements defeat that guess: the numbers are right-aligned so their left edges move, descriptions run onto a second line, and every page repeats a header in the middle of the table. You get one column of text, or a column per word.',
+  },
+  {
+    q: 'What does this converter do differently?',
+    a: 'It uses what makes a statement a statement. Numeric columns are found by clustering right edges, because money is right-aligned. Rows are rebuilt by clustering baselines, with a tolerance that scales with the font size. Repeated page furniture is detected and dropped. And critically, every row is checked against the running balance the statement prints, which is a verification step no generic converter has.',
+  },
+  {
+    q: 'Do I get one sheet or several?',
+    a: 'Three. Transactions holds the data with real dates and numbers. Summary records what was verified — row count, balance check result and any warnings — so you can see at a glance whether the file is trustworthy. Raw keeps the original text line behind every row, so any figure can be traced back to the document.',
+  },
+  {
+    q: 'Will multi-page statements work?',
+    a: 'Yes, and the repeated header and footer on each page are removed rather than being turned into transactions. The balance check also runs across the page break, so a row that was half-read on the boundary of page two shows up as a mismatch instead of passing silently.',
+  },
+  {
+    q: 'What if my statement has separate debit and credit columns?',
+    a: 'That layout is detected. You get both: the original Debit and Credit columns kept as positive numbers, plus a signed Amount column. Which of the two layouts your statement uses is inferred from the data and cross-checked against the running balance, not taken on trust from the header text.',
+  },
+  {
+    q: 'Does it work offline?',
+    a: 'Once the page has loaded, yes. The PDF is opened in the same browser tab, so there is no request to fail. Nothing about your statement is ever sent anywhere, which is why the tool continues to work if you disconnect.',
+  },
+];
+
+const related = [
+  { href: '/', title: 'Bank statement to Excel', blurb: 'The main converter, if you landed here from a search.' },
+  { href: '/bank-statement-to-csv', title: 'Bank statement to CSV', blurb: 'When the next program wants CSV rather than a workbook.' },
+  { href: '/extract-transactions', title: 'Extract transactions from a PDF', blurb: 'How the extraction and balance checking work internally.' },
+  { href: '/scanned', title: 'Scanned statements', blurb: 'When the PDF is an image and needs OCR instead.' },
+];
+---
+
+<Base
+  title="PDF Bank Statement to Excel — Convert a Statement PDF to .xlsx"
+  description="Convert a PDF bank statement to Excel. Generic PDF-to-Excel tools mangle statement tables; this one rebuilds rows and columns from the layout and verifies every row against the statement's running balance. Runs in your browser."
+>
+  <ConverterSection eyebrow=".xlsx · local conversion · balance-verified">
+    <h1>PDF bank statement to Excel</h1>
+    <p class="lede">
+      A statement PDF is not a table — it is text placed at coordinates. That is why an ordinary PDF-to-Excel converter
+      hands you one long column. This one rebuilds the table from the geometry, then proves it worked by checking the
+      running balance.
+    </p>
+  </ConverterSection>
+
+  <section class="section" aria-labelledby="why-heading">
+    <div class="page">
+      <h2 id="why-heading">Why generic PDF to Excel tools fail on statements</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-top:0">Money is right-aligned</h3>
+          <p style="margin-bottom:0">
+            <code>806.84</code> and <code>15.00</code> end at the same x position but start at different ones. A converter
+            that looks for whitespace gaps sees a different column boundary on almost every row.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Descriptions wrap</h3>
+          <p style="margin-bottom:0">
+            <code>POS DEBIT TERMINAL 0091</code> usually sits on the line below the merchant name, with no date. Treated
+            literally, it becomes a transaction of its own with no amount.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Headers repeat mid-table</h3>
+          <p style="margin-bottom:0">
+            Every page reprints "DATE DESCRIPTION AMOUNT BALANCE". On a three-page statement that is three phantom rows
+            in the middle of your data.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Amounts are ambiguous</h3>
+          <p style="margin-bottom:0">
+            Is <code>88.50</code> a debit? On some statements yes, on others it is a credit. The minus sign is not
+            printed — the column it sits in carries the meaning.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sunken" aria-labelledby="approach-heading">
+    <div class="page">
+      <div class="grid-2">
+        <div class="prose">
+          <h2 id="approach-heading">How this one rebuilds the table</h2>
+          <ol>
+            <li>
+              <strong>Rows from baselines.</strong> Every text run is grouped with the runs that share its vertical
+              position, with a tolerance that scales with the font size — so a large-print statement does not merge lines
+              and a dense one does not split them.
+            </li>
+            <li>
+              <strong>Columns from the numbers, not the whitespace.</strong> Amounts are right-aligned, so their right
+              edges cluster tightly even when the values are different widths. That gives exact column boundaries for the
+              columns that must not be wrong.
+            </li>
+            <li>
+              <strong>Continuation lines are folded in.</strong> A line with no date and no amount belongs to the
+              transaction above it, so it becomes part of that description instead of a row of its own.
+            </li>
+            <li>
+              <strong>Page furniture is dropped.</strong> Lines that repeat on most pages, and lines outside the region
+              the transactions occupy, are removed.
+            </li>
+            <li>
+              <strong>The balance chain decides.</strong> After the columns are read, the converter checks that each
+              previous balance plus the row amount equals the next balance. That check decides which column is the
+              balance, and it corrects the sign on statements that print debits unsigned.
+            </li>
+          </ol>
+        </div>
+        <div class="card">
+          <h2 style="margin-top:0;font-size:1.05rem">The check, in one line</h2>
+          <p>
+            A bank statement is self-checking. On every row, <code>previous balance + amount = balance</code>. If that
+            holds across the whole statement, the rows were read correctly. If it fails somewhere, you are told exactly
+            which rows, and why.
+          </p>
+          <p style="margin-bottom:0">
+            <span class="badge badge--ok"><span class="badge__dot" aria-hidden="true"></span>42/42 rows reconcile</span>
+          </p>
+          <p class="small muted" style="margin-top:0.8rem;margin-bottom:0">
+            This is also how the converter knows it has failed. When the chain breaks badly, the output is marked
+            low-confidence and the rows are flagged rather than quietly presented as fact.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <AdSlot slot="pdf-mid" />
+
+  <Faq items={faqs} />
+
+  <RelatedLinks heading="Related" items={related} />
+</Base>

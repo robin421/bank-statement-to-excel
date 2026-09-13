@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+
+const updated = '18 February 2025';
+---
+
+<Base
+  title="Terms of Use"
+  description="Terms of use for the bank statement to Excel converter, including the accuracy disclaimer, the limits of the tool, and the absence of any warranty."
+>
+  <section class="section">
+    <div class="page prose">
+      <p class="eyebrow">Terms</p>
+      <h1>Terms of use</h1>
+      <p class="small muted">Last updated {updated}.</p>
+
+      <div class="note note--warn">
+        <strong>Read this part.</strong> This tool converts the contents of a PDF or OFX file into a spreadsheet. It does
+        not audit your bank, verify your bank's arithmetic, or check that a statement is correct or complete. Conversion
+        can contain errors. Always check the output against your original statement before you file, reconcile, report or
+        lend against it.
+      </div>
+
+      <h2>1. What this service is</h2>
+      <p>
+        This site provides a browser-based file conversion tool. The conversion runs on your device. We do not receive,
+        store or process your files, and we provide no server-side conversion service under these terms.
+      </p>
+
+      <h2>2. No warranty</h2>
+      <p>
+        The service is provided "as is" and "as available", without warranty of any kind, express or implied, including
+        but not limited to fitness for a particular purpose, accuracy, or non-infringement. We do not warrant that the
+        conversion will be complete, correct, uninterrupted, or suitable for any particular accounting, tax, audit or
+        lending purpose.
+      </p>
+
+      <h2>3. Your responsibility to verify</h2>
+      <p>
+        You are solely responsible for verifying any output before relying on it. The tool provides aids for this — a
+        running-balance reconciliation count, per-row flags, and a Raw sheet containing the source text line behind each
+        row — but these are aids, not guarantees, and they can be defeated by unusual statement layouts.
+      </p>
+      <p>
+        Check at minimum: the number of rows, the total of the amounts, and the final balance against the closing balance
+        printed on your statement.
+      </p>
+
+      <h2>4. Not financial, legal, tax or accounting advice</h2>
+      <p>
+        Nothing on this site constitutes financial, legal, tax or accounting advice. The tool performs a mechanical
+        conversion of a document you supply. Consult a qualified professional for advice about your accounts, taxes or
+        financial position.
+      </p>
+
+      <h2>5. Acceptable use</h2>
+      <p>You agree not to use this service:</p>
+      <ul>
+        <li>to process documents you are not authorised to handle;</li>
+        <li>to attempt to disrupt, overload or reverse-engineer the site;</li>
+        <li>to scrape or republish its content as your own; or</li>
+        <li>in any way that breaks applicable law, including data protection and financial regulation.</li>
+      </ul>
+
+      <h2>6. Limitation of liability</h2>
+      <p>
+        To the maximum extent permitted by law, we are not liable for any indirect, incidental, special, consequential or
+        punitive damages, or for any loss of profits, revenue, data, or goodwill, arising out of or in connection with
+        your use of the service — including any loss arising from an inaccurate conversion, a missed transaction, or a
+        decision made on the basis of a converted file. Where liability cannot be excluded, it is limited to the greater
+        of the amount you paid us (which, for the free tool, is zero) or the minimum permitted by law.
+      </p>
+
+      <h2>7. Third-party names and links</h2>
+      <p>
+        Bank names, Intuit QuickBooks, Xero and other product names are the trademarks of their respective owners. They
+        appear on this site only to describe file formats and statement layouts. This site is not affiliated with,
+        endorsed by or sponsored by any of them. Links to third-party sites, including affiliate links, are provided for
+        convenience; we are not responsible for their content or practices.
+      </p>
+
+      <h2>8. Intellectual property</h2>
+      <p>
+        The site's own text, design and code are ours. The documents you convert remain entirely yours — we never receive
+        a copy, so no licence over them is granted or needed.
+      </p>
+
+      <h2>9. Availability and changes</h2>
+      <p>
+        We may change, suspend or discontinue any part of the service at any time, including limits on file size or page
+        count. We may update these terms; the date at the top of this page will change when we do, and continued use after
+        a change means you accept the updated terms.
+      </p>
+
+      <h2>10. Contact</h2>
+      <p>
+        Questions about these terms: <a href="/contact">contact us</a>.
+      </p>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,32 @@
+---
+export interface RelatedItem {
+  href: string;
+  title: string;
+  blurb: string;
+}
+
+export interface Props {
+  heading?: string;
+  items: RelatedItem[];
+}
+
+const { heading = 'Related', items } = Astro.props;
+---
+
+<section class="section section--tight" aria-labelledby="related-heading">
+  <div class="page">
+    <h2 id="related-heading" style="font-size:1.15rem">{heading}</h2>
+    <ul class="related">
+      {
+        items.map((item) => (
+          <li>
+            <a href={item.href}>
+              <strong>{item.title}</strong>
+              <span>{item.blurb}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

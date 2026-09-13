@@ -1,0 +1,282 @@
+{
+  "name": "multipage",
+  "openingBalance": 4820.55,
+  "transactions": [
+    {
+      "date": "2025-01-04",
+      "description": "AMAZON MKTPLACE PMTS",
+      "amount": -481.79,
+      "balance": 4338.76
+    },
+    {
+      "date": "2025-01-07",
+      "description": "AMAZON MKTPLACE PMTS",
+      "amount": 382.34,
+      "balance": 4721.1
+    },
+    {
+      "date": "2025-01-09",
+      "description": "RENT PAYMENT PORTAL",
+      "amount": -714.19,
+      "balance": 4006.91
+    },
+    {
+      "date": "2025-01-11",
+      "description": "INSURANCE PREMIUM AUTO REF 882133",
+      "amount": 711.13,
+      "balance": 4718.04
+    },
+    {
+      "date": "2025-01-14",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": -105.59,
+      "balance": 4612.45
+    },
+    {
+      "date": "2025-01-15",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": 202.72,
+      "balance": 4815.17
+    },
+    {
+      "date": "2025-01-16",
+      "description": "CITY ELECTRIC UTILITY",
+      "amount": -408.48,
+      "balance": 4406.69
+    },
+    {
+      "date": "2025-01-18",
+      "description": "NORTHWIND TRADING CO",
+      "amount": -344.49,
+      "balance": 4062.2
+    },
+    {
+      "date": "2025-01-19",
+      "description": "REFUND BEST BUY #0442 REF 882138",
+      "amount": 625.43,
+      "balance": 4687.63
+    },
+    {
+      "date": "2025-01-22",
+      "description": "AMAZON MKTPLACE PMTS",
+      "amount": -27.25,
+      "balance": 4660.38
+    },
+    {
+      "date": "2025-01-25",
+      "description": "WHOLE FOODS MKT #10234",
+      "amount": -569.67,
+      "balance": 4090.71
+    },
+    {
+      "date": "2025-01-28",
+      "description": "NORTHWIND TRADING CO",
+      "amount": -580.61,
+      "balance": 3510.1
+    },
+    {
+      "date": "2025-01-31",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": -938.62,
+      "balance": 2571.48
+    },
+    {
+      "date": "2025-02-01",
+      "description": "CHECK #1042 REF 8821313",
+      "amount": -181.04,
+      "balance": 2390.44
+    },
+    {
+      "date": "2025-02-04",
+      "description": "INTEREST PAYMENT",
+      "amount": -195.18,
+      "balance": 2195.26
+    },
+    {
+      "date": "2025-02-07",
+      "description": "REFUND BEST BUY #0442",
+      "amount": -671.1,
+      "balance": 1524.16
+    },
+    {
+      "date": "2025-02-08",
+      "description": "SERVICE FEE - MONTHLY",
+      "amount": -401.86,
+      "balance": 1122.3
+    },
+    {
+      "date": "2025-02-11",
+      "description": "INSURANCE PREMIUM AUTO",
+      "amount": 746.24,
+      "balance": 1868.54
+    },
+    {
+      "date": "2025-02-14",
+      "description": "INTEREST PAYMENT REF 8821318",
+      "amount": -569.14,
+      "balance": 1299.4
+    },
+    {
+      "date": "2025-02-16",
+      "description": "REFUND BEST BUY #0442",
+      "amount": 319.26,
+      "balance": 1618.66
+    },
+    {
+      "date": "2025-02-19",
+      "description": "SERVICE FEE - MONTHLY",
+      "amount": 401.31,
+      "balance": 2019.97
+    },
+    {
+      "date": "2025-02-21",
+      "description": "MOBILE DEPOSIT",
+      "amount": 659.8,
+      "balance": 2679.77
+    },
+    {
+      "date": "2025-02-23",
+      "description": "ACME PAYROLL DEPOSIT",
+      "amount": -943.63,
+      "balance": 1736.14
+    },
+    {
+      "date": "2025-02-24",
+      "description": "RENT PAYMENT PORTAL REF 8821323",
+      "amount": -604.06,
+      "balance": 1132.08
+    },
+    {
+      "date": "2025-02-25",
+      "description": "ATM WITHDRAWAL 4821 MAIN ST",
+      "amount": 709.13,
+      "balance": 1841.21
+    },
+    {
+      "date": "2025-02-26",
+      "description": "INTEREST PAYMENT",
+      "amount": -815.64,
+      "balance": 1025.57
+    },
+    {
+      "date": "2025-03-01",
+      "description": "NORTHWIND TRADING CO",
+      "amount": 808.49,
+      "balance": 1834.06
+    },
+    {
+      "date": "2025-03-03",
+      "description": "SERVICE FEE - MONTHLY",
+      "amount": -820.38,
+      "balance": 1013.68
+    },
+    {
+      "date": "2025-03-06",
+      "description": "TRANSFER TO SAVINGS REF 8821328",
+      "amount": 465.84,
+      "balance": 1479.52
+    },
+    {
+      "date": "2025-03-08",
+      "description": "UPWORK ESCROW PAYOUT",
+      "amount": -401.42,
+      "balance": 1078.1
+    },
+    {
+      "date": "2025-03-10",
+      "description": "CITY ELECTRIC UTILITY",
+      "amount": -912.39,
+      "balance": 165.71
+    },
+    {
+      "date": "2025-03-11",
+      "description": "CHECK #1042",
+      "amount": 483.41,
+      "balance": 649.12
+    },
+    {
+      "date": "2025-03-13",
+      "description": "WHOLE FOODS MKT #10234",
+      "amount": 154.15,
+      "balance": 803.27
+    },
+    {
+      "date": "2025-03-16",
+      "description": "WHOLE FOODS MKT #10234 REF 8821333",
+      "amount": 57.61,
+      "balance": 860.88
+    },
+    {
+      "date": "2025-03-18",
+      "description": "ACME PAYROLL DEPOSIT",
+      "amount": 724.27,
+      "balance": 1585.15
+    },
+    {
+      "date": "2025-03-19",
+      "description": "UPWORK ESCROW PAYOUT",
+      "amount": 141.53,
+      "balance": 1726.68
+    },
+    {
+      "date": "2025-03-21",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": 193.92,
+      "balance": 1920.6
+    },
+    {
+      "date": "2025-03-23",
+      "description": "ATM WITHDRAWAL 4821 MAIN ST",
+      "amount": 118.7,
+      "balance": 2039.3
+    },
+    {
+      "date": "2025-03-24",
+      "description": "REFUND BEST BUY #0442 REF 8821338",
+      "amount": -428.13,
+      "balance": 1611.17
+    },
+    {
+      "date": "2025-03-26",
+      "description": "INTEREST PAYMENT",
+      "amount": 100.26,
+      "balance": 1711.43
+    },
+    {
+      "date": "2025-03-28",
+      "description": "AMAZON MKTPLACE PMTS",
+      "amount": -52.9,
+      "balance": 1658.53
+    },
+    {
+      "date": "2025-03-31",
+      "description": "INTEREST PAYMENT",
+      "amount": 663.53,
+      "balance": 2322.06
+    },
+    {
+      "date": "2025-04-03",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": -256.68,
+      "balance": 2065.38
+    },
+    {
+      "date": "2025-04-04",
+      "description": "RENT PAYMENT PORTAL REF 8821343",
+      "amount": 632.65,
+      "balance": 2698.03
+    },
+    {
+      "date": "2025-04-07",
+      "description": "ACME PAYROLL DEPOSIT",
+      "amount": -182.39,
+      "balance": 2515.64
+    },
+    {
+      "date": "2025-04-08",
+      "description": "CHECK #1042",
+      "amount": 756.2,
+      "balance": 3271.84
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "name": "icici-like",
+  "openingBalance": 4820.55,
+  "transactions": [
+    {
+      "date": "2025-01-04",
+      "description": "AMAZON MKTPLACE PMTS",
+      "amount": -602.78,
+      "balance": 4217.77
+    },
+    {
+      "date": "2025-01-06",
+      "description": "ACME PAYROLL DEPOSIT",
+      "amount": -603.52,
+      "balance": 3614.25
+    },
+    {
+      "date": "2025-01-08",
+      "description": "REFUND BEST BUY #0442",
+      "amount": 842.66,
+      "balance": 4456.91
+    },
+    {
+      "date": "2025-01-09",
+      "description": "AMAZON MKTPLACE PMTS REF 882133",
+      "amount": -83.21,
+      "balance": 4373.7
+    },
+    {
+      "date": "2025-01-10",
+      "description": "NORTHWIND TRADING CO",
+      "amount": 221.01,
+      "balance": 4594.71
+    },
+    {
+      "date": "2025-01-12",
+      "description": "CHECK #1042",
+      "amount": -83.93,
+      "balance": 4510.78
+    },
+    {
+      "date": "2025-01-15",
+      "description": "ATM WITHDRAWAL 4821 MAIN ST",
+      "amount": -645.84,
+      "balance": 3864.94
+    },
+    {
+      "date": "2025-01-18",
+      "description": "CHECK #1042",
+      "amount": -100.43,
+      "balance": 3764.51
+    },
+    {
+      "date": "2025-01-19",
+      "description": "INTEREST PAYMENT REF 882138",
+      "amount": 173.98,
+      "balance": 3938.49
+    },
+    {
+      "date": "2025-01-20",
+      "description": "TRANSFER TO SAVINGS",
+      "amount": 880.91,
+      "balance": 4819.4
+    },
+    {
+      "date": "2025-01-23",
+      "description": "INSURANCE PREMIUM AUTO",
+      "amount": -454.83,
+      "balance": 4364.57
+    },
+    {
+      "date": "2025-01-24",
+      "description": "MOBILE DEPOSIT",
+      "amount": -766.11,
+      "balance": 3598.46
+    },
+    {
+      "date": "2025-01-27",
+      "description": "AMAZON MKTPLACE PMTS",
+      "amount": -817.7,
+      "balance": 2780.76
+    },
+    {
+      "date": "2025-01-30",
+      "description": "INTEREST PAYMENT REF 8821313",
+      "amount": 354.32,
+      "balance": 3135.08
+    },
+    {
+      "date": "2025-02-02",
+      "description": "WHOLE FOODS MKT #10234",
+      "amount": -307.2,
+      "balance": 2827.88
+    },
+    {
+      "date": "2025-02-03",
+      "description": "UPWORK ESCROW PAYOUT",
+      "amount": 80.66,
+      "balance": 2908.54
+    },
+    {
+      "date": "2025-02-06",
+      "description": "ATM WITHDRAWAL 4821 MAIN ST",
+      "amount": 133.58,
+      "balance": 3042.12
+    },
+    {
+      "date": "2025-02-07",
+      "description": "REFUND BEST BUY #0442",
+      "amount": -592.25,
+      "balance": 2449.87
+    },
+    {
+      "date": "2025-02-10",
+      "description": "INTEREST PAYMENT REF 8821318",
+      "amount": 229.35,
+      "balance": 2679.22
+    }
+  ]
+}

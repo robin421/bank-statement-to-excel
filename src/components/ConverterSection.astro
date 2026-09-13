@@ -1,0 +1,28 @@
+---
+import Converter from './converter/Converter.tsx';
+
+/**
+ * Hero + converter, shared by every tool page.
+ *
+ * The page-specific H1, lede and any intro copy go in the slot so each page
+ * targets a different intent instead of repeating the homepage verbatim.
+ */
+export interface Props {
+  eyebrow?: string;
+}
+
+const { eyebrow } = Astro.props;
+const affiliateUrl = import.meta.env.PUBLIC_AFFILIATE_OCR_URL || undefined;
+---
+
+<section class="section section--tight">
+  <div class="page">
+    <div style="max-width:46rem">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <slot />
+    </div>
+    <div style="margin-top:1.6rem">
+      <Converter client:load affiliateUrl={affiliateUrl} compact />
+    </div>
+  </div>
+</section>

@@ -1,0 +1,306 @@
+---
+import Base from '../layouts/Base.astro';
+import Converter from '../components/converter/Converter.tsx';
+import Faq from '../components/Faq.astro';
+import RelatedLinks from '../components/RelatedLinks.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { SITE } from '../data/site.mjs';
+
+const affiliateUrl = import.meta.env.PUBLIC_AFFILIATE_OCR_URL || undefined;
+
+const softwareSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: `${SITE.name} — Bank Statement to Excel Converter`,
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Any (runs in the browser)',
+  description:
+    'Converts text-based bank statement PDFs into Excel or CSV in the browser, and checks every row against the statement running balance.',
+  url: SITE.url,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  featureList: [
+    'Bank statement PDF to Excel (.xlsx)',
+    'Bank statement PDF to CSV',
+    'QuickBooks Online CSV export preset',
+    'Xero statement import CSV preset',
+    'Running-balance verification of every row',
+    'Runs entirely in the browser — no upload',
+  ],
+};
+
+const sampleRows = [
+  ['01/04/2025', 'ACME PAYROLL DEPOSIT', '', '317.92', '317.92', '5,138.47'],
+  ['01/06/2025', 'INSURANCE PREMIUM AUTO', '806.84', '', '-806.84', '4,331.63'],
+  ['01/09/2025', 'CHECK #1042', '88.50', '', '-88.50', '4,243.13'],
+  ['01/11/2025', 'NORTHWIND TRADING CO REF 882133', '643.32', '', '-643.32', '3,599.81'],
+];
+
+const faqs = [
+  {
+    q: 'Is my bank statement uploaded to a server?',
+    a: 'No. The PDF is opened and parsed by JavaScript running in your browser tab. There is no upload endpoint, no storage bucket and no queue — you can watch the network tab stay empty while it converts. That is also why the tool keeps working when you are offline after the page has loaded.',
+  },
+  {
+    q: 'Does it work on scanned or photographed statements?',
+    a: 'No, and it will tell you so rather than guess. Statements downloaded from online banking are almost always text-based PDFs, which this tool reads exactly. A scan or a phone photo is an image, and reading it needs OCR — see the scanned statements page for what to use instead.',
+  },
+  {
+    q: 'How do I know the numbers are right?',
+    a: 'The converter checks its own work. Bank statements print a running balance on every row, so the tool verifies that each previous balance plus the row amount equals the next balance. If rows do not reconcile, they are flagged in the preview and in the Notes column instead of being silently included.',
+  },
+  {
+    q: 'Why are some rows marked "check"?',
+    a: 'A flagged row is one the parser could not fully verify: an amount that did not fit the running balance, a missing amount, or two amounts on one line. Flags usually mean an unusual statement layout, not that the whole file is wrong — compare the flagged rows against your original PDF before using them.',
+  },
+  {
+    q: 'Can I import the result into QuickBooks or Xero?',
+    a: 'Yes. There are presets for QuickBooks Online (Date, Description, Amount with outflows negative) and for Xero statement import (*Date, *Amount, Payee, Description, Reference). Date order is a choice, because QuickBooks and Xero expect different formats depending on your locale.',
+  },
+  {
+    q: 'Is it free?',
+    a: 'Yes. There is no sign-up, no row limit and no watermark. The site is funded by advertising and by referrals to OCR services for the scanned statements this tool cannot read.',
+  },
+  {
+    q: 'What if my statement is password protected?',
+    a: 'Most banks send encrypted PDFs. The tool detects the encryption and asks for the password, which is used in your browser only. Typical bank passwords are your date of birth, your account number, or the last four digits of your card.',
+  },
+  {
+    q: 'How many pages can it handle?',
+    a: 'Up to 200 pages and 60 MB per file. The cap exists because everything runs on your device — a longer statement would make the browser tab unresponsive with no server to fall back on.',
+  },
+];
+
+const related = [
+  { href: '/bank-statement-to-csv', title: 'Bank statement to CSV', blurb: 'When you need CSV rather than a workbook, and why locale matters.' },
+  { href: '/pdf-bank-statement-to-excel', title: 'PDF bank statement to Excel', blurb: 'Why generic PDF-to-Excel converters mangle statement tables.' },
+  { href: '/quickbooks-csv', title: 'Import into QuickBooks Online', blurb: 'The exact CSV shape QuickBooks accepts, step by step.' },
+  { href: '/xero-csv', title: 'Import into Xero', blurb: 'Xero statement import columns and date formats.' },
+  { href: '/extract-transactions', title: 'Extract transactions from a PDF', blurb: 'How the extraction and balance-checking actually work.' },
+  { href: '/scanned', title: 'Scanned statements', blurb: 'What to do when the PDF is an image.' },
+];
+---
+
+<Base
+  title="Bank Statement to Excel Converter — Free, Private, In-Browser"
+  description="Convert a bank statement PDF to Excel (.xlsx) or CSV for free. Runs entirely in your browser — your statement is never uploaded. Every row is checked against the statement's running balance. QuickBooks and Xero presets included."
+  schema={[softwareSchema]}
+>
+  <section class="section section--tight">
+    <div class="page">
+      <div style="max-width:44rem">
+        <p class="eyebrow">Free · No sign-up · Nothing uploaded</p>
+        <h1>Convert a bank statement PDF to Excel</h1>
+        <p class="lede">
+          Drop in a statement from your online banking and get a clean spreadsheet back — with every row checked against
+          the statement's own running balance, so you can see whether the output can be trusted before you use it.
+        </p>
+      </div>
+
+      <div style="margin-top:1.6rem">
+        <Converter client:load affiliateUrl={affiliateUrl} />
+      </div>
+
+      <ul class="stat-row">
+        <li class="stat">
+          <div class="stat__value">0 bytes</div>
+          <div class="stat__label">uploaded — conversion is local</div>
+        </li>
+        <li class="stat">
+          <div class="stat__value">.xlsx / .csv</div>
+          <div class="stat__label">plus QuickBooks and Xero presets</div>
+        </li>
+        <li class="stat">
+          <div class="stat__value">Balance-checked</div>
+          <div class="stat__label">rows verified against the running total</div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--sunken" aria-labelledby="how-heading">
+    <div class="page">
+      <h2 id="how-heading">How it works</h2>
+      <ol class="steps">
+        <li>
+          <h3>Drop in the PDF</h3>
+          <p>
+            Use the statement your bank gives you — the PDF you download from online banking. It is read in this browser
+            tab, so there is nothing to wait for in a queue.
+          </p>
+        </li>
+        <li>
+          <h3>Rows are extracted and checked</h3>
+          <p>
+            The converter rebuilds the table from the PDF's text positions, then verifies every row against the running
+            balance the statement prints. Anything that does not add up gets flagged.
+          </p>
+        </li>
+        <li>
+          <h3>Download and use it</h3>
+          <p>
+            Take an Excel workbook, a plain CSV, or a file already shaped for QuickBooks Online or Xero. The workbook
+            includes a Summary sheet recording exactly what was verified.
+          </p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="output-heading">
+    <div class="page">
+      <div class="grid-2">
+        <div>
+          <h2 id="output-heading">What the output looks like</h2>
+          <p>
+            One row per transaction, with the columns a bookkeeper expects. Debits and credits are kept as separate
+            positive columns <em>and</em> as a single signed amount, so the file works whether your next step wants
+            "paid out / paid in" or a signed total.
+          </p>
+          <ul class="callout-list">
+            <li>
+              <span class="icon" aria-hidden="true">→</span>
+              <span><strong>Date</strong> — printed in the format you choose, so importers accept it.</span>
+            </li>
+            <li>
+              <span class="icon" aria-hidden="true">→</span>
+              <span><strong>Description</strong> — multi-line merchant details are joined into one cell.</span>
+            </li>
+            <li>
+              <span class="icon" aria-hidden="true">→</span>
+              <span><strong>Debit / Credit / Amount / Balance</strong> — as separate numeric columns Excel can sum and pivot.</span>
+            </li>
+            <li>
+              <span class="icon" aria-hidden="true">→</span>
+              <span><strong>Notes</strong> — flags any row that failed its balance check.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card card--flush">
+          <div style="padding:0.75rem 1rem;border-bottom:1px solid var(--rule);background:var(--paper-sunken)">
+            <p class="small muted" style="margin:0">Example output — Transactions sheet</p>
+          </div>
+          <div style="overflow:auto">
+            <table class="data">
+              <thead>
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">Description</th>
+                  <th scope="col" class="num">Debit</th>
+                  <th scope="col" class="num">Credit</th>
+                  <th scope="col" class="num">Amount</th>
+                  <th scope="col" class="num">Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  sampleRows.map((row) => (
+                    <tr>
+                      {row.map((cell, index) => (
+                        <td class={index === 0 || index >= 2 ? 'num' : 'desc-cell'}>{cell || '—'}</td>
+                      ))}
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+          <div style="padding:0.7rem 1rem;border-top:1px solid var(--rule)">
+            <p class="small muted" style="margin:0">
+              The workbook also carries a <strong>Summary</strong> sheet (what was verified) and a <strong>Raw</strong>{' '}
+              sheet (the source line behind every row).
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <AdSlot slot="home-mid" />
+
+  <section class="section section--sunken" aria-labelledby="who-heading">
+    <div class="page">
+      <h2 id="who-heading">Who this is for</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3 style="margin-top:0">Bookkeepers</h3>
+          <p style="margin-bottom:0">
+            Turn a client's statement PDF into something you can reconcile, without retyping 200 lines or buying a
+            monthly subscription for one file a month.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Freelancers and sole traders</h3>
+          <p style="margin-bottom:0">
+            Get a year of transactions into a spreadsheet for your accountant or your tax return, sorted and typed as
+            real dates and numbers.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Small businesses</h3>
+          <p style="margin-bottom:0">
+            Feed an account into QuickBooks or Xero when the bank's own feed is not available, and keep the balance
+            check to show the import is complete.
+          </p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Anyone auditing a statement</h3>
+          <p style="margin-bottom:0">
+            The Raw sheet keeps the original text line for every row, so a figure can always be traced back to the
+            document it came from.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="limits-heading">
+    <div class="page prose">
+      <h2 id="limits-heading">What it cannot do</h2>
+      <p>
+        Being clear about the limits is more useful than claiming to handle everything. This tool reads the text layer
+        inside a PDF. That covers the statements banks actually produce in online banking. It does not cover:
+      </p>
+      <ul class="callout-list">
+        <li>
+          <span class="icon icon--no" aria-hidden="true">✕</span>
+          <span>
+            <strong>Scanned or photographed statements.</strong> These are images. Reading them needs OCR, which cannot
+            run well in a browser tab — <a href="/scanned">what to use instead</a>.
+          </span>
+        </li>
+        <li>
+          <span class="icon icon--no" aria-hidden="true">✕</span>
+          <span>
+            <strong>PDFs whose text layer is broken.</strong> Some banks print with custom fonts that decode to
+            nonsense. The converter detects this and says so rather than inventing rows.
+          </span>
+        </li>
+        <li>
+          <span class="icon icon--no" aria-hidden="true">✕</span>
+          <span>
+            <strong>Categorising your spending.</strong> It converts what the statement says. It does not guess
+            categories or merchants.
+          </span>
+        </li>
+        <li>
+          <span class="icon icon--no" aria-hidden="true">✕</span>
+          <span>
+            <strong>Combining many statements at once.</strong> One file at a time in the browser; a batch route is on
+            the roadmap.
+          </span>
+        </li>
+      </ul>
+      <p class="small muted">
+        Always spot-check the converted rows against your original statement before filing, reconciling or lending
+        against them. This is a conversion tool, not an audit.
+      </p>
+    </div>
+  </section>
+
+  <Faq items={faqs} />
+
+  <AdSlot slot="home-bottom" />
+
+  <RelatedLinks heading="Next steps" items={related} />
+</Base>

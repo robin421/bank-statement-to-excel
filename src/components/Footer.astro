@@ -1,0 +1,58 @@
+---
+import { SITE } from '../data/site.mjs';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="page">
+    <div class="footer-grid">
+      <div>
+        <h3>Convert</h3>
+        <ul>
+          <li><a href="/">Bank statement to Excel</a></li>
+          <li><a href="/bank-statement-to-csv">Bank statement to CSV</a></li>
+          <li><a href="/pdf-bank-statement-to-excel">PDF bank statement to Excel</a></li>
+          <li><a href="/extract-transactions">Extract transactions</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Import into</h3>
+        <ul>
+          <li><a href="/quickbooks-csv">QuickBooks Online</a></li>
+          <li><a href="/xero-csv">Xero</a></li>
+          <li><a href="/ofx-qfx-to-csv">OFX / QFX to CSV</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>By bank</h3>
+        <ul>
+          <li><a href="/banks/chase">Chase</a></li>
+          <li><a href="/banks/bank-of-america">Bank of America</a></li>
+          <li><a href="/banks/hdfc">HDFC Bank</a></li>
+          <li><a href="/banks/hsbc">HSBC</a></li>
+          <li><a href="/banks">All banks</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Site</h3>
+        <ul>
+          <li><a href="/blog">Guides</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/terms">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-legal">
+      <p>
+        <strong>Not affiliated with any bank.</strong> {SITE.name} is an independent tool. Bank names are used only to
+        describe the statement formats the converter is tested against. Always check the converted rows against your
+        original statement before using them for accounting, tax or lending purposes.
+      </p>
+      <p>&copy; {year} {SITE.name}. Your statement is processed in your browser and is never uploaded to us.</p>
+    </div>
+  </div>
+</footer>

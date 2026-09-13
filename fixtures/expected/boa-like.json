@@ -1,0 +1,126 @@
+{
+  "name": "boa-like",
+  "openingBalance": 4820.55,
+  "transactions": [
+    {
+      "date": "2025-01-05",
+      "description": "RENT PAYMENT PORTAL",
+      "amount": 376.08,
+      "balance": 5196.63
+    },
+    {
+      "date": "2025-01-07",
+      "description": "ATM WITHDRAWAL 4821 MAIN ST",
+      "amount": 180.82,
+      "balance": 5377.45
+    },
+    {
+      "date": "2025-01-10",
+      "description": "WHOLE FOODS MKT #10234",
+      "amount": -399.8,
+      "balance": 4977.65
+    },
+    {
+      "date": "2025-01-11",
+      "description": "REFUND BEST BUY #0442 REF 882133",
+      "amount": 332.72,
+      "balance": 5310.37
+    },
+    {
+      "date": "2025-01-12",
+      "description": "ACME PAYROLL DEPOSIT",
+      "amount": 52.79,
+      "balance": 5363.16
+    },
+    {
+      "date": "2025-01-14",
+      "description": "REFUND BEST BUY #0442",
+      "amount": -558,
+      "balance": 4805.16
+    },
+    {
+      "date": "2025-01-16",
+      "description": "MOBILE DEPOSIT",
+      "amount": 176.63,
+      "balance": 4981.79
+    },
+    {
+      "date": "2025-01-18",
+      "description": "AMAZON MKTPLACE PMTS",
+      "amount": -344.41,
+      "balance": 4637.38
+    },
+    {
+      "date": "2025-01-20",
+      "description": "NORTHWIND TRADING CO REF 882138",
+      "amount": -806.23,
+      "balance": 3831.15
+    },
+    {
+      "date": "2025-01-21",
+      "description": "INTEREST PAYMENT",
+      "amount": -548.34,
+      "balance": 3282.81
+    },
+    {
+      "date": "2025-01-23",
+      "description": "RENT PAYMENT PORTAL",
+      "amount": 520.86,
+      "balance": 3803.67
+    },
+    {
+      "date": "2025-01-26",
+      "description": "REFUND BEST BUY #0442",
+      "amount": -237.78,
+      "balance": 3565.89
+    },
+    {
+      "date": "2025-01-28",
+      "description": "NORTHWIND TRADING CO",
+      "amount": -94.64,
+      "balance": 3471.25
+    },
+    {
+      "date": "2025-01-29",
+      "description": "WHOLE FOODS MKT #10234 REF 8821313",
+      "amount": -600.86,
+      "balance": 2870.39
+    },
+    {
+      "date": "2025-01-30",
+      "description": "WHOLE FOODS MKT #10234",
+      "amount": 199.36,
+      "balance": 3069.75
+    },
+    {
+      "date": "2025-02-02",
+      "description": "ATM WITHDRAWAL 4821 MAIN ST",
+      "amount": 802.56,
+      "balance": 3872.31
+    },
+    {
+      "date": "2025-02-05",
+      "description": "CHECK #1042",
+      "amount": 33.12,
+      "balance": 3905.43
+    },
+    {
+      "date": "2025-02-06",
+      "description": "SERVICE FEE - MONTHLY",
+      "amount": -240.27,
+      "balance": 3665.16
+    },
+    {
+      "date": "2025-02-08",
+      "description": "UPWORK ESCROW PAYOUT REF 8821318",
+      "amount": -414.63,
+      "balance": 3250.53
+    },
+    {
+      "date": "2025-02-09",
+      "description": "UPWORK ESCROW PAYOUT",
+      "amount": -595.34,
+      "balance": 2655.19
+    }
+  ]
+}

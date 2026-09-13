@@ -1,0 +1,137 @@
+---
+import Base from '../layouts/Base.astro';
+import ConverterSection from '../components/ConverterSection.astro';
+import Faq from '../components/Faq.astro';
+import RelatedLinks from '../components/RelatedLinks.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const faqs = [
+  {
+    q: 'What exactly is in the CSV?',
+    a: 'One header row and one row per transaction. The generic CSV carries Date, Description, Debit, Credit, Amount and Balance. Debit and Credit are always positive numbers in their own columns, and Amount is the signed net movement, so you can use whichever your next step expects.',
+  },
+  {
+    q: 'Why does my CSV open as a single column in Excel?',
+    a: 'That is a Windows locale setting, not a broken file. In many European locales Excel expects a semicolon instead of a comma as the separator. The easiest fix is to use File, Open inside Excel and pick the file, then choose "Delimited" and tick comma in the import wizard — or download the Excel workbook instead, which has no delimiter at all.',
+  },
+  {
+    q: 'Are accented characters and currency symbols preserved?',
+    a: 'Yes. The CSV is written as UTF-8 with a byte-order mark, which is what makes Excel on Windows read "Café" as "Café" rather than "CafÃ©". The BOM is a real byte at the start of the file, and every CSV parser ignores it correctly.',
+  },
+  {
+    q: 'What about commas inside merchant names?',
+    a: 'They are quoted properly according to RFC 4180: a field containing a comma, a quote or a line break is wrapped in double quotes, and any internal double quote is doubled. That is the standard every spreadsheet and importer understands.',
+  },
+  {
+    q: 'Should I use the CSV or the Excel workbook?',
+    a: 'Use the CSV when a program is going to read the file — an importer, a script, a database. Use the .xlsx when a person is going to read it, because the workbook keeps dates as real dates and numbers as real numbers and adds a Summary sheet recording what was verified.',
+  },
+  {
+    q: 'Are there decimal-comma problems?',
+    a: 'No, but only because amounts are normalised before export. Statements printed as 1.234,56 (German, Dutch, and many others) are converted to 1234.56 in the CSV, so the file always uses a dot as the decimal point regardless of what the PDF showed.',
+  },
+];
+
+const related = [
+  { href: '/', title: 'Bank statement to Excel', blurb: 'The workbook version, with typed dates and a verification summary.' },
+  { href: '/quickbooks-csv', title: 'QuickBooks Online CSV', blurb: 'Three columns, outflows negative — the shape QuickBooks accepts.' },
+  { href: '/xero-csv', title: 'Xero statement import CSV', blurb: 'The *Date and *Amount headers Xero requires.' },
+  { href: '/ofx-qfx-to-csv', title: 'OFX / QFX to CSV', blurb: 'Already-structured bank exports, converted and balance-checked.' },
+];
+---
+
+<Base
+  title="Bank Statement to CSV — Convert a Statement PDF to CSV"
+  description="Convert a bank statement PDF to CSV in your browser. Correct quoting, UTF-8 with BOM, normalised decimal points, and a choice of comma or semicolon delimiters. Nothing is uploaded."
+>
+  <ConverterSection eyebrow="CSV · no upload · no sign-up">
+    <h1>Convert a bank statement PDF to CSV</h1>
+    <p class="lede">
+      CSV is the format other programs read. That means the details that never matter for a spreadsheet — quoting,
+      encoding, decimal separators — decide whether the file works. They are all handled here, and you can pick the
+      delimiter your tool expects.
+    </p>
+  </ConverterSection>
+
+  <section class="section" aria-labelledby="columns-heading">
+    <div class="page">
+      <div class="grid-2">
+        <div>
+          <h2 id="columns-heading">The columns you get</h2>
+          <pre
+            style="overflow:auto;background:var(--paper-sunken);border:1px solid var(--rule);border-radius:6px;padding:0.9rem 1rem;font-size:0.8rem;line-height:1.7"
+          ><code>Date,Description,Debit,Credit,Amount,Balance
+01/04/2025,ACME PAYROLL DEPOSIT,,317.92,317.92,5138.47
+01/06/2025,INSURANCE PREMIUM AUTO,806.84,,-806.84,4331.63
+01/09/2025,"CHECK #1042, CLEARED",88.50,,-88.50,4243.13</code></pre>
+          <p class="small muted">
+            Note the quoted third row: a comma inside the description is escaped, not dropped or split into another
+            column.
+          </p>
+        </div>
+        <div>
+          <h2>Built for importers, not just for looks</h2>
+          <ul class="callout-list">
+            <li>
+              <span class="icon" aria-hidden="true">✓</span>
+              <span><strong>RFC 4180 quoting.</strong> Commas, quotes and line breaks inside descriptions cannot break the file.</span>
+            </li>
+            <li>
+              <span class="icon" aria-hidden="true">✓</span>
+              <span><strong>UTF-8 with BOM.</strong> Excel on Windows reads accented merchant names correctly.</span>
+            </li>
+            <li>
+              <span class="icon" aria-hidden="true">✓</span>
+              <span><strong>A dot decimal point, always.</strong> <code>1.234,56</code> from a European statement comes out as <code>1234.56</code>.</span>
+            </li>
+            <li>
+              <span class="icon" aria-hidden="true">✓</span>
+              <span><strong>CRLF line endings</strong>, which is what the RFC specifies and what Windows tools expect.</span>
+            </li>
+            <li>
+              <span class="icon" aria-hidden="true">✓</span>
+              <span><strong>Comma or semicolon.</strong> Choose the delimiter in the toolbar before downloading.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <AdSlot slot="csv-mid" />
+
+  <section class="section section--sunken" aria-labelledby="locale-heading">
+    <div class="page prose">
+      <h2 id="locale-heading">The three things that break bank CSVs</h2>
+      <p>
+        Almost every "the CSV is wrong" problem is one of these, and none of them are about the transactions themselves.
+      </p>
+      <h3>1. The decimal separator</h3>
+      <p>
+        A statement printed in Germany shows <code>1.234,56</code>. Written straight into a CSV, that is either a
+        string, or a date, or a number one thousand times too large, depending on who reads it. Amounts here are
+        normalised to <code>1234.56</code> before they are written, so the file is unambiguous everywhere.
+      </p>
+      <h3>2. The delimiter</h3>
+      <p>
+        Excel's behaviour depends on the machine's regional settings. If your copy expects a semicolon, a
+        comma-separated file lands in one column. Switch the delimiter and it opens correctly. (Or take the .xlsx,
+        which has no delimiter to get wrong.)
+      </p>
+      <h3>3. The date</h3>
+      <p>
+        <code>03/04/2025</code> is two different days depending on where you are, and a CSV has no way to say which.
+        Export in <code>2025-04-03</code> or <code>03-Apr-2025</code> when the file is going somewhere you do not
+        control. If the statement itself never proves the order, the converter says so and lets you switch it.
+      </p>
+      <p class="small muted">
+        The date format is a dropdown on every download, not a hidden setting — because the right answer depends on where
+        the file is going, not on what the converter prefers.
+      </p>
+    </div>
+  </section>
+
+  <Faq items={faqs} />
+
+  <RelatedLinks heading="Where to go next" items={related} />
+</Base>

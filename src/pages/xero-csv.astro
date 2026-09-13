@@ -1,0 +1,126 @@
+---
+import Base from '../layouts/Base.astro';
+import ConverterSection from '../components/ConverterSection.astro';
+import Faq from '../components/Faq.astro';
+import RelatedLinks from '../components/RelatedLinks.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const faqs = [
+  {
+    q: 'What columns does Xero need for a statement import?',
+    a: 'Xero\'s CSV statement import requires Date and Amount, marked *Date and *Amount in the header row. Payee, Description, Reference and Cheque Number are optional. The Xero preset writes all five optional-and-required columns in the order Xero documents them.',
+  },
+  {
+    q: 'What date format does Xero want?',
+    a: 'Xero reads the date according to your organisation\'s settings — DD/MM/YYYY for most regions and MM/DD/YYYY for the United States. The Xero preset defaults to DD/MM/YYYY; switch it in the Date format dropdown if your organisation uses another order. An ambiguous date is the most common cause of a Xero import landing on the wrong day.',
+  },
+  {
+    q: 'Should I use OFX instead of CSV?',
+    a: 'If your bank offers an OFX or QFX download, yes — it is better in every way. The data is already structured, there is no layout guessing and no OCR risk, and Xero imports OFX natively. This site converts OFX to CSV and to Excel as well, so you can take whichever path fits.',
+  },
+  {
+    q: 'Do amounts need to be positive or negative?',
+    a: 'Xero expects the statement the way a bank prints it: money in positive, money out negative. Statements that print withdrawals as positive numbers in their own column lose that direction on the way into a single Amount column, so the converter writes them negative — derived from the column the value came from and cross-checked against the running balance.',
+  },
+  {
+    q: 'Will this duplicate transactions already in Xero?',
+    a: 'Importing a period that is already reconciled will create a second copy of those lines. Import only periods that are missing from Xero, and check the closing balance after importing: if the last balance in Xero does not match the statement, something is doubled or missing.',
+  },
+  {
+    q: 'Does this send anything to Xero?',
+    a: 'No. The converter produces a file locally in your browser. You upload it to Xero yourself, inside your own session. Nothing about your statement reaches this site or Xero through it.',
+  },
+];
+
+const related = [
+  { href: '/quickbooks-csv', title: 'QuickBooks Online CSV', blurb: 'Three columns and outflows negative — a different shape.' },
+  { href: '/ofx-qfx-to-csv', title: 'OFX / QFX to CSV', blurb: 'Often the better route into Xero, if your bank exports it.' },
+  { href: '/bank-statement-to-csv', title: 'Generic bank statement to CSV', blurb: 'All six columns, for anything that is not an importer.' },
+  { href: '/', title: 'Bank statement to Excel', blurb: 'For reviewing the statement rather than importing it.' },
+];
+---
+
+<Base
+  title="Bank Statement to Xero CSV — Statement Import Format"
+  description="Convert a bank statement PDF into Xero's statement import CSV: *Date, *Amount, Payee, Description, Reference with outflows negative. Runs in your browser — nothing is uploaded."
+>
+  <ConverterSection eyebrow="Xero · *Date, *Amount · outflows negative">
+    <h1>Bank statement to Xero CSV</h1>
+    <p class="lede">
+      Xero's statement import is fussier than most about two things: the header names and the date order. Both are
+      handled here, and if your bank offers OFX instead of PDF you should take that route — this tool converts it too.
+    </p>
+  </ConverterSection>
+
+  <section class="section" aria-labelledby="format-heading">
+    <div class="page">
+      <div class="grid-2">
+        <div>
+          <h2 id="format-heading">The columns Xero documents</h2>
+          <pre
+            style="overflow:auto;background:var(--paper-sunken);border:1px solid var(--rule);border-radius:6px;padding:0.9rem 1rem;font-size:0.82rem;line-height:1.7"
+          ><code>*Date,*Amount,Payee,Description,Reference
+04/01/2025,317.92,,ACME PAYROLL DEPOSIT,
+06/01/2025,-806.84,,INSURANCE PREMIUM AUTO,
+09/01/2025,-88.50,,CHECK #1042,</code></pre>
+          <p class="small muted">
+            The asterisks are Xero's way of marking required fields — keep them in the header. Payee and Reference are
+            left blank rather than filled with a guess: an empty contact is harmless, a wrong one creates a duplicate
+            contact record.
+          </p>
+        </div>
+        <div class="prose">
+          <h2>Two things to get right</h2>
+          <h3>The date order</h3>
+          <p>
+            Xero interprets dates using your organisation's settings. A file where <code>04/01/2025</code> means 4 April
+            and an organisation expecting 1 April will import a full month of transactions on the wrong days — and it will
+            not warn you. Set the Date format dropdown to match your Xero organisation before downloading.
+          </p>
+          <h3>The direction of money</h3>
+          <p>
+            Xero needs signed amounts: money in positive, money out negative. A statement that prints withdrawals as
+            positive numbers in a separate column loses that direction on the way into a single Amount column, so the
+            converter signs them for you — decided from the column each value was printed in and confirmed against the
+            statement's running balance.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sunken" aria-labelledby="steps-heading">
+    <div class="page prose">
+      <h2 id="steps-heading">Importing the file into Xero</h2>
+      <ol>
+        <li>Go to <strong>Accounting</strong>, then <strong>Bank accounts</strong>, and open the account you are importing into.</li>
+        <li>Choose <strong>Reconcile</strong>, or the statement import option for that account.</li>
+        <li>Select <strong>Import a statement</strong> and pick CSV as the file type.</li>
+        <li>Upload the file and confirm the column mapping Xero proposes — Date and Amount are required; the rest are optional.</li>
+        <li>Check the opening and closing balances Xero shows against your statement, then confirm.</li>
+      </ol>
+      <h3>Confirm it worked</h3>
+      <p>
+        Xero will tell you the statement's opening and closing balance once the file is read. Compare that closing balance
+        with the one printed on your PDF. If they match, every row made it across with the right sign. The converter's
+        Summary sheet records the same closing figure so you have both in front of you.
+      </p>
+      <h3>If the import is rejected</h3>
+      <ul>
+        <li><strong>Wrong number of columns</strong> — the header row was edited. Keep <code>*Date</code> and <code>*Amount</code> exactly as written, asterisks included.</li>
+        <li><strong>Unrecognised date</strong> — the date format does not match the organisation. Re-download with the other order.</li>
+        <li><strong>Amounts as text</strong> — usually caused by re-saving the CSV in a spreadsheet that added thousands separators or a currency symbol.</li>
+      </ul>
+      <p class="small muted">
+        If your bank offers OFX or QFX, prefer it. It removes the date-order question entirely: the dates in an OFX file
+        are unambiguous, which is why Xero imports them natively.
+      </p>
+    </div>
+  </section>
+
+  <AdSlot slot="xero-mid" />
+
+  <Faq items={faqs} />
+
+  <RelatedLinks heading="Related" items={related} />
+</Base>

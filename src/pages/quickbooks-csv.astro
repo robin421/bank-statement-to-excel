@@ -1,0 +1,148 @@
+---
+import Base from '../layouts/Base.astro';
+import ConverterSection from '../components/ConverterSection.astro';
+import Faq from '../components/Faq.astro';
+import RelatedLinks from '../components/RelatedLinks.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+const faqs = [
+  {
+    q: 'What CSV format does QuickBooks Online accept?',
+    a: 'For the "Upload from file" route in Banking, QuickBooks Online expects three columns: Date, Description and Amount. There must be one header row, one row per transaction, and outflows must be negative — a payment of 806.84 is -806.84, while a deposit of 317.92 is 317.92. The QuickBooks preset produces exactly those three columns in that order.',
+  },
+  {
+    q: 'How should the dates be formatted?',
+    a: 'QuickBooks expects the date format matching your company file and locale — commonly MM/DD/YYYY in the United States and DD/MM/YYYY elsewhere. The QuickBooks preset defaults to MM/DD/YYYY; change it in the Date format dropdown before downloading if your QuickBooks uses a different one. A date QuickBooks cannot read is the single most common cause of a failed import.',
+  },
+  {
+    q: 'Why negative amounts?',
+    a: 'Because QuickBooks has to know which direction money moved. A statement that shows withdrawals in their own column as positive numbers loses that information when it becomes a single Amount column. The converter writes money out as negative, derived from the column the value was printed in and cross-checked against the running balance.',
+  },
+  {
+    q: 'Will the import duplicate transactions I already have?',
+    a: 'It can, if your bank account is already connected and downloading the same transactions. Uploading a CSV adds rows to the review queue; QuickBooks will not match them against existing entries for you. If the account is already connected, this is usually not the tool you want — it is for accounts with no live feed.',
+  },
+  {
+    q: 'What about Category, Payee and Memo columns?',
+    a: 'QuickBooks does not need them, and a file that includes them will simply have more columns to map. Keep the import to Date, Description and Amount, then categorise in QuickBooks where the rules engine can help you. The tool\'s own Excel workbook keeps debit, credit and balance columns if you want the fuller picture alongside.',
+  },
+  {
+    q: 'Is my banking data sent to QuickBooks by this tool?',
+    a: 'No. The converter never talks to Intuit or to anyone else. It writes a file on your machine; you upload that file to QuickBooks yourself, through your own logged-in session.',
+  },
+];
+
+const related = [
+  { href: '/xero-csv', title: 'Xero statement import', blurb: 'A different required header set — *Date and *Amount.' },
+  { href: '/bank-statement-to-csv', title: 'Generic bank statement to CSV', blurb: 'All six columns, for anything that is not an importer.' },
+  { href: '/ofx-qfx-to-csv', title: 'OFX / QFX to CSV', blurb: 'If your bank exports OFX, that is cleaner data than a PDF.' },
+  { href: '/', title: 'Bank statement to Excel', blurb: 'For reviewing the statement rather than importing it.' },
+];
+---
+
+<Base
+  title="Bank Statement to QuickBooks Online CSV — Import a Statement"
+  description="Convert a bank statement PDF into the three-column CSV QuickBooks Online accepts (Date, Description, Amount), with outflows negative. Runs in your browser — nothing is uploaded."
+>
+  <ConverterSection eyebrow="QuickBooks Online · 3 columns · outflows negative">
+    <h1>Bank statement to QuickBooks Online CSV</h1>
+    <p class="lede">
+      QuickBooks Online does not want a general-purpose CSV. It wants three columns, one header row and correctly signed
+      amounts — and a date it can parse. Pick the QuickBooks preset and choose the date format your company file uses.
+    </p>
+  </ConverterSection>
+
+  <section class="section" aria-labelledby="format-heading">
+    <div class="page">
+      <div class="grid-2">
+        <div>
+          <h2 id="format-heading">The format QuickBooks expects</h2>
+          <pre
+            style="overflow:auto;background:var(--paper-sunken);border:1px solid var(--rule);border-radius:6px;padding:0.9rem 1rem;font-size:0.82rem;line-height:1.7"
+          ><code>Date,Description,Amount
+01/04/2025,ACME PAYROLL DEPOSIT,317.92
+01/06/2025,INSURANCE PREMIUM AUTO,-806.84
+01/09/2025,CHECK #1042,-88.50</code></pre>
+          <p class="small muted">
+            Three columns, nothing else. Deposits positive, payments negative. If your statement prints withdrawals as
+            positive numbers in a separate column, the converter still writes them negative here — that is the point of
+            the preset.
+          </p>
+        </div>
+        <div class="prose">
+          <h2>Before you import</h2>
+          <ul class="callout-list">
+            <li>
+              <span class="icon" aria-hidden="true">1</span>
+              <span><strong>Check the date format.</strong> Match your QuickBooks company file. This is the most common reason an import is rejected.</span>
+            </li>
+            <li>
+              <span class="icon" aria-hidden="true">2</span>
+              <span><strong>Check the period.</strong> Export one statement at a time so the rows land in the right period and you can compare totals afterwards.</span>
+            </li>
+            <li>
+              <span class="icon" aria-hidden="true">3</span>
+              <span><strong>Know your balance.</strong> The statement's closing balance is on the Summary sheet — it is how you confirm the import completed.</span>
+            </li>
+            <li>
+              <span class="icon" aria-hidden="true">4</span>
+              <span><strong>Do not double-import.</strong> If the account already has a live bank feed, uploading the same period creates duplicates in the review queue.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sunken" aria-labelledby="steps-heading">
+    <div class="page prose">
+      <h2 id="steps-heading">Importing the file into QuickBooks Online</h2>
+      <p>
+        QuickBooks moves this around between releases, so the wording below may differ slightly in your version. The
+        sequence does not change.
+      </p>
+      <ol>
+        <li>Open <strong>Banking</strong> (or <strong>Transactions</strong>, depending on your version).</li>
+        <li>
+          Choose the bank account you are importing into. If it has no live feed, use the option to upload transactions
+          from a file rather than connecting a bank.
+        </li>
+        <li>Select <strong>Upload from file</strong> and choose the CSV you downloaded. Set the delimiter if asked — the file is comma-separated.</li>
+        <li>
+          Map the columns. QuickBooks usually detects <code>Date</code>, <code>Description</code> and <code>Amount</code>{' '}
+          from the header row; if it does not, select them manually. The date format question refers to the format used
+          <em>in the file</em>.
+        </li>
+        <li>Review the transactions in the <strong>For review</strong> queue, then accept them.</li>
+      </ol>
+      <h3>Confirming it worked</h3>
+      <p>
+        Compare three numbers: the number of rows in your CSV, the number of transactions in the review queue, and the
+        closing balance on the statement. If the row counts match and the final running balance matches the statement's
+        closing balance, the import is complete. That check is exactly what the tool's balance verification is for.
+      </p>
+      <h3>If the import fails</h3>
+      <ul>
+        <li>
+          <strong>"We couldn't read your file"</strong> — usually the date format. Re-download with the format your
+          company file uses.
+        </li>
+        <li>
+          <strong>Everything lands in one column</strong> — the delimiter selection. Confirm comma is chosen, not
+          semicolon or tab.
+        </li>
+        <li>
+          <strong>Amounts come in as text</strong> — indicates thousands separators were quoted oddly. The converter
+          writes plain numbers like <code>-1234.56</code> with no currency symbols or separators, so this should not
+          occur; if it does, check the file was not edited in a spreadsheet that re-formatted the column.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <AdSlot slot="qbo-mid" />
+
+  <Faq items={faqs} />
+
+  <RelatedLinks heading="Related" items={related} />
+</Base>

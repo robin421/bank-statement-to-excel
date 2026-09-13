@@ -1,0 +1,119 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import ConverterSection from '../../components/ConverterSection.astro';
+import Faq from '../../components/Faq.astro';
+import RelatedLinks from '../../components/RelatedLinks.astro';
+import { BANKS } from '../../data/keywords';
+
+export const getStaticPaths = (() =>
+  BANKS.map((bank) => ({
+    params: { bank: bank.slug },
+    props: { bank },
+  }))) satisfies GetStaticPaths;
+
+const { bank } = Astro.props;
+
+const faqs = [
+  {
+    q: `Does the converter have a special mode for ${bank.name}?`,
+    a: `No, and that is deliberate. The tool identifies rows and columns from the geometry of the page rather than from a per-bank template, so it works on layouts it has never seen — including the ones banks change without notice. A template that matched last year's ${bank.name} layout would be worse than no template at all, because it would fail silently.`,
+  },
+  {
+    q: `How do I check the ${bank.name} output is complete?`,
+    a: `Use the running balance. A ${bank.name} statement prints a balance against every row, and the converter checks that each balance plus the next amount equals the following balance. The preview shows how many rows reconciled. If the last balance in the output matches the closing balance on your statement, nothing was lost.`,
+  },
+  {
+    q: 'What if my statement looks different from the notes here?',
+    a: 'Bank layouts change, and the same bank can print different statements for different account types and countries. The notes on this page are a starting point for checking the output, not a specification. If your statement does not match, the converter still tries — the balance check will tell you whether it succeeded.',
+  },
+  {
+    q: 'Does this work for credit card statements as well?',
+    a: 'Yes, if they are text-based PDFs. A credit card statement has the same shape as a bank statement: dated rows, a description, an amount and often a running balance. Statements where every row is a charge, with no balance column, still convert — you simply lose the automatic verification.',
+  },
+  {
+    q: 'Is any of my data sent anywhere?',
+    a: 'No. The PDF is opened and parsed inside your browser tab. There is no upload, no account and no storage. That applies whatever bank the statement came from.',
+  },
+];
+
+const related = [
+  { href: '/', title: 'Bank statement to Excel', blurb: 'The main converter and the verification explained.' },
+  { href: '/bank-statement-to-csv', title: 'Bank statement to CSV', blurb: 'If you need CSV rather than a workbook.' },
+  { href: '/quickbooks-csv', title: 'QuickBooks Online', blurb: 'The three-column import shape.' },
+  { href: '/xero-csv', title: 'Xero statement import', blurb: 'The *Date / *Amount header set Xero requires.' },
+];
+---
+
+<Base
+  title={`${bank.name} Bank Statement to Excel — Convert a ${bank.name} PDF`}
+  description={`Convert a ${bank.name} bank statement PDF to Excel or CSV in your browser. Notes on the ${bank.name} statement layout, how to spot a misread row, and how the running balance verifies the output.`}
+>
+  <ConverterSection eyebrow={`${bank.name} · .xlsx and CSV · nothing uploaded`}>
+    <h1>Convert a {bank.name} bank statement to Excel</h1>
+    <p class="lede">
+      Drop in a {bank.name} statement PDF downloaded from online banking and get a spreadsheet back. The converter is
+      layout-driven rather than bank-specific, and it checks every row against the running balance printed on your
+      statement.
+    </p>
+  </ConverterSection>
+
+  <section class="section" aria-labelledby="layout-heading">
+    <div class="page">
+      <div class="grid-2">
+        <div class="prose">
+          <h2 id="layout-heading">What to expect from a {bank.name} statement</h2>
+          <p>
+            These notes describe the layout the converter is most often tested against for {bank.name}. They are here so
+            you know what to check in the preview — not because the tool needs them to work.
+          </p>
+          <ul>
+            {bank.layoutNotes.map((note) => <li>{note}</li>)}
+          </ul>
+          <p class="small muted">
+            Bank layouts change without notice, and differ by account type and country. If your statement does not match
+            these notes, convert it anyway and use the reconcile count in the preview to judge the result.
+          </p>
+        </div>
+
+        <div>
+          <div class="card">
+            <h2 style="margin-top:0;font-size:1.05rem">How to check the output in 30 seconds</h2>
+            <ol style="padding-left:1.15em">
+              <li>Look at the reconcile badge in the preview. It should say all rows reconcile.</li>
+              <li>Compare the <strong>last balance</strong> in the table with the closing balance on your statement.</li>
+              <li>Filter the preview to "only rows needing a check" and compare any flagged row against the PDF.</li>
+            </ol>
+            <p style="margin-bottom:0">
+              If the last balance matches and nothing is flagged, the conversion is complete. That is a stronger check
+              than eyeballing a few rows, because a dropped transaction cannot hide from it.
+            </p>
+          </div>
+
+          <div class="card" style="margin-top:1rem">
+            <h2 style="margin-top:0;font-size:1.05rem">If something looks wrong</h2>
+            <p style="margin-bottom:0">
+              The most common causes are a date order the statement did not make obvious — switch it in the preview and
+              re-check — and an amount that continued onto the following line. Both are surfaced rather than hidden: the
+              row is flagged and the balance delta is recorded on the Raw sheet.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="page">
+      <p class="small muted" style="max-width:70ch">
+        <strong>{bank.name} is a trademark of its owner.</strong> This site is independent and is not affiliated with,
+        endorsed by or connected to {bank.name}. The name is used only to describe the statement format being converted.
+        Always verify converted figures against your original statement before relying on them.
+      </p>
+    </div>
+  </section>
+
+  <Faq items={faqs} />
+
+  <RelatedLinks heading="Related" items={related} />
+</Base>
