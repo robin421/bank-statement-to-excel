@@ -12,6 +12,14 @@ that invariant to pick the columns, fix the signs, and count the rows we failed 
 - **Honesty claim:** a scanned PDF is refused with an explanation rather than converted into
   plausible-but-wrong rows.
 
+## Live
+
+**https://bankstatementtoexcel.vercel.app** — deployed on Vercel (project `bank-statement-to-excel`).
+
+That host is a placeholder origin, not a brand decision. When the real domain is bought, set
+`PUBLIC_SITE_URL` in the Vercel project and redeploy — it is the only place an origin is hardcoded,
+and canonicals, the sitemap, `robots.txt` and the OG tags all derive from it.
+
 ---
 
 ## Quick start
@@ -30,8 +38,11 @@ Other scripts:
 | `npm run build` | Static build into `dist/`, then strips macOS sidecar files |
 | `npm run typecheck` | `tsc --noEmit` over `src/` and `tests/` |
 | `npm run verify` | typecheck + unit tests + build |
-| `npm run smoke` | Playwright end-to-end test against a real browser |
+| `npm run smoke` | Playwright end-to-end test; pass a URL to test a deployment |
 | `npm run fixtures` | Regenerate the synthetic statement corpus |
+
+`npm run smoke https://bankstatementtoexcel.vercel.app` runs the whole suite against production,
+which is the only way to verify that the deployed CSP has not broken pdf.js's worker.
 
 ---
 
@@ -119,32 +130,45 @@ Copy `.env.example` to `.env`:
 
 ## Deploying
 
-Cloudflare Pages (or any static host):
+Vercel, already wired up (`vercel.json`):
 
-- Build command: `npm run build`
-- Output directory: `dist`
-- Node: 22.13+ / 24 (pdf.js 6 and Astro 7 require it)
-- Env: set `PUBLIC_SITE_URL`, and optionally the analytics/affiliate/adsense values above
+```bash
+vercel env add PUBLIC_SITE_URL production --value https://your-domain.com --yes
+vercel --prod
+```
 
-Nothing is server-rendered and there is no backend, so there is nothing to scale, migrate or roll
-back beyond the deploy itself.
+Settings Vercel uses: build `npm run build`, output `dist`, Node `>=22.13` (pdf.js 6), Astro framework
+detection. `vercel.json` also sets:
+
+- **`installCommand` with `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1`.** Playwright is a devDependency used
+  only by `scripts/smoke.mjs` locally; without this its postinstall downloads ~150 MB of browsers on
+  every deploy.
+- **A Content-Security-Policy.** `connect-src` is the directive that matters: it is what makes the
+  "your statement never leaves the browser" claim *enforceable* rather than a promise. Google's ad
+  hosts are pre-listed so enabling AdSense later does not silently break the page. Verified by a smoke
+  check that fails on any CSP violation — pdf.js runs fine without `'unsafe-eval'`.
+- **Immutable caching** for `/_astro/*` (content-hashed) and `must-revalidate` for `/`.
+
+`dist/` is a plain static directory, so any static host also works. There is no backend to scale,
+migrate or roll back beyond the deploy itself.
 
 ### Go-live checklist
 
-1. **Day-0 keyword validation (not done yet — do this before spending on content).** The keyword map
-   in `src/data/keywords.ts` is a hypothesis. Check the five primaries in a real SERP tool and, more
-   importantly, check *intent*: a large share of "bank statement to excel" volume wants a
-   spreadsheet **template**, not a converter. If that is the mix, the H1 and the above-the-fold copy
-   change. Also confirm `bank statement converter` and `csv bank statement converter` phrasing.
-2. Buy the domain, set `PUBLIC_SITE_URL`, rebuild, confirm canonicals and `sitemap-index.xml`.
-3. Verify the property in Google Search Console and submit the sitemap.
-4. Set `PUBLIC_CF_ANALYTICS_TOKEN` (cookieless — no cookie banner needed).
-5. Apply for AdSense **after** the content pages are indexed. Ad slots are below the fold only, and
-   they render nothing while the client id is empty — a thin tool page with ads on it is a fast
-   rejection.
+1. **Day-0 keyword validation (not done — do this before spending on content).** The keyword map in
+   `src/data/keywords.ts` is a hypothesis. Check the five primaries in a real SERP tool and, more
+   importantly, check *intent*: a large share of "bank statement to excel" volume wants a spreadsheet
+   **template**, not a converter. If that is the mix, the H1 and the above-the-fold copy change. Also
+   confirm the `bank statement converter` and `csv bank statement converter` phrasings.
+2. **Buy the domain**, set `PUBLIC_SITE_URL` in Vercel to it, add the domain in the Vercel project,
+   redeploy, then confirm canonicals and `sitemap-index.xml` point at it.
+3. Verify the property in Google Search Console and submit `sitemap-index.xml`.
+4. Set `PUBLIC_CF_ANALYTICS_TOKEN` (Cloudflare Web Analytics is cookieless — no cookie banner needed).
+   Note the CSP already allows `static.cloudflareinsights.com`.
+5. Apply for AdSense **after** the content pages are indexed. Ad slots are below the fold only, and they
+   render nothing while the client id is empty — a thin tool page with ads on it is a fast rejection.
 6. Add a certified CMP before enabling AdSense for EEA/UK traffic.
-7. Add real `verified` counts to `src/data/banks/*` notes once you have graded real statements. Do not
-   publish layout claims you have not tested.
+7. Fill in the `verified` counts on the bank pages once you have graded real statements. Do not publish
+   layout claims you have not tested.
 
 ---
 

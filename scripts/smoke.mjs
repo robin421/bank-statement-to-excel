@@ -68,6 +68,15 @@ async function main() {
   const consoleErrors = [];
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
+  // CSP violations are reported to the console, not as page errors, so a strict
+  // policy that breaks pdf.js would otherwise deploy silently.
+  const cspViolations = [];
+  page.on('console', (message) => {
+    const text = message.text();
+    if (/Content Security Policy|Refused to (load|connect|execute|create|run)/i.test(text)) cspViolations.push(text);
+    if (message.type() === 'error' && !cspViolations.includes(text)) consoleErrors.push(text);
+  });
+
   try {
     console.log(`\nconverting fixtures in a real browser (${BASE})\n`);
     await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
@@ -126,6 +135,12 @@ async function main() {
     check('no upload-shaped requests', uploads.length === 0, uploads.slice(0, 3).join(', '));
 
     check('no uncaught page errors', consoleErrors.length === 0, consoleErrors.slice(0, 2).join(' | '));
+
+    check(
+      'Content-Security-Policy causes no violations',
+      cspViolations.length === 0,
+      cspViolations.slice(0, 2).join(' | '),
+    );
 
     // An image-only PDF must be refused, not guessed at.
     await page.locator('.btn--link', { hasText: 'Start over' }).first().click();
