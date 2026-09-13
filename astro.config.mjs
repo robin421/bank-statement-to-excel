@@ -13,7 +13,7 @@ import { LOCALE_CODES } from './src/i18n/locales.ts';
  * to the hosting environment) with nothing else in the codebase to update.
  */
 const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), 'PUBLIC_');
-const siteUrl = String(process.env.PUBLIC_SITE_URL || env.PUBLIC_SITE_URL || 'https://bankstatementtoexcel.example').replace(
+const siteUrl = String(process.env.PUBLIC_SITE_URL || env.PUBLIC_SITE_URL || 'https://www.wattflow.net').replace(
   /\/$/,
   '',
 );

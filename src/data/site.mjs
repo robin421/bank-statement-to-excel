@@ -7,7 +7,7 @@
 // environment; `process.env` is the fallback for plain Node contexts. Reading
 // both means the site URL behaves the same in `astro dev`, `astro build` and CI.
 
-const FALLBACK_URL = 'https://bankstatementtoexcel.example';
+const FALLBACK_URL = 'https://www.wattflow.net';
 
 const fromEnv =
   (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.PUBLIC_SITE_URL) ||
@@ -22,6 +22,8 @@ export const SITE = {
   tagline: 'Convert a bank statement PDF to Excel or CSV — in your browser',
   description:
     'Free tool that converts text-based bank statement PDFs into Excel (.xlsx) or CSV. Runs entirely in your browser — your statement is never uploaded. Includes QuickBooks and Xero export presets.',
-  email: 'hello@bankstatementtoexcel.example',
+  // TODO: point this at a real mailbox before applying to AdSense — a contact
+  // address on a reserved TLD reaches nobody, and reviewers do check.
+  email: 'hello@wattflow.net',
   twitter: '',
 };
