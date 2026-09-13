@@ -76,7 +76,7 @@ That single invariant does three jobs at once:
 3. **It detects dropped rows.** A missing transaction breaks the chain at that point. The failure is localised, and the
    difference tells you what is missing.
 
-This is why [the converter](/pdf-bank-statement-to-excel) can report *"42/42 rows reconcile"* instead of asking you to
+This is why [the converter](/pdf-bank-statement-to-excel/) can report *"42/42 rows reconcile"* instead of asking you to
 trust it. And it is why it can also admit failure: when the chain does not close, the rows are flagged rather than
 presented as fact.
 
@@ -94,4 +94,4 @@ closing balance printed on the statement. If all three agree, the conversion is 
 not, the running balance will point at the row where things went wrong.
 
 For the practical walkthrough — including which file to download from your bank in the first place — see
-[How to convert a bank statement to Excel](/blog/how-to-convert-bank-statement-to-excel).
+[How to convert a bank statement to Excel](/blog/how-to-convert-bank-statement-to-excel/).

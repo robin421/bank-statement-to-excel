@@ -241,7 +241,7 @@ export default function Converter({ locale = DEFAULT_LOCALE, compact = false, af
               {t('dropzone.limits')}
             </p>
             {!compact && (
-              <a className="btn--link" href="/scanned" onClick={(event) => event.stopPropagation()}>
+              <a className="btn--link" href="/scanned/" onClick={(event) => event.stopPropagation()}>
                 {t('dropzone.scanned')}
               </a>
             )}
@@ -328,14 +328,14 @@ export default function Converter({ locale = DEFAULT_LOCALE, compact = false, af
                 <a href={affiliateUrl} rel="sponsored noopener" target="_blank">
                   {t('error.ocrLink')}
                 </a>{' '}
-                {t('error.ocrOr')} <a href="/scanned">{t('error.ocrWhy')}</a>.
+                {t('error.ocrOr')} <a href="/scanned/">{t('error.ocrWhy')}</a>.
               </p>
             )}
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
               <button type="button" className="btn btn--primary" onClick={reset}>
                 {t('error.tryAnother')}
               </button>
-              <a className="btn btn--ghost" href="/scanned">
+              <a className="btn btn--ghost" href="/scanned/">
                 {t('error.scannedLink')}
               </a>
             </div>

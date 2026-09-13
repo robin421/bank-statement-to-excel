@@ -10,11 +10,14 @@ export interface Props {
 
 const { locale = DEFAULT_LOCALE, translations } = Astro.props;
 
+// The page's own URL, used when the switcher's current language is selected.
+const currentPath = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+
 const links = [
-  { href: '/bank-statement-to-csv', label: 'CSV' },
-  { href: '/quickbooks-csv', label: 'QuickBooks' },
-  { href: '/xero-csv', label: 'Xero' },
-  { href: '/scanned', label: 'Scanned' },
+  { href: '/bank-statement-to-csv/', label: 'CSV' },
+  { href: '/quickbooks-csv/', label: 'QuickBooks' },
+  { href: '/xero-csv/', label: 'Xero' },
+  { href: '/scanned/', label: 'Scanned' },
 ];
 
 /**
@@ -29,6 +32,9 @@ const links = [
 function targetFor(code: LocaleCode): string {
   const explicit = translations?.[code];
   if (explicit) return explicit;
+  // Selecting the language you are already reading must leave you on this page,
+  // not dump you on the homepage.
+  if (code === locale) return currentPath;
   return code === DEFAULT_LOCALE ? '/' : `/${code}/`;
 }
 ---

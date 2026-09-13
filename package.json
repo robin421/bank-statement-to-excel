@@ -11,10 +11,11 @@
     "build": "astro build && node scripts/strip-appledouble.mjs dist",
     "preview": "astro preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "check:links": "node scripts/check-links.mjs",
     "smoke": "node scripts/smoke.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "npm run typecheck && vitest run && npm run build",
+    "verify": "npm run typecheck && vitest run && npm run build && npm run check:links",
     "fixtures": "node fixtures/generate.mjs"
   },
   "dependencies": {

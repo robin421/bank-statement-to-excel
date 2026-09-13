@@ -21,7 +21,7 @@ import { BANKS } from '../../data/keywords';
         {
           BANKS.map((bank) => (
             <li>
-              <a href={`/banks/${bank.slug}`}>
+              <a href={`/banks/${bank.slug}/`}>
                 <strong>{bank.name}</strong>
                 <span>{bank.layoutNotes[0]}</span>
               </a>

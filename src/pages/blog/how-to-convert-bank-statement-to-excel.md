@@ -16,7 +16,7 @@ This is where most of the time is won or lost. Banks will give you the same stat
 not equally good:
 
 1. **OFX or QFX** — if your bank offers this, take it. It is structured data, so nothing has to be guessed. [The
-   converter reads it](/ofx-qfx-to-csv) and the dates cannot be misread.
+   converter reads it](/ofx-qfx-to-csv/) and the dates cannot be misread.
 2. **CSV export** — usually fine, but bank-made CSVs vary between exports in ways that trip up automated tools.
 3. **The PDF download** — the right choice when there is no data export, and what most people have. Make sure you take
    the *download*, not a copy of what the browser is showing you; the in-browser viewer is sometimes an image.
@@ -25,7 +25,7 @@ not equally good:
 
 Quick way to check which one you have: open the PDF and try to highlight a single word in the middle of a transaction
 line. If the words select individually, it has a text layer and [the converter](/)
-will read it exactly. If nothing selects, it is an image — see [scanned statements](/scanned).
+will read it exactly. If nothing selects, it is an image — see [scanned statements](/scanned/).
 
 ## Step 2: Convert it
 
@@ -62,9 +62,9 @@ the workbook. But it is worth knowing why the check works, because it is the sam
 
 - **Excel workbook** — for reading, sorting, or sending to an accountant. Dates arrive as real dates and amounts as real
   numbers, so you can sum and pivot immediately.
-- **CSV** — for an importer, a script, or a database. [Details on delimiters and encodings here](/bank-statement-to-csv).
-- **QuickBooks Online** — [the three-column shape it requires](/quickbooks-csv).
-- **Xero** — [the `*Date`/`*Amount` header set](/xero-csv), or import OFX directly if your bank provides it.
+- **CSV** — for an importer, a script, or a database. [Details on delimiters and encodings here](/bank-statement-to-csv/).
+- **QuickBooks Online** — [the three-column shape it requires](/quickbooks-csv/).
+- **Xero** — [the `*Date`/`*Amount` header set](/xero-csv/), or import OFX directly if your bank provides it.
 
 ## When the numbers do not add up
 

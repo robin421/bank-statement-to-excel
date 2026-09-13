@@ -1,12 +1,21 @@
 ---
 import Base from '../layouts/Base.astro';
 import RelatedLinks from '../components/RelatedLinks.astro';
+import { LOCALE_CODES, type LocaleCode } from '../i18n';
+
+// A 404 has no URL of its own, so the canonical points at the homepage and the
+// language switcher sends every language to its own homepage rather than to a
+// path that does not exist.
+const canonicalPath = '/';
+const translations = Object.fromEntries(
+  LOCALE_CODES.map((code) => [code, code === 'en' ? '/' : `/${code}/`]),
+) as Partial<Record<LocaleCode, string>>;
 
 const related = [
   { href: '/', title: 'Bank statement to Excel', blurb: 'Convert a text-based statement PDF.' },
-  { href: '/ofx-qfx-to-csv', title: 'OFX / QFX to CSV', blurb: 'Structured bank exports, no layout guessing.' },
-  { href: '/scanned', title: 'Scanned statements', blurb: 'Why a scan needs OCR, and what to use.' },
-  { href: '/blog', title: 'Guides', blurb: 'How to convert and how to check the result.' },
+  { href: '/ofx-qfx-to-csv/', title: 'OFX / QFX to CSV', blurb: 'Structured bank exports, no layout guessing.' },
+  { href: '/scanned/', title: 'Scanned statements', blurb: 'Why a scan needs OCR, and what to use.' },
+  { href: '/blog/', title: 'Guides', blurb: 'How to convert and how to check the result.' },
 ];
 ---
 
@@ -14,6 +23,8 @@ const related = [
   title="Page Not Found"
   description="That page does not exist. Convert a bank statement PDF to Excel or CSV from the homepage."
   noindex
+  canonicalPath={canonicalPath}
+  translations={translations}
 >
   <section class="section">
     <div class="page prose">

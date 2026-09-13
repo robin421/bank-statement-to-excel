@@ -24,6 +24,8 @@ export interface Props {
    * none, so alternates are opt-in per page.
    */
   translations?: Partial<Record<LocaleCode, string>>;
+  /** Override the canonical path. Used by the 404 page, which has no URL of its own. */
+  canonicalPath?: string;
 }
 
 const props = Astro.props as Props;
@@ -40,7 +42,9 @@ const origin = Astro.site ?? SITE.url;
 // Normalise to a trailing slash so the canonical, the hreflang alternates and
 // the sitemap all name the exact same URL. Emitting `/de` as the canonical while
 // hreflang says `/de/` splits the signal between two URLs that both serve 200.
-const pathname = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+// `canonicalPath` exists for the 404 page, whose own path is not a real URL.
+const rawPath = props.canonicalPath ?? Astro.url.pathname;
+const pathname = rawPath.endsWith('/') ? rawPath : `${rawPath}/`;
 const canonicalUrl = new URL(pathname, origin).href;
 const ogTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
 
@@ -48,9 +52,10 @@ const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 const adsenseClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
 
 // Only declare alternates when the page actually exists in more than one
-// language; a lone hreflang pointing at a 404 wastes crawl budget.
+// language; a lone hreflang pointing at a 404 wastes crawl budget. Skipped on
+// noindex pages, which have nothing to consolidate.
 const alternates = Object.entries(props.translations ?? {}) as Array<[LocaleCode, string]>;
-const hasAlternates = alternates.length > 1;
+const hasAlternates = alternates.length > 1 && !noindex;
 
 const baseSchema = {
   '@context': 'https://schema.org',

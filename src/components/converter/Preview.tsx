@@ -75,7 +75,7 @@ export default function Preview({
           {quality.reasons[0] ?? t('error.noRowsFallback')}
         </p>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <a className="btn btn--primary" href="/scanned">
+          <a className="btn btn--primary" href="/scanned/">
             {t('error.scannedCta')}
           </a>
           <button type="button" className="btn btn--ghost" onClick={onReset}>
