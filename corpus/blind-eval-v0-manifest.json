@@ -1,5 +1,5 @@
 {
-  "$comment": "FROZEN before any parser output existed for these files. Ground truth comes from the manual corpus-admission pass (raw pdf.js text + hand arithmetic), never from parser output. Do not edit after the blind run.",
+  "$comment": "FROZEN before any parser output existed for these files. Ground truth comes from the manual corpus-admission pass (raw pdf.js text + hand arithmetic), never from parser output. Do not edit after the blind run. RESULT: run 2026-09-14, see corpus/BLIND-EVAL-V0-REPORT.md. These eight files lose blind status and become regression corpus.",
   "version": "blind-eval-v0",
   "frozenAt": "2026-09-14",
   "parserSnapshot": {
@@ -11,7 +11,12 @@
     "dateLookbackLines": 2,
     "minDetailScore": 0.35,
     "minChainScoreGap": 0.15,
-    "evidenceWeights": { "dateCoverage": 1, "datedAmountCoverage": 0.6, "entryCount": 0.15, "entryCountSaturation": 10 },
+    "evidenceWeights": {
+      "dateCoverage": 1,
+      "datedAmountCoverage": 0.6,
+      "entryCount": 0.15,
+      "entryCountSaturation": 10
+    },
     "knownTunedParameter": "beamWidth is empirical, not derived: 12k lost a correct chain that 40k recovers. Held fixed for this run.",
     "fileHashes": {
       "decode.ts": "ca3bb47c6554e932570b0d6db19ecabe126e359ed93243abada62665d6470cf0",
@@ -40,8 +45,14 @@
         "totalCredits": 402.72,
         "totalDebits": 217.0,
         "sectionTotals": [
-          { "type": "savings-deposits", "total": 402.72 },
-          { "type": "savings-withdrawals", "total": 217.0 }
+          {
+            "type": "savings-deposits",
+            "total": 402.72
+          },
+          {
+            "type": "savings-withdrawals",
+            "total": 217.0
+          }
         ],
         "arithmeticVerified": true,
         "evidence": "20649.65 + 402.72 - 217.00 = 20835.37 exact; row check 20649.65 - 217.00 = 20432.65 exact.",
@@ -65,8 +76,14 @@
         "totalCredits": 13.68,
         "totalDebits": 13.57,
         "sectionTotals": [
-          { "type": "total-additions", "total": 13.68 },
-          { "type": "total-subtractions", "total": 13.57 }
+          {
+            "type": "total-additions",
+            "total": 13.68
+          },
+          {
+            "type": "total-subtractions",
+            "total": 13.57
+          }
         ],
         "arithmeticVerified": true,
         "evidence": "6.97 + 13.68 - 13.57 = 7.08 exact.",
@@ -111,7 +128,13 @@
         "totalCredits": 7.75,
         "totalDebits": 0.0,
         "transactionCount": 1,
-        "sectionTotals": [{ "type": "electronic-deposits-bank-credits", "count": 1, "total": 7.75 }],
+        "sectionTotals": [
+          {
+            "type": "electronic-deposits-bank-credits",
+            "count": 1,
+            "total": 7.75
+          }
+        ],
         "arithmeticVerified": true,
         "evidence": "2433.11 + 7.75 - 0.00 = 2440.86 exact.",
         "notes": "Genuine Wells Fargo Commercial Interest Checking statement filed as a bankruptcy exhibit. One transaction: 04/30 Interest Payment 7.75. Document is 30 pages; the statement occupies part of it."
@@ -134,8 +157,14 @@
         "totalCredits": 40961.04,
         "totalDebits": 44496.18,
         "sectionTotals": [
-          { "type": "withdrawals-other-debits", "total": 12642.8 },
-          { "type": "checks-paid", "total": 31853.38 }
+          {
+            "type": "withdrawals-other-debits",
+            "total": 12642.8
+          },
+          {
+            "type": "checks-paid",
+            "total": 31853.38
+          }
         ],
         "arithmeticVerified": true,
         "evidence": "4823.87 + 40961.04 - 12642.80 - 31853.38 = 1288.73 exact. Detail prints 'Total Checks Paid $31,853.38' matching the summary's -31,853.38.",
@@ -159,8 +188,15 @@
         "totalCredits": 0.16,
         "totalDebits": 502519.38,
         "sectionTotals": [
-          { "type": "withdrawals-other-debits", "count": 62, "total": 499308.99 },
-          { "type": "service-fees", "total": 3210.39 }
+          {
+            "type": "withdrawals-other-debits",
+            "count": 62,
+            "total": 499308.99
+          },
+          {
+            "type": "service-fees",
+            "total": 3210.39
+          }
         ],
         "arithmeticVerified": true,
         "evidence": "502519.22 + 0.16 - 499308.99 - 0.00 - 3210.39 = 0.00 exact.",
@@ -185,9 +221,21 @@
         "totalDebits": 207595.5,
         "transactionCount": 8,
         "sectionTotals": [
-          { "type": "deposits-credits", "count": 2, "total": 70939.18 },
-          { "type": "checks", "count": 0, "total": 0.0 },
-          { "type": "other-debits", "count": 6, "total": 207595.5 }
+          {
+            "type": "deposits-credits",
+            "count": 2,
+            "total": 70939.18
+          },
+          {
+            "type": "checks",
+            "count": 0,
+            "total": 0.0
+          },
+          {
+            "type": "other-debits",
+            "count": 6,
+            "total": 207595.5
+          }
         ],
         "arithmeticVerified": true,
         "evidence": "200000.00 + 70939.18 - 0.00 - 207595.50 = 63343.68 exact. Deposit detail 32355.31 + 38583.87 = 70939.18 matches the stated Amount of Deposits/Credits.",
@@ -212,13 +260,50 @@
         "totalDebits": 366629.64,
         "transactionCount": 25,
         "sectionTotals": [
-          { "type": "deposits-credits", "count": 3, "total": 457632.54 },
-          { "type": "withdrawals-debits", "count": 22, "total": 366629.64 }
+          {
+            "type": "deposits-credits",
+            "count": 3,
+            "total": 457632.54
+          },
+          {
+            "type": "withdrawals-debits",
+            "count": 22,
+            "total": 366629.64
+          }
         ],
         "arithmeticVerified": true,
         "evidence": "379464.44 + 457632.54 - 366629.64 = 470467.34 exact. Deposit detail 329771.89 + 63535.47 + 64325.18 = 457632.54 matches '+ Deposits and Credits (3)'.",
         "notes": "Statement period 07/01/2026-07/31/2026. Prints the item count in parentheses beside each section total."
       }
     }
-  ]
+  ],
+  "blindStatus": {
+    "run": true,
+    "ranAt": "2026-09-14",
+    "verdict": "No-Go / Architecture Review",
+    "verifiedCorrect": 1,
+    "falseAccept": 2,
+    "partialCorrectChainPresent": 2,
+    "safeRefusal": 0,
+    "missedParse": 3,
+    "verifiedSafeCoverage": 0.125,
+    "recoverableCoverage": 0.375,
+    "falseAcceptanceRate": 0.667,
+    "realOnly": {
+      "verifiedCorrect": 0,
+      "falseAccept": 0,
+      "partialCorrect": 1,
+      "missedParse": 3,
+      "verifiedSafeCoverage": 0.0
+    },
+    "officialSampleOnly": {
+      "verifiedCorrect": 1,
+      "falseAccept": 2,
+      "partialCorrect": 1,
+      "missedParse": 0,
+      "verifiedSafeCoverage": 0.25,
+      "falseAcceptanceRate": 0.667
+    },
+    "demotedTo": "regression corpus \u2014 seen once, so no longer out-of-sample"
+  }
 }
