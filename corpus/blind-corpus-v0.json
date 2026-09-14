@@ -2,6 +2,14 @@
   "$comment": "Blind evaluation corpus manifest. Admission is manual and arithmetic-based; the parser was NOT run to decide eligibility. See corpus/ACQUISITION-REPORT.md.",
   "version": "blind-corpus-v0-draft",
   "generatedBy": "manual inspection of raw pdf.js text dumps (scripts/corpus-inspect.mjs), no parse2",
+  "corrections": [
+    {
+      "about": "fixtures/real/us-commerce-bank.pdf",
+      "finding": "SOURCE_NOT_SELF_CONSISTENT",
+      "evidence": "SHA-256 53cb0d6fcea0691c567f874309df843df7d7386842a5443907825fc3ddeb235c matches what commercebank.com serves today, so the file is authentic and complete. Its summary prints Checks Paid -200.00 while its detail lists 75.00 + 30.00 + 200.00 with a printed total of 305.00.",
+      "action": "removed from correctness regression, retained as a robustness fixture; G01 is the valid fixture for this layout family"
+    }
+  ],
   "entries": [
     {
       "id": "A03",

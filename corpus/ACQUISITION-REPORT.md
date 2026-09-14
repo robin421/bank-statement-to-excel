@@ -114,10 +114,32 @@ Commerce Bank business checking statement, same Kansas City address, same summar
 daily-balance structure. But G01 reconciles exactly and the existing file does not
 (its checks total 305.00 against a summary counting 200.00).
 
-So the earlier conclusion that "Commerce Bank is internally inconsistent" was wrong
-about the *cause*: the bank's layout is fine, and the copy in `fixtures/real/` is a
-mangled or truncated rendering of it. That file should be re-downloaded and
-re-checked, and it should not have been treated as a document with no ground truth.
+**Verified, and my first explanation was wrong.** I re-downloaded the original from
+`commercebank.com` and its SHA-256 is identical to the stored fixture
+(`53cb0d6f…`), so nothing was truncated in transit. Rendering the page confirms it is
+a complete single page that ends cleanly at `Total Checks Paid $305.00` — no missing
+daily-balance section, no page 2.
+
+So the document is authentic *and* internally inconsistent:
+
+```
+summary   Checks Paid   -200.00
+detail    75.00 + 30.00 + 200.00 = 305.00, printed "Total Checks Paid $305.00"
+gap       105.00
+```
+
+Both subtotals are self-consistent with themselves and disagree with each other, so
+no ledger reproduces the printed ending balance. The 2003 specimen is simply a
+flawed mock document.
+
+G01 settles it: the 2011 Commerce Bank statement in the St. Louis RFP is the same
+layout family and prints `Total Checks Paid $31,853.38` against a summary of
+`-31,853.38`. The bank's layout is correct; the 2003 specimen is wrong.
+
+Consequence: `us-commerce-bank.pdf` is marked `SOURCE_NOT_SELF_CONSISTENT` and
+removed from every correctness assertion in `tests/real-corpus.spec.ts`. It stays in
+the corpus as a robustness fixture — the parser must not crash on it and must not
+claim to have verified it. G01 is the valid fixture for that layout family.
 
 ## F. Not implemented (roadmap only)
 

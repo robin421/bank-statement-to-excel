@@ -537,3 +537,60 @@ Still not frozen, now for three recorded reasons:
 
 The next step is corpus, not code: find statements whose own arithmetic reconciles,
 with enough layout diversity to be worth calling a blind set.
+
+
+---
+
+## Stage 6: the Commerce Bank fixture is a flawed document, not a corrupt file
+
+Re-downloading the original settled it. The stored fixture's SHA-256 is identical to
+what `commercebank.com` serves today (`53cb0d6f…`), and rendering the page shows a
+complete single page ending cleanly at `Total Checks Paid $305.00`. Nothing was
+truncated.
+
+The document is authentic **and** internally inconsistent:
+
+```
+summary    Checks Paid   -200.00
+detail     75.00 + 30.00 + 200.00 = 305.00     (printed total $305.00)
+gap        105.00
+```
+
+The 2011 Commerce Bank statement inside the St. Louis RFP (corpus entry G01) is the
+same layout family and prints `Total Checks Paid $31,853.38` against a summary of
+`-31,853.38`. So the bank's layout is fine and the 2003 specimen is wrong.
+
+**This corrects two earlier statements of mine, both wrong:**
+
+- *"the decoder discards the ledger on accounting grounds"* — no; the ledger does not
+  reconcile, because the document does not.
+- *"the fixture is a mangled or truncated rendering"* — no; it is byte-identical to
+  the publisher's copy.
+
+**What survives.** The mechanism is still a real defect: the parser reported
+`verified` on a chain built by reading `75.00` — a cheque amount — as an *opening
+balance*, with the other cheques as its amounts and the category total as the close.
+75 + 30 + 200 = 305 makes it arithmetically valid and semantically meaningless. A
+transaction read as a balance is a false acceptance regardless of this document.
+
+**What changes.** The document cannot grade that defect, because it supplies no
+correct answer. `us-commerce-bank.pdf` is marked `SOURCE_NOT_SELF_CONSISTENT`,
+excluded from every correctness assertion, and retained only as a robustness fixture:
+the parser must not crash on it and must not claim to have verified it. G01 becomes
+the layout family's valid fixture.
+
+The general lesson, and the reason this was worth an hour: **a corpus needs a
+per-entry self-consistency check before admission, and an exclusion without a
+recorded reason is how a wrong ground truth hides.** Both are now enforced —
+`tests/real-corpus.spec.ts` fails if an excluded fixture has no reason attached.
+
+## Regression corpus: frozen
+
+| Fixture | Role |
+|---|---|
+| 10 synthetic layouts | implementation correctness, precise and deterministic |
+| `us-capital-one`, `de-sparkasse`, `de-postbank-muster`, `ch-sz-kantonalbank`, `fr-lafinancepourtous`, `py-bancop-tc`, `bo-bcp-extractos`, `pt-banco-de-portugal` | real-layout regression |
+| `us-commerce-bank` | **robustness only** — `SOURCE_NOT_SELF_CONSISTENT` |
+| `de-postbank-din-a4`, `us-impact-bank` | refusal regression (image-only) |
+
+Frozen. No further tuning against this corpus.
