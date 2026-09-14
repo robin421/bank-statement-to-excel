@@ -16,3 +16,8 @@ fixtures/reports/
 
 # Prototype scratch
 /fixtures/reports/
+
+# Corpus candidates and text dumps: re-downloadable, ~32MB, and statements are
+# third-party documents. Only the manifest and the report are committed.
+/corpus/candidates/
+/corpus/dump/

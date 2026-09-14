@@ -21,7 +21,8 @@
     "inspect:statement": "vite-node scripts/inspect-statement.ts --",
     "verify:real": "vite-node scripts/record-real-baseline.mjs",
     "seq:money": "vite-node scripts/seq-money.ts --",
-    "decode2": "vite-node scripts/decode2.ts --"
+    "decode2": "vite-node scripts/decode2.ts --",
+    "corpus:dump": "node scripts/corpus-inspect.mjs --"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.5",
