@@ -19,7 +19,9 @@
     "fixtures": "node fixtures/generate.mjs",
     "verify:bank": "vite-node scripts/verify-bank.mjs --",
     "inspect:statement": "vite-node scripts/inspect-statement.ts --",
-    "verify:real": "vite-node scripts/record-real-baseline.mjs"
+    "verify:real": "vite-node scripts/record-real-baseline.mjs",
+    "seq:money": "vite-node scripts/seq-money.ts --",
+    "decode2": "vite-node scripts/decode2.ts --"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.5",

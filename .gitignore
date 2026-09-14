@@ -13,3 +13,6 @@ fixtures/real/
 
 # Derived verification reports (aggregate-only, but local artifacts)
 fixtures/reports/
+
+# Prototype scratch
+/fixtures/reports/
