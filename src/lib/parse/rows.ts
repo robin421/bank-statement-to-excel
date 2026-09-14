@@ -1,4 +1,5 @@
 import { median } from './cluster';
+import { splitCellTokens } from './tokens';
 import type { PdfPageText, PdfTextItem } from '../pdf/types';
 
 export interface TextCell extends PdfTextItem {
@@ -43,7 +44,11 @@ export function buildRows(pages: PdfPageText[]): Row[] {
       if (!bucket.length) return;
       const cells: TextCell[] = bucket
         .map((item) => ({ ...item, page: page.pageNumber }))
-        .sort((a, b) => a.x - b.x);
+        .sort((a, b) => a.x - b.x)
+        // A run like "01.10.2021 Lastschrift -790,00" carries three things a
+        // human reads as three columns. Splitting it is what makes real
+        // statements parse — see tokens.ts.
+        .flatMap((cell) => splitCellTokens(cell));
       const rowHeight = median(cells.map((cell) => cell.h).filter((h) => h > 0)) || bodyHeight;
       rows.push({
         page: page.pageNumber,

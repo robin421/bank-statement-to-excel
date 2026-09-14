@@ -39,6 +39,17 @@ const CURRENCY_CODES = /\b(USD|EUR|GBP|INR|AUD|CAD|NZD|SGD|CHF|JPY|ZAR|NGN|HKD|S
 
 const NUMERIC_ONLY = /^[\d.,]+$/;
 
+/**
+ * Anything larger than this is not a bank amount.
+ *
+ * Statements contain reference lines like `26 26060 00000 00000 00000`, which
+ * concatenate into a 19-digit "number". Treated as money it produced a column
+ * band 114pt wide that overlapped the real ones and destroyed the column model
+ * on a real Swiss statement.
+ */
+const MAX_MAGNITUDE = 1e13;
+const MAX_DIGITS = 15;
+
 function detectCurrency(raw: string): string | undefined {
   for (const [symbol, code] of Object.entries(CURRENCY_SYMBOLS)) {
     if (raw.includes(symbol)) return code;
@@ -62,7 +73,11 @@ interface DecimalSplit {
  * means every separator is grouping.
  */
 export function normalizeNumeric(raw: string): DecimalSplit | null {
-  const s = raw.replace(/\s/g, '');
+  // Thousands separators include the Swiss apostrophe and the French narrow
+  // no-break space. Stripping them here is what makes `48'671.25` a number
+  // rather than a string — the export side already writes `1'234.56` for de-CH,
+  // and reading it back has to work too.
+  const s = raw.replace(/[\s'\u2019\u00A0\u202F]/g, '');
   if (!s || !/\d/.test(s) || !NUMERIC_ONLY.test(s)) return null;
 
   const separators = [...s].map((c, i) => (c === '.' || c === ',' ? i : -1)).filter((i) => i >= 0);
@@ -80,7 +95,11 @@ export function normalizeNumeric(raw: string): DecimalSplit | null {
 
   const integerPart = s.slice(0, lastIndex).replace(/[.,]/g, '');
   const fractionPart = s.slice(lastIndex + 1);
-  if (!integerPart) return null;
+  // A trailing separator is not a number. Postbank prints its dates as
+  // `23.05.` with the year stacked underneath, and reading that as 2305 turned a
+  // date into an amount and cost the whole statement.
+  if (!fractionPart) return null;
+  if (!integerPart) return { normalized: `0.${fractionPart}`, hasFraction: true };
   return { normalized: `${integerPart}.${fractionPart}`, hasFraction: true };
 }
 
@@ -148,6 +167,10 @@ export function parseAmount(raw: string): ParsedAmount | null {
 export function isAmountLike(raw: string): boolean {
   const parsed = parseAmount(raw);
   if (!parsed) return false;
+  // Reference numbers and payment-slip code lines concatenate into enormous
+  // integers. They are not amounts and must not become columns.
+  if (parsed.magnitude >= MAX_MAGNITUDE) return false;
+  if ((raw.match(/\d/g) ?? []).length > MAX_DIGITS) return false;
   // Reject bare small integers: they are overwhelmingly row numbering, cheque
   // numbers and page numbers rather than transaction amounts.
   if (!parsed.strong && parsed.magnitude < 1000) return false;

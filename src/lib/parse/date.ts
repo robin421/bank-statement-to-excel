@@ -26,25 +26,63 @@ export interface DateOrderGuess {
   evidence: { mdy: number; dmy: number };
 }
 
+/**
+ * Month names across the markets this tool serves.
+ *
+ * Keys are lower-cased and stripped of diacritics, so `Okt`, `okt`, `mär` and
+ * `déc` all resolve without listing every accented spelling. Restricting this to
+ * English was a real bug: a German statement printing `01. Okt 2021` parsed to
+ * no date at all, and therefore to no rows.
+ *
+ * The abbreviations do not collide across languages — `mar` is March in English,
+ * Spanish and French; `mai` is May in German, French and Portuguese; `set` is
+ * September in Portuguese and Italian. That is why one flat map is safe.
+ */
 const MONTHS: Record<string, number> = {
-  jan: 1, january: 1,
-  feb: 2, february: 2,
-  mar: 3, march: 3,
-  apr: 4, april: 4,
-  may: 5,
-  jun: 6, june: 6,
-  jul: 7, july: 7,
-  aug: 8, august: 8,
-  sep: 9, sept: 9, september: 9,
-  oct: 10, october: 10,
-  nov: 11, november: 11,
-  dec: 12, december: 12,
+  // English
+  jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3, apr: 4, april: 4, may: 5,
+  jun: 6, june: 6, jul: 7, july: 7, aug: 8, august: 8, sep: 9, sept: 9, september: 9,
+  oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12,
+
+  // German. `Mär` and `März` normalise to `mar` and `marz`; the `ae` spellings
+  // are for statements and exports that transliterate.
+  januar: 1, jaen: 1, janner: 1, februar: 2, marz: 3, maer: 3, maerz: 3, mrz: 3,
+  mai: 5, juni: 6, juli: 7, august: 8, okt: 10, oktober: 10, dez: 12, dezember: 12,
+
+  // French
+  janv: 1, janvier: 1, fevr: 2, fevrier: 2, mars: 3, avr: 4, avril: 4, juin: 6,
+  juil: 7, juillet: 7, aout: 8, septembre: 9, octobre: 10, novembre: 11, decembre: 12,
+
+  // Spanish
+  ene: 1, enero: 1, febrero: 2, marzo: 3, abr: 4, abril: 4, mayo: 5, junio: 6,
+  julio: 7, ago: 8, agosto: 8, septiembre: 9, octubre: 10, noviembre: 11, dic: 12, diciembre: 12,
+
+  // Portuguese
+  janeiro: 1, fev: 2, fevereiro: 2, marco: 3, maio: 5, junho: 6, julho: 7,
+  set: 9, setembro: 9, out: 10, outubro: 10, dezembro: 12,
+
+  // Italian
+  gen: 1, gennaio: 1, febbraio: 2, aprile: 4, mag: 5, maggio: 5, giu: 6, giugno: 6,
+  lug: 7, luglio: 7, settembre: 9, ott: 10, ottobre: 10, dicembre: 12,
+
+  // Dutch
+  januari: 1, februari: 2, mrt: 3, maart: 3, mei: 5, juni: 6, juli: 7, augustus: 8,
 };
+
+function monthNumber(raw: string): number | undefined {
+  const key = raw
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/\.$/, '');
+  return MONTHS[key];
+}
 
 const ISO_RE = /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/;
 const NUMERIC_RE = /^(\d{1,2})([/\-.])(\d{1,2})(?:\2(\d{2,4}))?$/;
-const DAY_MONTH_RE = /^(\d{1,2})[\s\-.]?([A-Za-z]{3,9})\.?[\s\-.,]*(\d{2,4})?$/;
-const MONTH_DAY_RE = /^([A-Za-z]{3,9})\.?[\s\-.]?(\d{1,2}),?[\s]*(\d{2,4})?$/;
+// `\p{L}` rather than `[A-Za-z]` so `Mär`, `août` and `déc` match.
+const DAY_MONTH_RE = /^(\d{1,2})[\s\-.]{1,2}(\p{L}{3,9})\.?[\s\-.,]*(\d{2,4})?$/u;
+const MONTH_DAY_RE = /^(\p{L}{3,9})\.?[\s\-.]{1,2}(\d{1,2}),?[\s]*(\d{2,4})?$/u;
 
 function normalizeYear(raw: string | undefined): number | null {
   if (!raw) return null;
@@ -95,7 +133,10 @@ export function isDateLike(raw: string): boolean {
  * which is the single most common source of phantom transactions.
  */
 export function parseDate(raw: string, order: DateOrder = 'MDY', fallbackYear: number | null = null): ParsedDate | null {
-  const s = raw.trim().replace(/\s+/g, ' ');
+  // Some banks terminate a date with a separator and stack the year on the line
+  // below (Postbank prints `23.05.` with `2023` underneath). Dropping one
+  // trailing separator is what lets that date be recognised at all.
+  const s = raw.trim().replace(/([./-])$/, '').replace(/\s+/g, ' ');
   if (!s || s.length > 24) return null;
 
   const iso = s.match(ISO_RE);
@@ -140,7 +181,7 @@ export function parseDate(raw: string, order: DateOrder = 'MDY', fallbackYear: n
 
   const dayMonth = s.match(DAY_MONTH_RE);
   if (dayMonth) {
-    const month = MONTHS[dayMonth[2].toLowerCase()];
+    const month = monthNumber(dayMonth[2]);
     const day = Number.parseInt(dayMonth[1], 10);
     const year = normalizeYear(dayMonth[3]) ?? fallbackYear;
     if (month && isValidYmd(year, month, day)) {
@@ -151,7 +192,7 @@ export function parseDate(raw: string, order: DateOrder = 'MDY', fallbackYear: n
 
   const monthDay = s.match(MONTH_DAY_RE);
   if (monthDay) {
-    const month = MONTHS[monthDay[1].toLowerCase()];
+    const month = monthNumber(monthDay[1]);
     const day = Number.parseInt(monthDay[2], 10);
     const year = normalizeYear(monthDay[3]) ?? fallbackYear;
     if (month && isValidYmd(year, month, day)) {

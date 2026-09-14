@@ -1,4 +1,4 @@
-import { classifyCell, isInBand, type ColumnBand, type ColumnModel } from './columns';
+import { bandForCell, classifyCell, isInBand, type ColumnBand, type ColumnModel } from './columns';
 import { normalizeRowKey, type Row, type TextCell } from './rows';
 import { parseAmount, type ParsedAmount } from './amount';
 import { parseDate, type DateOrder } from './date';
@@ -112,7 +112,7 @@ function moneyForRow(row: Row, model: ColumnModel): RowMoney[] {
   for (const cell of row.cells) {
     const kind = classifyCell(cell);
     if (kind !== 'money' && kind !== 'weak_number') continue;
-    const band = model.moneyBands.find((candidate) => isInBand(cell, candidate));
+    const band = bandForCell(cell, model.moneyBands);
     if (!band) continue;
     const parsed = parseAmount(cell.str);
     if (!parsed) continue;

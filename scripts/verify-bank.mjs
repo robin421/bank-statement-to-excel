@@ -48,16 +48,27 @@ if (bankSlug && !bank) {
 }
 
 const bytes = new Uint8Array(fs.readFileSync(file));
-const doc = await pdfjs.getDocument({
-  data: bytes,
-  password: flag('password'),
-  useSystemFonts: false,
-  disableFontFace: true,
-  standardFontDataUrl: STANDARD_FONTS,
-}).promise;
 
-const result = await convertDocument(doc);
-await doc.destroy?.();
+let result;
+try {
+  const doc = await pdfjs.getDocument({
+    data: bytes,
+    password: flag('password'),
+    useSystemFonts: false,
+    disableFontFace: true,
+    standardFontDataUrl: STANDARD_FONTS,
+  }).promise;
+  result = await convertDocument(doc);
+  await doc.destroy?.();
+} catch (error) {
+  // A scan is a normal outcome, not a crash. Report it the same way the UI does.
+  const name = error?.name;
+  const message = error instanceof Error ? error.message : String(error);
+  console.log(`\n${path.basename(file)}`);
+  console.log(`  refused                   ${name ?? 'Error'}: ${message}`);
+  console.log(`\n  FAIL — nothing to publish (the parser refused rather than guessing)\n`);
+  process.exit(1);
+}
 
 const rate = result.reconciliation.passRate;
 const checked = result.reconciliation.checked;

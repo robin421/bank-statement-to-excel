@@ -116,6 +116,73 @@ the whole pipeline is unit-testable in Node and cannot accidentally depend on th
 
 ---
 
+## Testing against real statements, not just our own
+
+The synthetic corpus scored **100%** while real Sparkasse and Postbank statements
+parsed to **zero rows**. A corpus you generate yourself tests your assumptions,
+not the world. That gap is the single most useful thing this project has learned,
+so there are now two corpora:
+
+| Corpus | Lives in | Committed | Purpose |
+|---|---|---|---|
+| Synthetic | `fixtures/pdf/` | yes | Precise, deterministic checks of known behaviours |
+| Real | `fixtures/real/` | **no** | Catches what synthetic fixtures cannot |
+
+The real corpus is not committed — the files are third-party documents. Their
+*results* are: `fixtures/real-baseline.json` records what the parser currently
+achieves, and `tests/real-corpus.spec.ts` fails if any statement gets worse. The
+suite skips cleanly when the files are absent.
+
+The baseline is a **floor, not a target**. Several of these layouts do not parse
+properly yet. Raise the numbers as the parser improves; never lower them to make
+a build pass.
+
+### Current state of the real corpus
+
+```
+parsed        9
+refused       2   (image-only PDFs — the parser says so rather than guessing)
+publishable   1
+```
+
+"Publishable" means the statement reconciled against its own running balance,
+which is the bar for a bank page. One out of eleven is the honest number, and the
+test asserts it so it cannot quietly be assumed higher.
+
+### Getting the corpus
+
+Banks publish sample statements for customers. Search the bank's own domain for
+`filetype:pdf "sample statement"` — a statement downloaded from anywhere else is
+usually an SEO-spam template that proves nothing about the real layout.
+
+```bash
+npm run verify:bank -- fixtures/real/chase-jan.pdf --bank chase   # one statement
+npm run inspect:statement -- fixtures/real/x.pdf 40 bands         # what the parser sees
+npm run verify:real                                                # re-record the baseline
+```
+
+### Bugs these real statements found
+
+Every one of these passed the synthetic corpus:
+
+- **Merged text runs.** Real PDFs draw `01.10.2021 Lastschrift -790,00` as a
+  *single* run, so "a date is its own cell" was false and the statement produced
+  no rows at all. `parse/tokens.ts` now splits a leading date and a trailing
+  amount out of a run.
+- **Month names were English-only.** A German statement printing `01. Okt 2021`
+  parsed to no date, and therefore to no rows. `tests/months.spec.ts` now walks
+  all twelve months in seven languages — it immediately caught `dic`, `abr`,
+  `ago` and `mars` missing, and a wrong `maer` → January.
+- **`23.05.` read as the amount 2305.** Postbank stacks the year under the date,
+  so the day/month arrives with a trailing separator. `normalizeNumeric` accepted
+  it as `2305.` and turned a date into money.
+- **Swiss apostrophe thousands.** `48'671.25` was not a number. The export side
+  already wrote `1'234.56` for `de-CH`; the import side never read it.
+- **Reference lines became columns.** `26 26060 00000 00000 00000` concatenated
+  into a 19-digit integer, producing a 114pt-wide column band that overlapped the
+  real ones and destroyed the column model. Amounts are now sanity-capped.
+- **Band matching took the first overlap** rather than the nearest anchor.
+
 ## Bank pages, and why most of them do not exist
 
 `/banks/` explains how to get a readable file out of any bank. Individual

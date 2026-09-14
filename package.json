@@ -17,7 +17,9 @@
     "test:watch": "vitest",
     "verify": "npm run typecheck && vitest run && npm run build && npm run check:links",
     "fixtures": "node fixtures/generate.mjs",
-    "verify:bank": "vite-node scripts/verify-bank.mjs --"
+    "verify:bank": "vite-node scripts/verify-bank.mjs --",
+    "inspect:statement": "vite-node scripts/inspect-statement.ts --",
+    "verify:real": "vite-node scripts/record-real-baseline.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.5",

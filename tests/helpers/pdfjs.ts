@@ -51,4 +51,16 @@ export async function openFixture(name: string, password?: string) {
   }).promise;
 }
 
+/** Open any PDF by absolute path — used for the real-statement corpus. */
+export async function openPdf(absolutePath: string, password?: string) {
+  const data = new Uint8Array(fs.readFileSync(absolutePath));
+  return pdfjs.getDocument({
+    data,
+    password,
+    useSystemFonts: false,
+    disableFontFace: true,
+    standardFontDataUrl: STANDARD_FONTS,
+  }).promise;
+}
+
 export { pdfjs };

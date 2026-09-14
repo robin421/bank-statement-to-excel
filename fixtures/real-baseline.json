@@ -1,0 +1,82 @@
+{
+  "bo-bcp-extractos.pdf": {
+    "outcome": "parsed",
+    "pages": 2,
+    "rows": 0,
+    "reconcileRate": 0,
+    "reconcileChecked": 0,
+    "quality": "low_confidence"
+  },
+  "ch-sz-kantonalbank.pdf": {
+    "outcome": "parsed",
+    "pages": 1,
+    "rows": 3,
+    "reconcileRate": 0.5,
+    "reconcileChecked": 2,
+    "quality": "ok"
+  },
+  "de-postbank-din-a4.pdf": {
+    "outcome": "refused",
+    "reason": "NO_TEXT_LAYER"
+  },
+  "de-postbank-muster.pdf": {
+    "outcome": "parsed",
+    "pages": 2,
+    "rows": 12,
+    "reconcileRate": 0.3333,
+    "reconcileChecked": 3,
+    "quality": "low_confidence"
+  },
+  "de-sparkasse-ksk-tuttlingen.pdf": {
+    "outcome": "parsed",
+    "pages": 2,
+    "rows": 12,
+    "reconcileRate": 0,
+    "reconcileChecked": 0,
+    "quality": "ok"
+  },
+  "fr-lafinancepourtous.pdf": {
+    "outcome": "parsed",
+    "pages": 1,
+    "rows": 15,
+    "reconcileRate": 0,
+    "reconcileChecked": 0,
+    "quality": "ok"
+  },
+  "pt-banco-de-portugal.pdf": {
+    "outcome": "parsed",
+    "pages": 3,
+    "rows": 0,
+    "reconcileRate": 0,
+    "reconcileChecked": 0,
+    "quality": "low_confidence"
+  },
+  "py-bancop-tc.pdf": {
+    "outcome": "parsed",
+    "pages": 1,
+    "rows": 19,
+    "reconcileRate": 0,
+    "reconcileChecked": 1,
+    "quality": "ok"
+  },
+  "us-capital-one.pdf": {
+    "outcome": "parsed",
+    "pages": 1,
+    "rows": 5,
+    "reconcileRate": 1,
+    "reconcileChecked": 4,
+    "quality": "ok"
+  },
+  "us-commerce-bank.pdf": {
+    "outcome": "parsed",
+    "pages": 1,
+    "rows": 5,
+    "reconcileRate": 0,
+    "reconcileChecked": 2,
+    "quality": "ok"
+  },
+  "us-impact-bank.pdf": {
+    "outcome": "refused",
+    "reason": "NO_TEXT_LAYER"
+  }
+}

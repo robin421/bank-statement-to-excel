@@ -204,3 +204,26 @@ export function isInBand(cell: TextCell, band: ColumnBand, tolerance = 6): boole
   const centre = cell.x + cell.w / 2;
   return centre >= band.left - tolerance && centre <= band.right + tolerance;
 }
+
+/**
+ * Pick the band a cell belongs to.
+ *
+ * Bands can overlap — a right-aligned amount and a right-aligned balance sit at
+ * different x but their cells can span similar ranges — so "first band that
+ * contains the centre" is not good enough. Nearest anchor wins, which is stable
+ * because anchors are what the bands were clustered on.
+ */
+export function bandForCell(cell: TextCell, bands: ColumnBand[], tolerance = 10): ColumnBand | undefined {
+  const centre = cell.x + cell.w / 2;
+  let best: ColumnBand | undefined;
+  let bestDistance = Number.POSITIVE_INFINITY;
+  for (const band of bands) {
+    if (centre < band.left - tolerance || centre > band.right + tolerance) continue;
+    const distance = Math.abs(band.anchor - centre);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = band;
+    }
+  }
+  return best;
+}
