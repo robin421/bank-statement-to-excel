@@ -27,6 +27,12 @@ export interface LayoutNote {
 }
 
 export interface VerificationRecord {
+  /**
+   * Where the statement came from. A bank-published sample has the real layout
+   * but may not cover every account type, so a page built on one has to say so
+   * rather than claiming it was tested against a customer statement.
+   */
+  source: 'bank-published sample' | 'customer statement';
   /** ISO date the statement was tested. */
   date: string;
   pages: number;

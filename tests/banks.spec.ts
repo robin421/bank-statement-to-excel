@@ -21,6 +21,7 @@ import {
 
 function record(overrides: Partial<VerificationRecord> = {}): VerificationRecord {
   return {
+    source: 'customer statement',
     date: '2025-03-01',
     pages: 2,
     rows: 40,
@@ -105,6 +106,16 @@ describe('bank dataset', () => {
     // published a bank without evidence (fix the dataset, not this test).
     expect(verifiedBanks()).toHaveLength(0);
     expect(BANKS.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it('records where each verification came from', () => {
+    // "Tested against a real statement" is a stronger claim than "tested against
+    // the bank's published sample", and the page wording depends on which it is.
+    for (const entry of BANKS) {
+      for (const verification of entry.verifications) {
+        expect(['bank-published sample', 'customer statement']).toContain(verification.source);
+      }
+    }
   });
 
   it('finds a bank by slug and returns undefined otherwise', () => {
