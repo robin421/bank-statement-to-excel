@@ -21,3 +21,7 @@ fixtures/reports/
 # third-party documents. Only the manifest and the report are committed.
 /corpus/candidates/
 /corpus/dump/
+
+# Blind evaluation artifacts: raw parser output for the frozen blind run.
+# Committed selectively (summary + report); per-file JSON is large.
+/artifacts/

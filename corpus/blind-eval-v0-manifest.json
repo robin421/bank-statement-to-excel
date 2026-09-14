@@ -1,0 +1,224 @@
+{
+  "$comment": "FROZEN before any parser output existed for these files. Ground truth comes from the manual corpus-admission pass (raw pdf.js text + hand arithmetic), never from parser output. Do not edit after the blind run.",
+  "version": "blind-eval-v0",
+  "frozenAt": "2026-09-14",
+  "parserSnapshot": {
+    "commit": "9a047d4",
+    "dirty": false,
+    "beamWidth": 40000,
+    "maxRoleTokensPerLine": 5,
+    "minCandidateConfidence": 0.55,
+    "dateLookbackLines": 2,
+    "minDetailScore": 0.35,
+    "minChainScoreGap": 0.15,
+    "evidenceWeights": { "dateCoverage": 1, "datedAmountCoverage": 0.6, "entryCount": 0.15, "entryCountSaturation": 10 },
+    "knownTunedParameter": "beamWidth is empirical, not derived: 12k lost a correct chain that 40k recovers. Held fixed for this run.",
+    "fileHashes": {
+      "decode.ts": "ca3bb47c6554e932570b0d6db19ecabe126e359ed93243abada62665d6470cf0",
+      "chain-selection/select.ts": "6b4eb1c8d63f26fa989e5ee50b912f5e6e1b561ae4cc2bd72947bd5f99d6d323",
+      "chain-selection/evidence.ts": "dac306d4730962ed63fdaeeb3541357dfe7b2864609532a765a9c34cbb8d6877",
+      "amounts.ts": "17d5b82cd567c22230e1069ffcb317ceb6cbbb67c367cf9b29fb870b8f84c787",
+      "lines.ts": "acb8ba23741ffa0b703a950e2f26cf63c06db407895971960fb7c3a7bd94266b",
+      "tokens.ts": "bf4e91a064cd6d0fbbb9595ef68b19c8153e9d416ea62de38b972661b3df3bc1"
+    }
+  },
+  "entries": [
+    {
+      "id": "A03",
+      "path": "corpus/candidates/A03-leominstercu-read.pdf",
+      "bank": "Leominster Credit Union",
+      "country": "US",
+      "transactionNature": "official_sample",
+      "layoutFamily": "lcu-multi-account-withdrawal-deposit-balance",
+      "accountType": "savings",
+      "pageCount": 1,
+      "textLayer": true,
+      "balanceStructure": "running_balance",
+      "groundTruth": {
+        "openingBalance": 20649.65,
+        "closingBalance": 20835.37,
+        "totalCredits": 402.72,
+        "totalDebits": 217.0,
+        "sectionTotals": [
+          { "type": "savings-deposits", "total": 402.72 },
+          { "type": "savings-withdrawals", "total": 217.0 }
+        ],
+        "arithmeticVerified": true,
+        "evidence": "20649.65 + 402.72 - 217.00 = 20835.37 exact; row check 20649.65 - 217.00 = 20432.65 exact.",
+        "notes": "Document also contains a Checking section and a loan balance block. Only the Savings section is admitted as ground truth."
+      }
+    },
+    {
+      "id": "A04",
+      "path": "corpus/candidates/A04-thebancorp-sample.pdf",
+      "bank": "The Bancorp Bank, N.A.",
+      "country": "US",
+      "transactionNature": "official_sample",
+      "layoutFamily": "bancorp-two-panel-daily-balance",
+      "accountType": "business",
+      "pageCount": 4,
+      "textLayer": true,
+      "balanceStructure": "sparse_balance",
+      "groundTruth": {
+        "openingBalance": 6.97,
+        "closingBalance": 7.08,
+        "totalCredits": 13.68,
+        "totalDebits": 13.57,
+        "sectionTotals": [
+          { "type": "total-additions", "total": 13.68 },
+          { "type": "total-subtractions", "total": 13.57 }
+        ],
+        "arithmeticVerified": true,
+        "evidence": "6.97 + 13.68 - 13.57 = 7.08 exact.",
+        "notes": "Two side-by-side panels (DEBITS/Subtractions, CREDITS/Additions) plus a DAILY BALANCES table. Page 3 carries a loan roll-forward. Only the page-1 checking section is admitted as ground truth."
+      }
+    },
+    {
+      "id": "A05",
+      "path": "corpus/candidates/A05-rbc-estatement.pdf",
+      "bank": "RBC Royal Bank",
+      "country": "CA",
+      "transactionNature": "official_sample",
+      "layoutFamily": "rbc-summary-then-detail-running-balance",
+      "accountType": "checking",
+      "pageCount": 1,
+      "textLayer": true,
+      "balanceStructure": "running_balance",
+      "groundTruth": {
+        "openingBalance": 4247.14,
+        "closingBalance": 3664.79,
+        "totalCredits": 145.15,
+        "totalDebits": 727.5,
+        "arithmeticVerified": true,
+        "evidence": "4247.14 + 145.15 - 727.50 = 3664.79 exact.",
+        "notes": "Explicit opening/deposits/withdrawals/closing summary, then a detail table with Withdrawals, Deposits, Balance columns and dates printed as '15 Mar'."
+      }
+    },
+    {
+      "id": "S02",
+      "path": "corpus/candidates/S02-stretto-pleading-a.pdf",
+      "bank": "Wells Fargo Bank, N.A.",
+      "country": "US",
+      "transactionNature": "real",
+      "layoutFamily": "wells-fargo-commercial-account-summary-daily-ledger",
+      "accountType": "business",
+      "pageCount": 30,
+      "textLayer": true,
+      "balanceStructure": "sparse_balance",
+      "groundTruth": {
+        "openingBalance": 2433.11,
+        "closingBalance": 2440.86,
+        "totalCredits": 7.75,
+        "totalDebits": 0.0,
+        "transactionCount": 1,
+        "sectionTotals": [{ "type": "electronic-deposits-bank-credits", "count": 1, "total": 7.75 }],
+        "arithmeticVerified": true,
+        "evidence": "2433.11 + 7.75 - 0.00 = 2440.86 exact.",
+        "notes": "Genuine Wells Fargo Commercial Interest Checking statement filed as a bankruptcy exhibit. One transaction: 04/30 Interest Payment 7.75. Document is 30 pages; the statement occupies part of it."
+      }
+    },
+    {
+      "id": "G01",
+      "path": "corpus/candidates/G01-stlouis-treasurer-rfp.pdf",
+      "bank": "Commerce Bank",
+      "country": "US",
+      "transactionNature": "official_sample",
+      "layoutFamily": "commerce-bank-business-checking-summary-daily-balance",
+      "accountType": "business",
+      "pageCount": 143,
+      "textLayer": true,
+      "balanceStructure": "sparse_balance",
+      "groundTruth": {
+        "openingBalance": 4823.87,
+        "closingBalance": 1288.73,
+        "totalCredits": 40961.04,
+        "totalDebits": 44496.18,
+        "sectionTotals": [
+          { "type": "withdrawals-other-debits", "total": 12642.8 },
+          { "type": "checks-paid", "total": 31853.38 }
+        ],
+        "arithmeticVerified": true,
+        "evidence": "4823.87 + 40961.04 - 12642.80 - 31853.38 = 1288.73 exact. Detail prints 'Total Checks Paid $31,853.38' matching the summary's -31,853.38.",
+        "notes": "Sample statement occupies pages 58-60 of a City of St. Louis Treasurer RFP. Same layout family as the excluded us-commerce-bank.pdf, whose own summary and detail disagree."
+      }
+    },
+    {
+      "id": "C05",
+      "path": "corpus/court/C05-stretto-X048.pdf",
+      "bank": "unnamed (three accounts)",
+      "country": "US",
+      "transactionNature": "real",
+      "layoutFamily": "operating-account-summary-deposits-withdrawals-checks-fees",
+      "accountType": "business",
+      "pageCount": 34,
+      "textLayer": true,
+      "balanceStructure": "opening_closing_only",
+      "groundTruth": {
+        "openingBalance": 502519.22,
+        "closingBalance": 0.0,
+        "totalCredits": 0.16,
+        "totalDebits": 502519.38,
+        "sectionTotals": [
+          { "type": "withdrawals-other-debits", "count": 62, "total": 499308.99 },
+          { "type": "service-fees", "total": 3210.39 }
+        ],
+        "arithmeticVerified": true,
+        "evidence": "502519.22 + 0.16 - 499308.99 - 0.00 - 3210.39 = 0.00 exact.",
+        "notes": "Bankruptcy exhibit (Case 20-30149, Doc 581) containing three separate August 2020 statements. Only account 1 (opening 502,519.22) is admitted as ground truth; the other two (42,092.45 and 24,395.71) are not yet verified."
+      }
+    },
+    {
+      "id": "C06",
+      "path": "corpus/court/C06-stretto-x130.pdf",
+      "bank": "Bank of America, N.A.",
+      "country": "US",
+      "transactionNature": "real",
+      "layoutFamily": "boa-full-analysis-checking-summary-plus-detail",
+      "accountType": "business",
+      "pageCount": 18,
+      "textLayer": true,
+      "balanceStructure": "opening_closing_only",
+      "groundTruth": {
+        "openingBalance": 200000.0,
+        "closingBalance": 63343.68,
+        "totalCredits": 70939.18,
+        "totalDebits": 207595.5,
+        "transactionCount": 8,
+        "sectionTotals": [
+          { "type": "deposits-credits", "count": 2, "total": 70939.18 },
+          { "type": "checks", "count": 0, "total": 0.0 },
+          { "type": "other-debits", "count": 6, "total": 207595.5 }
+        ],
+        "arithmeticVerified": true,
+        "evidence": "200000.00 + 70939.18 - 0.00 - 207595.50 = 63343.68 exact. Deposit detail 32355.31 + 38583.87 = 70939.18 matches the stated Amount of Deposits/Credits.",
+        "notes": "Bankruptcy exhibit, statement period 04/01/2021-04/30/2021, 'FULL ANALYSIS CHECKING'. The statement states item counts per section, which is an independent cross-check."
+      }
+    },
+    {
+      "id": "C10",
+      "path": "corpus/court/C10-stretto-X491.pdf",
+      "bank": "unnamed (OPERATING)",
+      "country": "US",
+      "transactionNature": "real",
+      "layoutFamily": "operating-balance-summary-with-counted-sections",
+      "accountType": "business",
+      "pageCount": 29,
+      "textLayer": true,
+      "balanceStructure": "opening_closing_only",
+      "groundTruth": {
+        "openingBalance": 379464.44,
+        "closingBalance": 470467.34,
+        "totalCredits": 457632.54,
+        "totalDebits": 366629.64,
+        "transactionCount": 25,
+        "sectionTotals": [
+          { "type": "deposits-credits", "count": 3, "total": 457632.54 },
+          { "type": "withdrawals-debits", "count": 22, "total": 366629.64 }
+        ],
+        "arithmeticVerified": true,
+        "evidence": "379464.44 + 457632.54 - 366629.64 = 470467.34 exact. Deposit detail 329771.89 + 63535.47 + 64325.18 = 457632.54 matches '+ Deposits and Credits (3)'.",
+        "notes": "Statement period 07/01/2026-07/31/2026. Prints the item count in parentheses beside each section total."
+      }
+    }
+  ]
+}
