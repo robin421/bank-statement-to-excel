@@ -456,3 +456,84 @@ evidence-backed way to close it.** Freezing weights around it would bake it in.
 The next step is not another rule. It is more statements — specifically statements
 whose own figures reconcile, since a corpus that cannot supply ground truth cannot
 validate a fix.
+
+
+---
+
+## Stage 5: expanding the corpus exposed a scaling bug and a brittle parameter
+
+The bottleneck was never parsing more documents — it was **finding documents worth
+parsing**. Searching Bing (DuckDuckGo's `filetype:` index is too thin) for
+bank-published and institution-published samples, then decoding the `u=` redirect
+parameter, produced seven usable files. Results across 19 documents:
+
+```
+verified 6   partial 10   refused 3     85/85 balance constraints satisfied
+```
+
+### A dense line hung the decoder outright
+
+`us-bankofamerica-howtoread.pdf` — a Bank of America "how to read your statement"
+guide — put **34 money figures on a single line**. Line expansion enumerates role
+combinations per figure, so that line alone was 4^34 branches. The first corpus run
+timed out at 20 minutes.
+
+Two fixes: figures beyond the best five on a line keep being *charged* as
+unexplained but may not take a role (a transaction row has one to three figures;
+thirty is a dense layout), and the per-line ranking is computed once instead of on
+every recursion step. The corpus now decodes in about four minutes.
+
+The refusal itself is correct behaviour: the guide produced **16 chains** and the
+ambiguity detector declined to verify any of them, gap 0.03.
+
+### The beam width is load-bearing, and that is not a good sign
+
+Reducing live states from 120,000 to 12,000 for speed **silently lost the correct
+chain for `fr-lafinancepourtous`** — a real French statement went from `verified` to
+`NO_RECONCILED_CHAIN`. At 20,000 it still failed. At 40,000 it returns.
+
+So the decoder is not solved, it is *tuned to a size that happens to work for these
+19 documents*. That is exactly the state the brief warns against freezing, and it is
+recorded here rather than buried in a constant.
+
+### What the new documents actually are
+
+Of seven downloads, five are **fabricated samples** — university admissions offices,
+a city government, a document-tools vendor — and produce no chain at all. That is
+the parser behaving correctly on documents that contain no consistent ledger.
+
+The bottleneck for evaluation is therefore **corpus admission, not parsing**: a
+usable statement must be one whose own figures reconcile, and most public "samples"
+are illustrations rather than statements. Commerce Bank remains the clearest proof:
+it was in this corpus for three stages as the key regression case, and it is a
+document with no consistent ledger.
+
+### Corpus admission filter — proposal, not implemented
+
+The check that would have caught Commerce Bank on arrival, and that did catch it
+late, is arithmetic rather than keyword:
+
+```
+admit a document only if SOME reconciled chain spans >= 2 amounts and >= 80% of
+those amounts are dated
+```
+
+Commerce Bank's summary chain spans 3 amounts and is 0% dated; its dated chains span
+2 amounts but reconcile only by reading a transaction as an opening balance. Neither
+satisfies the rule. It is not implemented because it would be a fifth rule fitted to
+the one document known to violate it — the same overfitting the previous stage
+stopped on.
+
+## Where this leaves the freeze
+
+Still not frozen, now for three recorded reasons:
+
+1. **A known false acceptance** (Commerce Bank) with no evidence-backed fix.
+2. **A parameter that is tuned, not derived** — the beam width changes whether a real
+   statement verifies.
+3. **A corpus that mostly cannot supply ground truth** — five of seven new documents
+   are fabricated samples, and one of the eleven original ones is internally
+   inconsistent.
+
+The next step is corpus, not code: find statements whose own arithmetic reconciles,
+with enough layout diversity to be worth calling a blind set.

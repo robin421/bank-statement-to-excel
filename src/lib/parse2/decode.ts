@@ -79,7 +79,27 @@ const W_UNEXPLAINED = 8;
  */
 const W_CHAIN_START = 4;
 /** Default cap on live states. Bounded so a browser tab stays responsive. */
-export const DEFAULT_MAX_STATES = 120_000;
+export const DEFAULT_MAX_STATES = 40_000;
+
+/**
+ * Most money figures on one line that may be given a role.
+ *
+ * The width is load-bearing: at 20,000 states the correct sum for a real French
+ * statement was pruned away and the statement lost its chain entirely, so this is
+ * not free to lower. 40,000 restores it and still decodes the 19-file corpus in
+ * about a minute.
+ *
+ * A transaction line carries one to three figures — an amount, sometimes a
+ * separate debit and credit, sometimes a balance. A line carrying thirty is not a
+ * transaction row, it is a dense layout: a Bank of America "how to read your
+ * statement" guide puts 34 annotation callouts on a single line, and enumerating
+ * role combinations for them is 4^34, which hung the decoder outright.
+ *
+ * Figures past this many are still *charged* as unexplained, so they count against
+ * a parse rather than vanishing from the accounting. Only their role options are
+ * dropped, which is where the explosion came from.
+ */
+const MAX_ROLE_TOKENS_PER_LINE = 5;
 
 export type Role = 'amount' | 'anchor' | 'ignored';
 
@@ -235,7 +255,21 @@ export function decode(lines: LineEvent[], options: { maxStates?: number; minCon
       // them independently let a token be silently dropped whenever a sibling on
       // the same line was consumed, which under-reported unexplained money and
       // allowed a wrong parse to look clean.
-      expandLine(state, line, minConfidence, consider);
+      expandLine(
+        state,
+        line,
+        minConfidence,
+        consider,
+        // Ranked once per line. A transaction row has one to three figures; a line
+        // with thirty is a dense layout, and enumerating roles for all of them is
+        // what hung the decoder on a Bank of America statement guide.
+        new Set(
+          [...line.money]
+            .sort((a, b) => b.confidence - a.confidence)
+            .slice(0, MAX_ROLE_TOKENS_PER_LINE)
+            .map((entry) => entry.token.id),
+        ),
+      );
     }
 
     beam = [...next.values()].sort((a, b) => b.score - a.score);
@@ -315,6 +349,7 @@ function expandLine(
   line: LineEvent,
   minConfidence: number,
   consider: (state: State) => void,
+  roleEligible: Set<string>,
   index = 0,
 ): void {
   if (index >= line.money.length) {
@@ -344,6 +379,7 @@ function expandLine(
       line,
       minConfidence,
       consider,
+      roleEligible,
       index + 1,
     );
 
@@ -356,6 +392,7 @@ function expandLine(
   );
 
   if (candidate.confidence < minConfidence) return;
+  if (!roleEligible.has(candidate.token.id)) return;
 
   const token = candidate.token;
   const value = candidate.reading.magnitude;
