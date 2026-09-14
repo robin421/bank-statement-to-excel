@@ -30,6 +30,37 @@ export type SelectionReason =
 export interface ScoredChain {
   chain: ReconciledChain;
   evidence: ChainEvidence;
+  /** Numeric columns the chain's anchors were printed in, when known. */
+  anchorColumns: Array<string | undefined>;
+}
+
+/**
+ * Numeric columns a chain's anchors were printed in.
+ *
+ * Diagnostic only. Three rules were tried on this evidence and all three were
+ * wrong, which is worth recording so nobody re-derives them:
+ *
+ *   1. "all anchors share one column"        broke Schwyzer KB and lafinancepourtous
+ *   2. "no anchor shares the amounts' column" broke Sparkasse, Postbank and
+ *                                             lafinancepourtous
+ *   3. (1) and (2) together                   strictly worse
+ *
+ * The reason is that on a real statement the balance is often printed in the *same*
+ * right-aligned column as the transactions — a single `Betrag` layout puts
+ * everything on one right edge. So column identity does not separate a balance
+ * reading from an amount, and any rule built on it discards correct chains.
+ *
+ * The Commerce Bank trap that motivated this — `75.00` (a check amount) read as an
+ * opening balance, `30.00` and `200.00` consumed from the same column, `305.00` (the
+ * category total) read as the close — therefore needs a discriminator this layer
+ * does not have. See docs/parse2-prototype.md.
+ */
+export function anchorColumns(chain: ReconciledChain, lines: LineEvent[]): Array<string | undefined> {
+  const byToken = new Map<string, string | undefined>();
+  for (const line of lines) {
+    for (const candidate of line.money) byToken.set(candidate.token.id, candidate.columnId);
+  }
+  return chain.anchors.map((anchor) => byToken.get(anchor.token.id));
 }
 
 export interface ChainSelectionResult {
@@ -91,7 +122,11 @@ export function selectChain(
   );
 
   const scored: ScoredChain[] = reconciled
-    .map((chain) => ({ chain, evidence: chainEvidence(chain, lines, weights) }))
+    .map((chain) => ({
+      chain,
+      evidence: chainEvidence(chain, lines, weights),
+      anchorColumns: anchorColumns(chain, lines),
+    }))
     .sort((a, b) => b.evidence.detailScore - a.evidence.detailScore || a.chain.id.localeCompare(b.chain.id));
 
   const thresholds = { minDetailScore, minChainScoreGap };

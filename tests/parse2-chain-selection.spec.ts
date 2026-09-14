@@ -306,3 +306,38 @@ describe('Test 5 — a single reconciled chain', () => {
     expect(result.reason).toBe('NO_RECONCILED_CHAIN');
   });
 });
+
+describe('Corpus finding — the Commerce Bank specimen is internally inconsistent', () => {
+  /**
+   * Recorded because it invalidates the case as a target.
+   *
+   * The summary block balances exactly, and the detail block's checks total 305.00
+   * against a summary that counts 200.00. So there is no transaction ledger that
+   * reproduces the printed ending balance, and "make Commerce Bank select the detail
+   * chain" is not a solvable problem — there is no consistent detail chain to select.
+   *
+   * This is a fact about the document, independent of the PDF, so it is asserted
+   * here rather than left as a comment.
+   */
+  const begin = 7126.11;
+  const deposits = 3615.08;
+  const atm = 20.0;
+  const summaryChecks = 200.0;
+  const printedEnding = 10521.19;
+  const detailChecks = 75.0 + 30.0 + 200.0;
+
+  it('confirms the summary block is self-consistent', () => {
+    expect(begin + deposits - atm - summaryChecks).toBeCloseTo(printedEnding, 2);
+  });
+
+  it('confirms the detail block is not consistent with the summary', () => {
+    expect(begin + deposits - atm - detailChecks).not.toBeCloseTo(printedEnding, 2);
+    expect(detailChecks - summaryChecks).toBeCloseTo(105.0, 2);
+  });
+
+  it('confirms the printed detail total matches its own detail rows', () => {
+    // 75 + 30 + 200 = 305, so the detail block is internally consistent and simply
+    // disagrees with the category figure the summary uses.
+    expect(detailChecks).toBeCloseTo(305.0, 2);
+  });
+});

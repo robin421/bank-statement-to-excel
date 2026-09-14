@@ -361,3 +361,98 @@ be worse than reporting `partial`.
 Freeze the weights and thresholds only after Commerce Bank is resolved and the
 reclassifications are checked. Thresholds in force:
 `minDetailScore 0.35`, `minChainScoreGap 0.15` (`chain-selection/select.ts`).
+
+
+---
+
+## Stage 4: the Commerce Bank case is invalid as a target
+
+Chasing the "candidate set fix" for Commerce Bank turned up something that
+invalidates the case, and it is worth stating plainly because a lot of this
+prototype's recent direction was aimed at it.
+
+**The specimen does not reconcile with itself.**
+
+```
+SUMMARY                                 DETAIL
+Beginning Balance      7126.11
++ Deposits & Other     3615.08          Deposit             3615.08
+- ATM Withdrawals        20.00          05-18 $20.00          20.00
+- Checks Paid           200.00          05-12  75.00
+                                       05-18  30.00
+                                       05-24 200.00
+                                       Total Checks Paid    305.00
+= 10521.19  (matches printed close)
+```
+
+The summary balances exactly. The detail block is internally consistent — 75 + 30 +
+200 = 305. But 305 ≠ 200, so **no transaction ledger reproduces the printed ending
+balance**. Off by exactly 105.00, the two smaller checks.
+
+So "make chain selection pick the detail chain" is not a solvable problem: there is
+no consistent detail chain to pick. My previous framing — *the decoder discards the
+ledger on accounting grounds* — was the wrong diagnosis.
+
+### The false acceptance is nevertheless real, and now understood
+
+Commerce Bank is reported `verified` on a chain built from its checks section:
+
+```
+opening anchor  75.00   (a check amount, column c7)
+amounts         30.00, 200.00   (the other checks, same column c7)
+closing anchor  305.00  (the category total, column c14)
+```
+
+75 + 30 + 200 = 305, so every constraint holds. **A transaction is being read as an
+opening balance.** That is the mechanism, and it is the same class of defect as the
+earlier ones: arithmetic that is satisfied by misreading the document's roles.
+
+### Three attempts to gate on column structure, all wrong
+
+| Rule | Result |
+|---|---|
+| all anchors share one column | broke Schwyzer KB and lafinancepourtous |
+| no anchor shares the amounts' column | broke Sparkasse, Postbank, lafinancepourtous |
+| both together | strictly worse |
+
+The reason is factual, not a tuning failure: **on a real statement the balance is
+often printed in the same right-aligned column as the transactions.** A single
+`Betrag` layout puts every figure on one right edge, so column identity cannot
+separate a balance reading from an amount. Any rule built on it discards correct
+chains, which is worse than the false acceptance it was meant to catch.
+
+The rule has been reverted and retained only as a diagnostic (`anchorColumns`).
+
+### Why this is a stopping point rather than a prompt for a fourth rule
+
+Three failed formulations on one document is overfitting in progress. The brief
+forbids exactly this (§21 "do not keep adding signals", §23 "do not keep tuning
+against the regression corpus"), and this document cannot supply ground truth
+anyway. A fourth rule invented here would be fitted to a specimen whose correct
+answer does not exist.
+
+**The discriminator needed is not derivable from what is in these 11 files.** It
+requires either statements that do reconcile, or a signals set this layer does not
+have (for example a genuine "this line is a balance readout" signal from layout
+repetition across pages, which needs far more documents to calibrate).
+
+## Freeze assessment: still not met, and the reason is different again
+
+```
+verified 5   partial 4   refused 2     19/19 constraints satisfied
+```
+
+- Capital One, Sparkasse, Schwyzer KB, lafinancepourtous verified — no regression.
+- Postbank `partial`, gap 0.01: two fully-dated reconciled chains. Genuine ambiguity.
+- Commerce Bank `verified`: a **known false acceptance** with an understood mechanism
+  and no available fix.
+- BCP and Banco de Portugal `partial / NO_RECONCILED_CHAIN`.
+- bancop `partial / INSUFFICIENT_DETAIL_EVIDENCE`.
+
+`Blind Evaluation Candidate v0` is not frozen, for one reason that matters more than
+the others: **there is a known false acceptance in the corpus and I have no
+evidence-backed way to close it.** Freezing weights around it would bake it in.
+
+The next step is not another rule. It is more statements — specifically statements
+whose own figures reconcile, since a corpus that cannot supply ground truth cannot
+validate a fix.
