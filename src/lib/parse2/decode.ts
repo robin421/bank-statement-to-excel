@@ -46,8 +46,27 @@ export const BALANCE_TOLERANCE = 0.011;
 const W_CONSTRAINT = 100;
 /** Bonus per amount spanned: two anchors one row apart agree by accident far more easily than twenty rows apart. */
 const W_SPAN = 0.8;
-/** Cost of admitting a token as an amount. */
+/** Cost of admitting a token as an amount, before the isolation factor. */
 const W_AMOUNT_COST = 1.5;
+/**
+ * How much more expensive it is to read an *isolated* figure as a transaction.
+ *
+ * A summary figure — `$194.17` under "your account(s) have earned:" — lines up
+ * with nothing. Every real transaction amount on the same page lines up with
+ * several others. Without this, a parse could chain three isolated summary
+ * figures, satisfy the arithmetic, and be accepted.
+ */
+const W_ISOLATION = 5;
+/**
+ * A balance constraint is only worth as much as the figures it chains.
+ *
+ * This is the term that makes the verification mean something. A chain built
+ * entirely from isolated figures is arithmetically self-consistent and tells you
+ * nothing; a chain built from populated numeric columns is real evidence. The
+ * bonus is scaled by the weaker of the anchor quality and the mean amount
+ * quality, so one unsupported link weakens the whole chain.
+ */
+const MIN_EVIDENCE_QUALITY = 0.15;
 /** Cost of leaving a money-looking token unexplained, scaled by its confidence. */
 const W_UNEXPLAINED = 8;
 /**
@@ -82,6 +101,8 @@ export interface BalanceConstraint {
   passed: boolean;
   /** How many amounts the constraint spans. Longer spans are stronger evidence. */
   spans: number;
+  /** Column support behind this chain, 0..1. Low means it proves little. */
+  evidenceQuality: number;
 }
 
 export interface Parse {
@@ -126,6 +147,8 @@ interface State {
   anchors: number;
   amounts: number;
   chains: number;
+  /** Sum of column support over the amounts since the last anchor. */
+  spanSupport: number;
 }
 
 const round2 = (value: number): number => Math.round(value * 100) / 100;
@@ -157,6 +180,7 @@ export function decode(lines: LineEvent[], options: { maxStates?: number; minCon
     anchors: 0,
     amounts: 0,
     chains: 0,
+    spanSupport: 0,
   };
 
   let beam: State[] = [root];
@@ -225,6 +249,7 @@ function expandLine(
         anchors: patch.anchors ?? state.anchors,
         amounts: patch.amounts ?? state.amounts,
         chains: patch.chains ?? state.chains,
+        spanSupport: patch.spanSupport ?? state.spanSupport,
       },
       line,
       minConfidence,
@@ -251,12 +276,19 @@ function expandLine(
     ? [candidate.reading.value < 0 ? -1 : 1]
     : [1, -1];
 
+  // Reading an isolated figure as a transaction is possible — some statements do
+  // print a lone amount — but it costs, in proportion to how little support the
+  // column gives it.
+  const isolation = 1 + W_ISOLATION * (1 - candidate.columnSupport);
+  const amountCost = W_AMOUNT_COST * candidate.confidence * isolation;
+
   for (const sign of signChoices) {
     rest(
       {
         runningSum: round2(state.runningSum + sign * value),
         span: state.span + 1,
-        score: state.score - W_AMOUNT_COST * candidate.confidence,
+        spanSupport: state.spanSupport + candidate.columnSupport,
+        score: state.score - amountCost,
         amounts: state.amounts + 1,
       },
       { kind: 'amount', token, signedValue: sign * value, lineId: line.id },
@@ -274,6 +306,7 @@ function expandLine(
       runningSum: 0,
       lastAnchorLine: line.id,
       span: 0,
+      spanSupport: 0,
       score: state.score - W_CHAIN_START,
       anchors: state.anchors + 1,
       chains: state.chains + 1,
@@ -292,6 +325,16 @@ function expandLine(
     return;
   }
 
+  // Evidence quality: the weaker of the anchor's column support and the mean
+  // support of the amounts chained. A chain of isolated summary figures scores
+  // near zero however exactly it balances, which is what stops a self-consistent
+  // but wrong parse from being accepted.
+  const meanAmountSupport = state.span > 0 ? state.spanSupport / state.span : 0;
+  const evidenceQuality = Math.max(
+    MIN_EVIDENCE_QUALITY,
+    Math.min(candidate.columnSupport, meanAmountSupport),
+  );
+
   const constraint: BalanceConstraint = {
     fromLine: state.lastAnchorLine ?? line.id,
     toLine: line.id,
@@ -301,8 +344,9 @@ function expandLine(
     computed,
     passed: true,
     spans: state.span,
+    evidenceQuality,
   };
-  const bonus = W_CONSTRAINT + W_SPAN * state.span;
+  const bonus = (W_CONSTRAINT + W_SPAN * state.span) * evidenceQuality;
 
   rest(
     {
@@ -310,6 +354,7 @@ function expandLine(
       runningSum: 0,
       lastAnchorLine: line.id,
       span: 0,
+      spanSupport: 0,
       score: state.score + bonus,
       constraintScore: state.constraintScore + bonus,
       anchors: state.anchors + 1,

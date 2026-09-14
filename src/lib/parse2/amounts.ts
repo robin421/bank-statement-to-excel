@@ -105,6 +105,13 @@ export interface MoneyCandidate {
   /** Set when this token sits in a column with other figures. */
   columnId?: string;
   /**
+   * How well supported this figure's column is, 0..1. A figure that lines up
+   * with several others is evidence of a numeric column; a lone one usually is
+   * not a transaction amount at all. Used by the decoder to judge how much a
+   * balance constraint built on this figure is worth.
+   */
+  columnSupport: number;
+  /**
    * Confidence after document context. A figure that lines up with many others is
    * far more likely to be an amount; an isolated number in prose is not.
    */
@@ -124,7 +131,7 @@ export function moneyCandidates(tokens: PdfToken[], linePitch: number, medianFon
   for (const token of tokens) {
     const reading = moneyReading(token);
     if (!reading) continue;
-    monetary.push({ token, reading, right: token.x + token.width, confidence: reading.confidence });
+    monetary.push({ token, reading, right: token.x + token.width, confidence: reading.confidence, columnSupport: 0 });
   }
 
   // Cluster right edges. Tolerance scales with the font: figures in one column
@@ -145,10 +152,14 @@ export function moneyCandidates(tokens: PdfToken[], linePitch: number, medianFon
   clusters.forEach((cluster, index) => {
     const id = `c${index}`;
     // A populated column of figures is strong evidence; a lone aligned value is not.
-    const support = Math.min(1, cluster.members.length / 6);
+    // A column of one is not evidence of anything. Three figures in a line is a
+    // numeric column; five is a strong one.
+    const support = Math.min(1, Math.max(0, cluster.members.length - 1) / 3);
+    const confidenceBonus = Math.min(1, cluster.members.length / 6);
     for (const member of cluster.members) {
       member.columnId = id;
-      member.confidence = Math.min(1, member.confidence + support * 0.45);
+      member.columnSupport = support;
+      member.confidence = Math.min(1, member.confidence + confidenceBonus * 0.45);
     }
   });
 

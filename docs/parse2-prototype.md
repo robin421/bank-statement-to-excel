@@ -73,6 +73,83 @@ motivated it.
 
 ---
 
+## Addendum: the falsification experiment, and what it actually showed
+
+The recommendation was to make `verified` strict enough that the identified false
+acceptance fails, and to treat a failure to do so as evidence against the approach.
+Two objective terms were added:
+
+- **Isolation cost.** Reading an *isolated* figure as a transaction now costs in
+  proportion to how little support its column gives it. Every real transaction
+  amount lines up with several others; a figure that lines up with nothing does not.
+- **Evidence-scaled constraints.** A balance constraint is now worth as much as the
+  figures it chains: `(W_CONSTRAINT + W_SPAN·span) × min(anchorSupport, meanAmountSupport)`.
+  A chain of isolated figures scores near zero however exactly it balances.
+
+### Result: one fixed, and one mis-diagnosis corrected
+
+**Capital One — fixed.** The three spurious summary figures are gone. The chain is
+now exactly the ledger:
+
+```
+PASS  1186.93 -> 1189.42   delta 2.49
+PASS  1189.42 -> 1191.67   delta 2.25
+PASS  1191.67 -> 1194.17   delta 2.50
+PASS  1194.17 -> 1194.17   delta 0.00      (closing)
+amounts: 2.49, 2.25, 2.50                  (was 6 amounts including three summary figures)
+```
+
+Sparkasse likewise lost its one spurious amount and now holds exactly the twelve
+real transactions. Postbank moved from `unsupported` to `verified`.
+
+**Commerce Bank — not a false acceptance at all.** I had mis-diagnosed it. Its
+`Beginning Balance / Deposits & Other Credits / ATM Withdrawals / Checks Paid /
+Ending Balance` block is a *genuinely valid* balance chain:
+
+```
+7126.11 + 3615.08 − 20.00 − 200.00 = 10521.19   ✓ exactly the printed ending balance
+```
+
+So the decoder was not wrong. It found a second, equally consistent chain, in the
+same document, and reported it. The real problem is **chain selection**, not
+verification:
+
+> `verified` currently means "these figures form a consistent balance chain".
+> A statement can contain several such chains — a summary and a ledger — and the
+> user wants the ledger.
+
+### Corpus after the change
+
+```
+verified 6   unsupported 3   refused 2      balance constraints 19/19 satisfied
+```
+
+(`verified`: Schwyzer KB, Postbank, Sparkasse, lafinancepourtous, Capital One,
+Commerce Bank.)
+
+### What this means for the recommendation
+
+The architecture still holds up: the change removed a real false acceptance without
+losing a single correct chain, which is the direction the objective needed to move.
+But the verification definition is **still not publishable**, for a different reason
+than before. The remaining work is not "make the arithmetic stricter" — it is
+**choose the right chain**, and there are three generic signals for that, none of
+which is a keyword list:
+
+1. **Dated entries.** The ledger's entries carry dates; a summary block's do not.
+   This is the strongest and cheapest signal, and chronology is currently unused.
+2. **Entry count.** A ledger has many entries; a summary has a handful of
+   category totals.
+3. **Subtotal structure.** A summary chain's amounts are *sums of the ledger's*
+   amounts — a detectable relationship, and the most principled of the three
+   because it explains the document rather than describing it.
+
+Until chain selection is resolved, `verified` must not be published, and the honest
+output for a multi-chain document is `partial` with both chains surfaced so the user
+can pick — which is the fail-closed behaviour the brief asks for in §16.
+
+---
+
 ## The false acceptance — the finding that matters
 
 **`us-capital-one` is marked `verified` and its parse is wrong.**
