@@ -104,7 +104,8 @@ src/
   lib/exporters/   xlsx, csv, QuickBooks, Xero, date formatting
   components/converter/   the React island (dropzone, password, preview, download)
   pages/           the SEO page set — one canonical URL per search-intent cluster
-  data/keywords.ts the keyword→URL map, and the per-bank notes
+  data/keywords.ts the keyword→URL map (one canonical URL per intent)
+  data/banks.ts    the bank dataset, gated on real verification
 fixtures/          generator + committed synthetic PDFs + ground truth
 tests/             vitest suites (parser, exporters, OFX) + Node pdf.js helper
 scripts/           smoke.mjs (Playwright), strip-appledouble.mjs
@@ -114,6 +115,61 @@ The parser deliberately does **not** import pdf.js: `extractPages()` takes a duc
 the whole pipeline is unit-testable in Node and cannot accidentally depend on the DOM.
 
 ---
+
+## Bank pages, and why most of them do not exist
+
+`/banks/` explains how to get a readable file out of any bank. Individual
+`/banks/<bank>/` pages **only exist for banks we have tested a real statement
+from**, and none are published today.
+
+The reason is specific: a page per bank with the same copy and the name swapped
+is a doorway page by Google's own definition, and on a domain this new it is not
+a risk worth taking for a handful of long-tail queries. It is also dishonest —
+we would be asserting a layout we had never seen.
+
+So the layout notes in `src/data/banks.ts` are stored as **hypotheses**, not
+claims:
+
+```ts
+{ text: 'Debits print with a leading minus sign.', state: 'hypothesis' }
+```
+
+They are written down because a hypothesis is a test plan. The gate is
+`isVerified()`, and `tests/banks.spec.ts` asserts that (a) an untested bank is
+never publishable and (b) a note cannot claim `confirmed` without a verification
+behind it.
+
+### The verification workflow
+
+Put the statement in `fixtures/real/` (gitignored — statements are PII and must
+never be committed) and run:
+
+```bash
+npm run verify:bank -- fixtures/real/chase-jan.pdf --bank chase
+npm run verify:bank -- fixtures/real/hdfc.pdf --bank hdfc --password 1234
+```
+
+It prints pages read, rows recovered, the detected layout, the date order and
+whether the document proved it, the quality verdict, and the balance-chain
+result — then lists that bank's hypotheses so each can be confirmed or refuted.
+Exit code is 0 only when the statement reconciled, so it can gate a release.
+
+The report written to `fixtures/reports/` is deliberately **aggregate-only**: no
+merchant names or descriptions, so it is safe to paste into a commit message or
+an issue.
+
+When a statement passes, record it in `src/data/banks.ts`:
+
+```ts
+verifications: [{ date: '2025-03-01', pages: 3, rows: 61, reconcileRate: 1, dateOrder: 'MDY', issues: [] }],
+layoutNotes: [
+  { text: 'Debits print with a leading minus sign.', state: 'confirmed', observation: 'Held on all 61 rows.' },
+],
+```
+
+The page then generates itself, and it carries the real test result rather than a
+claim. Adding a bank to `BANKS` without a verification changes nothing — the page
+still will not be built.
 
 ## Languages
 

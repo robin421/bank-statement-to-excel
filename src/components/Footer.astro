@@ -1,62 +1,86 @@
 ---
 import { SITE } from '../data/site.mjs';
-
 import { DEFAULT_LOCALE, type LocaleCode } from '../i18n';
+import { verifiedBanks } from '../data/banks';
 
 const { locale = DEFAULT_LOCALE }: { locale?: LocaleCode } = Astro.props;
 
 const year = new Date().getFullYear();
+
+/**
+ * The "By bank" column lists tested banks only.
+ *
+ * Linking to a bank page we have not verified would 404 — and generating one
+ * anyway would be a doorway page. Until a statement from a bank reconciles
+ * against its own balance, the only honest link is to the overview.
+ */
+const tested = verifiedBanks();
+const bankLinks = tested.slice(0, 5).map((bank) => ({ href: `/banks/${bank.slug}/`, label: bank.name }));
+
+const groups = [
+  {
+    heading: 'Convert',
+    links: [
+      { href: '/', label: 'Bank statement to Excel' },
+      { href: '/bank-statement-to-csv/', label: 'Bank statement to CSV' },
+      { href: '/pdf-bank-statement-to-excel/', label: 'PDF bank statement to Excel' },
+      { href: '/extract-transactions/', label: 'Extract transactions' },
+    ],
+  },
+  {
+    heading: 'Import into',
+    links: [
+      { href: '/quickbooks-csv/', label: 'QuickBooks Online' },
+      { href: '/xero-csv/', label: 'Xero' },
+      { href: '/ofx-qfx-to-csv/', label: 'OFX / QFX to CSV' },
+    ],
+  },
+  {
+    heading: 'By bank',
+    links: [
+      ...bankLinks,
+      { href: '/banks/', label: tested.length ? 'All tested banks' : 'Tested banks' },
+    ],
+  },
+  {
+    heading: 'Site',
+    links: [
+      { href: '/blog/', label: 'Guides' },
+      { href: '/about/', label: 'About' },
+      { href: '/contact/', label: 'Contact' },
+      { href: '/privacy/', label: 'Privacy' },
+      { href: '/terms/', label: 'Terms' },
+    ],
+  },
+];
 ---
 
 <footer class="site-footer">
   <div class="page">
     <div class="footer-grid">
-      <div>
-        <h3>Convert</h3>
-        <ul>
-          <li><a href="/">Bank statement to Excel</a></li>
-          <li><a href="/bank-statement-to-csv/">Bank statement to CSV</a></li>
-          <li><a href="/pdf-bank-statement-to-excel/">PDF bank statement to Excel</a></li>
-          <li><a href="/extract-transactions/">Extract transactions</a></li>
-        </ul>
-      </div>
-      <div>
-        <h3>Import into</h3>
-        <ul>
-          <li><a href="/quickbooks-csv/">QuickBooks Online</a></li>
-          <li><a href="/xero-csv/">Xero</a></li>
-          <li><a href="/ofx-qfx-to-csv/">OFX / QFX to CSV</a></li>
-        </ul>
-      </div>
-      <div>
-        <h3>By bank</h3>
-        <ul>
-          <li><a href="/banks/chase/">Chase</a></li>
-          <li><a href="/banks/bank-of-america/">Bank of America</a></li>
-          <li><a href="/banks/hdfc/">HDFC Bank</a></li>
-          <li><a href="/banks/hsbc/">HSBC</a></li>
-          <li><a href="/banks/">All banks</a></li>
-        </ul>
-      </div>
-      <div>
-        <h3>Site</h3>
-        <ul>
-          <li><a href="/blog/">Guides</a></li>
-          <li><a href="/about/">About</a></li>
-          <li><a href="/contact/">Contact</a></li>
-          <li><a href="/privacy/">Privacy</a></li>
-          <li><a href="/terms/">Terms</a></li>
-        </ul>
-      </div>
+      {
+        groups.map((group) => (
+          <div>
+            <h3>{group.heading}</h3>
+            <ul>
+              {group.links.map((link) => (
+                <li>
+                  <a href={link.href}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
     </div>
 
     <div class="footer-legal">
       <p>
         <strong>Not affiliated with any bank.</strong> {SITE.name} is an independent tool. Bank names are used only to
-        describe the statement formats the converter is tested against. Always check the converted rows against your
-        original statement before using them for accounting, tax or lending purposes.
+        describe the statement formats that have been tested. Always check the converted rows against your original
+        statement before using them for accounting, tax or lending purposes.
       </p>
-      <p>&copy; {year} {SITE.name}. {locale === 'en' ? 'Your statement is processed in your browser and is never uploaded to us.' : 'Your statement is processed in your browser and is never uploaded to us.'}</p>
+      <p>&copy; {year} {SITE.name}. Your statement is processed in your browser and is never uploaded to us.</p>
     </div>
   </div>
 </footer>

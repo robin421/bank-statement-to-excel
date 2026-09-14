@@ -1,39 +1,164 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { BANKS } from '../../data/keywords';
+import Faq from '../../components/Faq.astro';
+import RelatedLinks from '../../components/RelatedLinks.astro';
+import ConverterSection from '../../components/ConverterSection.astro';
+import { verifiedBanks, pendingBanks } from '../../data/banks';
+
+const verified = verifiedBanks();
+
+const faqs = [
+  {
+    q: 'Does the converter need a profile for my bank?',
+    a: 'No, and that is deliberate. It identifies rows and columns from the geometry of the page — where the text sits and how the numbers align — rather than from a per-bank template. A template that matched last year’s layout would fail silently the moment the bank changed it; the balance check fails loudly instead.',
+  },
+  {
+    q: 'Then why list banks at all?',
+    a: 'Because the useful information is not "does it work for Chase" but "how do I get a file it can read". Most failed conversions are the wrong download, not a parsing problem. The sections below cover that, and where we have tested a statement from a particular bank we say exactly what we found.',
+  },
+  {
+    q: 'What does a bank page actually tell me once it exists?',
+    a: 'Only tested facts: the date of the test, how many pages and transactions were parsed, what share of rows reconciled against the statement’s own running balance, and anything that did not work. No guesses, and no page at all for a bank we have not tested.',
+  },
+  {
+    q: 'My bank is not listed. Does that mean it will not work?',
+    a: 'No. Most text-based statements convert without any bank-specific knowledge. Drop yours in and look at the reconcile count in the preview: if the rows match the statement’s balance chain, it worked, whatever the bank.',
+  },
+  {
+    q: 'What if I can only get a scanned statement?',
+    a: 'A scan is an image and needs OCR, which cannot run well in a browser. The scanned statements page covers what to use instead — but check first whether your bank also offers a PDF download or an OFX/CSV export, because that is a much better input.',
+  },
+];
+
+const related = [
+  { href: '/', title: 'Bank statement to Excel', blurb: 'The converter, and how the balance check works.' },
+  { href: '/ofx-qfx-to-csv/', title: 'OFX / QFX to CSV', blurb: 'If your bank exports structured data, use that instead of a PDF.' },
+  { href: '/quickbooks-csv/', title: 'QuickBooks Online CSV', blurb: 'The three-column import shape.' },
+  { href: '/scanned/', title: 'Scanned statements', blurb: 'When the PDF is an image.' },
+];
 ---
 
-<Base
-  title="Bank Statement to Excel by Bank — Layout Notes"
-  description="Convert bank statements from Chase, Bank of America, Wells Fargo, HDFC, ICICI, HSBC and Barclays to Excel or CSV, with notes on how each bank's statement is laid out."
->
-  <section class="section">
-    <div class="page">
-      <p class="eyebrow">By bank</p>
-      <h1>Bank statement to Excel, by bank</h1>
-      <p class="lede">
-        The converter is layout-driven rather than bank-specific, so it does not need a per-bank profile to work. What
-        these pages add is the detail that helps you check the output: how each bank lays out dates, signs and columns,
-        and what tends to go wrong.
-      </p>
+<ConverterSection eyebrow="Layout-driven · no per-bank templates">
+  <h1>Bank statement formats, by bank</h1>
+  <p class="lede">
+    The converter does not use a profile for your bank — it reads the layout of the page. What is genuinely useful is
+    knowing how to get a file it can read, and which statements have been tested. Both are below.
+  </p>
+</ConverterSection>
 
-      <ul class="related" style="margin-top:2rem">
-        {
-          BANKS.map((bank) => (
-            <li>
-              <a href={`/banks/${bank.slug}/`}>
-                <strong>{bank.name}</strong>
-                <span>{bank.layoutNotes[0]}</span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-
-      <div class="note note--info" style="margin-top:2rem;max-width:60ch">
-        <strong>Not affiliated with any bank.</strong> Bank names appear here only to describe statement layouts. Every
-        conversion happens in your browser and no bank is involved in it.
+<section class="section" aria-labelledby="file-heading">
+  <div class="page">
+    <h2 id="file-heading">Getting the right file out of your bank</h2>
+    <p class="lede" style="font-size:1rem">
+      Most failed conversions are the wrong download, not a parsing problem. In rough order of how well they work:
+    </p>
+    <div class="card-grid" style="margin-top:1.4rem">
+      <div class="card">
+        <h3 style="margin-top:0">1. OFX or QFX export</h3>
+        <p style="margin-bottom:0">
+          Structured data, no layout to infer, dates that cannot be misread. Look for <em>Export</em>,{' '}
+          <em>Download transactions</em>, or a file-type dropdown offering OFX/QFX.{' '}
+          <a href="/ofx-qfx-to-csv/">This site converts those too.</a>
+        </p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">2. The PDF download button</h3>
+        <p style="margin-bottom:0">
+          Take the actual download, not a copy of what is on screen. Many banks render an image in the browser viewer
+          while the file behind the download button is a proper text PDF.
+        </p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">3. A CSV export</h3>
+        <p style="margin-bottom:0">
+          Usually fine, but bank-produced CSVs vary between exports in ways that trip up automated tools. If both CSV
+          and OFX are offered, OFX is a fixed specification and CSV is not.
+        </p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">4. A scan or a photo</h3>
+        <p style="margin-bottom:0">
+          The only case that genuinely needs OCR. Try the download button first — it is usually there.{' '}
+          <a href="/scanned/">What to do if it is not</a>.
+        </p>
       </div>
     </div>
-  </section>
+
+    <div class="note note--info" style="margin-top:1.6rem;max-width:70ch">
+      <strong>Quick test for any PDF:</strong> open it and try to highlight a single word in the middle of a transaction
+      line. If the words select individually, it has a text layer and the converter will read it exactly.
+    </div>
+  </div>
+</section>
+
+<section class="section section--sunken" aria-labelledby="verified-heading">
+  <div class="page">
+    <h2 id="verified-heading">Statements we have tested</h2>
+
+    {
+      verified.length > 0 ? (
+        <>
+          <p class="lede" style="font-size:1rem">
+            A bank appears here only after a real statement from it reconciled against its own running balance. The
+            figures are from that test, not an estimate.
+          </p>
+          <div class="card card--flush" style="max-width:52rem">
+            <table class="data">
+              <thead>
+                <tr>
+                  <th scope="col">Bank</th>
+                  <th scope="col" class="num">
+                    Rows
+                  </th>
+                  <th scope="col" class="num">
+                    Reconciled
+                  </th>
+                  <th scope="col">Tested</th>
+                </tr>
+              </thead>
+              <tbody>
+                {verified.map((bank) => {
+                  const latest = bank.verifications[bank.verifications.length - 1];
+                  return (
+                    <tr>
+                      <td>
+                        <a href={`/banks/${bank.slug}/`}>{bank.name}</a>
+                      </td>
+                      <td class="num">{latest.rows}</td>
+                      <td class="num">{(latest.reconcileRate * 100).toFixed(0)}%</td>
+                      <td>{latest.date}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
+      ) : (
+        <div class="prose">
+          <p>
+            <strong>Nothing is listed yet.</strong> We publish a bank page only after a real statement from that bank has
+            been parsed and its rows reconciled against the running balance the statement prints. Until then there is
+            nothing honest to say about that bank’s layout, and swapping the bank name on a generic page is exactly the
+            kind of content that should not exist.
+          </p>
+          <p>
+            You can convert your statement right now regardless — the parser reads the layout of the page rather than a
+            per-bank profile, so most text-based statements work without ever having been seen before. The{' '}
+            <a href="/">converter on the homepage</a> reports how many rows reconciled, which is the answer to “did it
+            work” for your specific bank.
+          </p>
+          <p class="small muted" style="margin-bottom:0">
+            {pendingBanks().length} bank layouts are queued for testing. If you have a statement from one of them, running
+            it through the converter and checking the reconcile count is the whole test.
+          </p>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<Faq items={faqs} heading="Questions about bank coverage" />
+
+<RelatedLinks heading="Related" items={related} />
 </Base>

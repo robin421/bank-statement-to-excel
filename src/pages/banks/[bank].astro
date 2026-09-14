@@ -4,99 +4,174 @@ import Base from '../../layouts/Base.astro';
 import ConverterSection from '../../components/ConverterSection.astro';
 import Faq from '../../components/Faq.astro';
 import RelatedLinks from '../../components/RelatedLinks.astro';
-import { BANKS } from '../../data/keywords';
+import { verifiedBanks, type Bank } from '../../data/banks';
 
+/**
+ * Only verified banks get a page.
+ *
+ * Publishing one generic page per bank with the name swapped is a doorway page
+ * by Google's own definition, and it is not worth the risk for a long-tail
+ * query. A page here carries a real test result instead — see the README for the
+ * verification workflow.
+ */
 export const getStaticPaths = (() =>
-  BANKS.map((bank) => ({
+  verifiedBanks().map((bank) => ({
     params: { bank: bank.slug },
     props: { bank },
   }))) satisfies GetStaticPaths;
 
-const { bank } = Astro.props;
+const { bank } = Astro.props as { bank: Bank };
+
+const latest = bank.verifications[bank.verifications.length - 1];
+const confirmed = bank.layoutNotes.filter((note) => note.state === 'confirmed');
+const refuted = bank.layoutNotes.filter((note) => note.state === 'refuted');
+const untested = bank.layoutNotes.filter((note) => note.state === 'hypothesis');
 
 const faqs = [
   {
-    q: `Does the converter have a special mode for ${bank.name}?`,
-    a: `No, and that is deliberate. The tool identifies rows and columns from the geometry of the page rather than from a per-bank template, so it works on layouts it has never seen — including the ones banks change without notice. A template that matched last year's ${bank.name} layout would be worse than no template at all, because it would fail silently.`,
+    q: `How was the ${bank.name} layout tested?`,
+    a: `A real ${bank.name} statement was parsed on ${latest.date}. It ran ${latest.pages} page${latest.pages === 1 ? '' : 's'} and ${latest.rows} transactions, and ${(latest.reconcileRate * 100).toFixed(0)}% of the consecutive rows reconciled against the running balance printed on the statement itself. That check is the evidence: a missed or misread row breaks the balance chain at that point.`,
   },
   {
-    q: `How do I check the ${bank.name} output is complete?`,
-    a: `Use the running balance. A ${bank.name} statement prints a balance against every row, and the converter checks that each balance plus the next amount equals the following balance. The preview shows how many rows reconciled. If the last balance in the output matches the closing balance on your statement, nothing was lost.`,
+    q: `Does this mean every ${bank.name} statement will work?`,
+    a: `No. Banks change layouts without notice, and the same bank prints different statements for different account types and countries. What the test shows is that this layout converted cleanly. If yours differs, the converter still tries — look at the reconcile count in the preview to judge the result.`,
   },
   {
-    q: 'What if my statement looks different from the notes here?',
-    a: 'Bank layouts change, and the same bank can print different statements for different account types and countries. The notes on this page are a starting point for checking the output, not a specification. If your statement does not match, the converter still tries — the balance check will tell you whether it succeeded.',
-  },
-  {
-    q: 'Does this work for credit card statements as well?',
-    a: 'Yes, if they are text-based PDFs. A credit card statement has the same shape as a bank statement: dated rows, a description, an amount and often a running balance. Statements where every row is a charge, with no balance column, still convert — you simply lose the automatic verification.',
+    q: 'What should I check before using the output?',
+    a: 'Three things: the number of rows against your statement, the total of the amount column, and the final balance against the closing balance printed on the statement. If all three agree, the conversion is complete.',
   },
   {
     q: 'Is any of my data sent anywhere?',
-    a: 'No. The PDF is opened and parsed inside your browser tab. There is no upload, no account and no storage. That applies whatever bank the statement came from.',
+    a: 'No. The PDF is opened and parsed inside your browser tab. There is no upload, no account and no storage.',
   },
 ];
 
 const related = [
-  { href: '/', title: 'Bank statement to Excel', blurb: 'The main converter and the verification explained.' },
+  { href: '/', title: 'Bank statement to Excel', blurb: 'The converter, and how the balance check works.' },
+  { href: '/banks/', title: 'All tested banks', blurb: 'Which statement layouts have been verified, and how to get the right file.' },
   { href: '/bank-statement-to-csv/', title: 'Bank statement to CSV', blurb: 'If you need CSV rather than a workbook.' },
   { href: '/quickbooks-csv/', title: 'QuickBooks Online', blurb: 'The three-column import shape.' },
-  { href: '/xero-csv/', title: 'Xero statement import', blurb: 'The *Date / *Amount header set Xero requires.' },
 ];
+
+const softwareSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: `Convert a ${bank.name} statement to Excel`,
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Any (runs in the browser)',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
 ---
 
 <Base
-  title={`${bank.name} Bank Statement to Excel — Convert a ${bank.name} PDF`}
-  description={`Convert a ${bank.name} bank statement PDF to Excel or CSV in your browser. Notes on the ${bank.name} statement layout, how to spot a misread row, and how the running balance verifies the output.`}
+  title={`${bank.name} Bank Statement to Excel — Tested Layout`}
+  description={`Convert a ${bank.name} bank statement PDF to Excel or CSV in your browser. This layout has been tested: ${latest.rows} transactions parsed, ${(latest.reconcileRate * 100).toFixed(0)}% of rows reconciled against the statement's own running balance.`}
+  schema={[softwareSchema]}
 >
-  <ConverterSection eyebrow={`${bank.name} · .xlsx and CSV · nothing uploaded`}>
+  <ConverterSection eyebrow={`${bank.name} · ${bank.country} · ${bank.currency}`}>
     <h1>Convert a {bank.name} bank statement to Excel</h1>
     <p class="lede">
-      Drop in a {bank.name} statement PDF downloaded from online banking and get a spreadsheet back. The converter is
-      layout-driven rather than bank-specific, and it checks every row against the running balance printed on your
-      statement.
+      Drop in a {bank.name} statement PDF downloaded from online banking and get a spreadsheet back. This layout has been
+      tested against a real statement; the results are below, including anything that did not work.
     </p>
   </ConverterSection>
 
-  <section class="section" aria-labelledby="layout-heading">
+  <section class="section section--tight">
+    <div class="page">
+      <div class="card" style="border-color:var(--accent);max-width:52rem">
+        <div style="display:flex;flex-wrap:wrap;gap:0.8rem;align-items:center">
+          <span class="badge badge--ok">
+            <span class="badge__dot" aria-hidden="true" />
+            Tested {(latest.reconcileRate * 100).toFixed(0)}% reconciled
+          </span>
+          <span class="badge badge--neutral">{latest.rows} transactions</span>
+          <span class="badge badge--neutral">
+            {latest.pages} page{latest.pages === 1 ? '' : 's'}
+          </span>
+          <span class="badge badge--neutral">Tested {latest.date}</span>
+        </div>
+        <p class="small muted" style="margin:0.9rem 0 0">
+          “Reconciled” means each row’s balance matched the previous balance plus that row’s amount, to the cent, across
+          the whole statement. A missed or misread row breaks that chain, so it is a real check rather than a sample.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sunken" aria-labelledby="layout-heading">
     <div class="page">
       <div class="grid-2">
         <div class="prose">
-          <h2 id="layout-heading">What to expect from a {bank.name} statement</h2>
+          <h2 id="layout-heading">What the {bank.name} layout actually does</h2>
           <p>
-            These notes describe the layout the converter is most often tested against for {bank.name}. They are here so
-            you know what to check in the preview — not because the tool needs them to work.
+            Only what was observed in the test. Where the statement behaved as expected it is marked confirmed; where it
+            did not, that is recorded too.
           </p>
-          <ul>
-            {bank.layoutNotes.map((note) => <li>{note}</li>)}
-          </ul>
-          <p class="small muted">
-            Bank layouts change without notice, and differ by account type and country. If your statement does not match
-            these notes, convert it anyway and use the reconcile count in the preview to judge the result.
-          </p>
+          {
+            confirmed.length > 0 && (
+              <ul class="callout-list">
+                {confirmed.map((note) => (
+                  <li>
+                    <span class="icon" aria-hidden="true">
+                      ✓
+                    </span>
+                    <span>
+                      {note.text}
+                      {note.observation && <><br /><span class="small muted">Observed: {note.observation}</span></>}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+          {
+            refuted.length > 0 && (
+              <>
+                <h3>Did not hold</h3>
+                <ul class="callout-list">
+                  {refuted.map((note) => (
+                    <li>
+                      <span class="icon icon--no" aria-hidden="true">
+                        ✕
+                      </span>
+                      <span>
+                        {note.text}
+                        {note.observation && <><br /><span class="small muted">Observed: {note.observation}</span></>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )
+          }
+          {
+            untested.length > 0 && (
+              <p class="small muted">
+                {untested.length} characteristic{untested.length === 1 ? '' : 's'} of this layout {untested.length === 1 ? 'was' : 'were'} not
+                covered by the statement we tested, so nothing is claimed about {untested.length === 1 ? 'it' : 'them'}.
+              </p>
+            )
+          }
         </div>
 
         <div>
           <div class="card">
-            <h2 style="margin-top:0;font-size:1.05rem">How to check the output in 30 seconds</h2>
+            <h2 style="margin-top:0;font-size:1.05rem">How to check the output</h2>
             <ol style="padding-left:1.15em">
-              <li>Look at the reconcile badge in the preview. It should say all rows reconcile.</li>
-              <li>Compare the <strong>last balance</strong> in the table with the closing balance on your statement.</li>
-              <li>Filter the preview to "only rows needing a check" and compare any flagged row against the PDF.</li>
+              <li>The reconcile badge in the preview should say every row reconciles.</li>
+              <li>
+                The <strong>last balance</strong> in the table should equal the closing balance on your statement.
+              </li>
+              <li>Filter the preview to rows needing a check and compare those against the PDF.</li>
             </ol>
             <p style="margin-bottom:0">
-              If the last balance matches and nothing is flagged, the conversion is complete. That is a stronger check
-              than eyeballing a few rows, because a dropped transaction cannot hide from it.
+              If the last balance matches and nothing is flagged, the conversion is complete.
             </p>
           </div>
 
           <div class="card" style="margin-top:1rem">
-            <h2 style="margin-top:0;font-size:1.05rem">If something looks wrong</h2>
-            <p style="margin-bottom:0">
-              The most common causes are a date order the statement did not make obvious — switch it in the preview and
-              re-check — and an amount that continued onto the following line. Both are surfaced rather than hidden: the
-              row is flagged and the balance delta is recorded on the Raw sheet.
-            </p>
+            <h2 style="margin-top:0;font-size:1.05rem">Getting a readable file</h2>
+            <p style="margin-bottom:0">{bank.exportPath}</p>
           </div>
         </div>
       </div>
@@ -107,7 +182,7 @@ const related = [
     <div class="page">
       <p class="small muted" style="max-width:70ch">
         <strong>{bank.name} is a trademark of its owner.</strong> This site is independent and is not affiliated with,
-        endorsed by or connected to {bank.name}. The name is used only to describe the statement format being converted.
+        endorsed by or connected to {bank.name}. The name is used only to describe the statement format that was tested.
         Always verify converted figures against your original statement before relying on them.
       </p>
     </div>

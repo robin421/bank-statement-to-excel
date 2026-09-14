@@ -10,3 +10,6 @@ dist/
 fixtures/real/
 *.local.pdf
 .vercel
+
+# Derived verification reports (aggregate-only, but local artifacts)
+fixtures/reports/
