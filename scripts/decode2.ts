@@ -15,9 +15,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { extractPages } from '../src/lib/pdf/extractPages.ts';
-import { buildLines } from '../src/lib/parse2/lines.ts';
-import { decode } from '../src/lib/parse2/decode.ts';
-import { documentYear, inferOrder } from '../src/lib/parse2/dates.ts';
+import { parseDocument } from '../src/lib/parse2/index.ts';
 
 const require = createRequire(import.meta.url);
 const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
@@ -34,10 +32,9 @@ async function decodeFile(file: string) {
   const pages = await extractPages(doc);
   await doc.destroy?.();
 
-  const index = buildLines(pages);
-  const { order, ambiguous } = inferOrder(index.graph.tokens);
-  const year = documentYear(index.graph.tokens);
-  const parse = decode(index.lines);
+  const result = parseDocument(pages);
+  const { index, parse, selection } = result;
+  const { order, ambiguous, year } = { order: result.dateOrder.order, ambiguous: result.dateOrder.ambiguous, year: result.year };
 
   const passed = parse.constraints.filter((c) => c.passed);
   const failed = parse.constraints.filter((c) => !c.passed);
@@ -47,7 +44,7 @@ async function decodeFile(file: string) {
   const strong = passed.filter((c) => Math.abs(c.delta) > 0 || true);
   const amounts = parse.amounts.filter((a) => a.role === 'amount');
 
-  return { file, index, order, ambiguous, year, parse, passed, failed, strong, amounts };
+  return { file, index, order, ambiguous, year, parse, selection, passed, failed, strong, amounts };
 }
 
 const args = process.argv.slice(2);
@@ -78,21 +75,15 @@ for (const file of files) {
     // Verification is a strict statement, not a confidence number: every balance
     // constraint must hold, there must be at least one, and it must span real
     // transactions rather than two anchors that happened to sit next to each other.
-    const spans = r.passed.reduce((sum, c) => sum + c.spans, 0);
-    const contradictions = r.parse.terms.contradictions;
-    const verdict =
-      r.parse.constraints.length === 0
-        ? 'unsupported'
-        : contradictions > 0
-          ? 'partial'
-          : spans >= 2
-            ? 'verified'
-            : 'unsupported';
+    const verdict = r.selection.status === 'verified' ? 'verified' : 'partial';
     verdicts[verdict] = (verdicts[verdict] ?? 0) + 1;
+    const best = r.selection.candidateChains[0];
     console.log(
-      `  ${name.padEnd(29)} ${verdict.padEnd(12)} ${String(r.parse.anchors.length).padStart(7)}` +
-        ` ${String(r.parse.constraints.length).padStart(12)} ${String(r.passed.length).padStart(5)}` +
-        ` ${String(spans).padStart(6)} ${String(r.amounts.length).padStart(8)} ${String(unexplained).padStart(12)}`,
+      `  ${name.padEnd(29)} ${verdict.padEnd(12)} ${r.selection.reason.padEnd(30)}` +
+        ` chains ${String(r.selection.candidateChains.length).padStart(2)}` +
+        ` best ${(best?.evidence.detailScore ?? 0).toFixed(2)}` +
+        ` gap ${r.selection.scoreGap.toFixed(2).padStart(5)}` +
+        ` ${String(unexplained).padStart(7)}`,
     );
     totalConstraints += r.parse.constraints.length;
     totalPassed += r.passed.length;
@@ -106,9 +97,27 @@ for (const file of files) {
             `  computed ${c.computed.toFixed(2)}  ${c.fromLine}..${c.toLine}`,
         );
       }
-      for (const a of r.parse.amounts) {
-        console.log(`      ${a.role === 'anchor' ? 'anchor' : 'amount'}  ${a.value.toFixed(2).padStart(12)}  ${JSON.stringify(a.token.text)}`);
+      for (const [i, scored] of r.selection.candidateChains.entries()) {
+        const e = scored.evidence;
+        const selected = r.selection.selected?.id === scored.chain.id;
+        console.log(`      Chain #${i + 1}  (${scored.chain.id})${selected ? '  <-- SELECTED' : ''}`);
+        console.log(`        reconciled            yes  (${scored.chain.constraints.length}/${scored.chain.constraints.length} constraints)`);
+        console.log(`        entries               ${e.entryCount}`);
+        console.log(`        dated entries         ${e.entriesWithTransactionDate}`);
+        console.log(`        date coverage         ${(e.dateCoverage * 100).toFixed(1)}%`);
+        console.log(`        dated amount coverage ${(e.datedAmountCoverage * 100).toFixed(1)}%`);
+        console.log(`        detail score          ${e.detailScore.toFixed(3)}`);
+        console.log(`        lines                 ${scored.chain.startLine}..${scored.chain.endLine}  ${scored.chain.opening.toFixed(2)} -> ${scored.chain.closing.toFixed(2)}`);
+        for (const a of scored.chain.amounts.slice(0, 6)) {
+          console.log(`          amount ${a.value.toFixed(2).padStart(12)}  line ${a.lineId}`);
+        }
+        if (scored.chain.amounts.length > 6) console.log(`          ... ${scored.chain.amounts.length - 6} more`);
       }
+      console.log(`      Chain selection:  best ${(r.selection.candidateChains[0]?.evidence.detailScore ?? 0).toFixed(3)}` +
+        `  second ${(r.selection.candidateChains[1]?.evidence.detailScore ?? 0).toFixed(3)}` +
+        `  gap ${r.selection.scoreGap.toFixed(3)}`);
+      console.log(`      status: ${r.selection.status}   reason: ${r.selection.reason}`);
+      console.log(`      thresholds: minDetailScore ${r.selection.thresholds.minDetailScore}  minChainScoreGap ${r.selection.thresholds.minChainScoreGap}`);
       console.log('');
     }
   } catch (error) {
@@ -120,4 +129,5 @@ for (const file of files) {
 console.log('');
 console.log(`  balance constraints: ${totalPassed}/${totalConstraints} satisfied`);
 console.log(`  verdicts: ${Object.entries(verdicts).map(([k, v]) => `${k} ${v}`).join('   ')}`);
+console.log('  (verified = reconciled + looks like transaction detail + no competing chain within the gap)');
 console.log('');

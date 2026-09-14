@@ -1,4 +1,6 @@
 import { parseDate, type DateOrder, type ParsedDate } from '../parse/date';
+
+export type { DateOrder };
 import type { PdfToken } from './tokens';
 
 /**

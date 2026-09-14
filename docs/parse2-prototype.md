@@ -249,3 +249,115 @@ Cheapest next experiment, in order:
 3. **Hold out new statements.** The 11 real files have already shaped the design, so
    they can only serve as regression, never as evidence of coverage. Real evaluation
    needs statements that have never been looked at.
+
+---
+
+## Stage 3: chain selection (`reconciled` ≠ `verified`)
+
+The previous stage's conclusion was that the remaining problem had changed shape.
+It had:
+
+> `verified` meant "these figures form a consistent balance chain". A statement can
+> hold several such chains — a summary and a ledger — and the user wants the ledger.
+
+So `verified` is now a **statement-level judgement**, not an arithmetic one:
+
+```
+reconciled   these figures form an arithmetically consistent chain
+verified     ...and this is the transaction detail, and no equally plausible
+             alternative explanation exists
+```
+
+Two stages, deliberately not sharing a score:
+
+```
+lib/parse2/
+  tokens.ts                 extraction   — 2-D token graph
+  amounts.ts, dates.ts      candidates   — readings with evidence and confidence
+  lines.ts                  candidates   — the decoder's input sequence
+  decode.ts                 reconciliation — which readings are self-consistent?
+  chain-selection/          selection      — which of those is the transaction detail?
+```
+
+Arithmetic is the **gate** into selection, never a term in it (brief §8). Every
+candidate already reconciles, so scoring it again on arithmetic would just let the
+cleanest summary win — which is precisely the failure that started this.
+
+### Evidence
+
+`dateCoverage` and `datedAmountCoverage` (value-weighted), plus a weak `entryCount`
+term, in the priority order the brief requires. Entry count is last because "the
+ledger has more rows" is a tendency, not an invariant: a statement can have eight
+summary categories and four transactions.
+
+Dates come from the existing `DateCandidate` path, never a fresh regex over the
+line. An amount counts as dated if its own line carries a date, or a date sits
+within `DATE_LOOKBACK_LINES = 2` lines above it *and* no amount intervenes — which
+is what makes a multi-line entry work without making a section header count.
+
+### Result on the regression corpus
+
+```
+verified 5   partial 4   refused 2      19/19 balance constraints satisfied
+```
+
+| Statement | Accounting stage | After chain selection |
+|---|---|---|
+| Capital One | verified | **verified**, gap 0.94 — amounts 2.49, 2.25, 2.50 preserved |
+| Sparkasse | verified | **verified**, gap ∞ — the 12 transactions preserved |
+| Schwyzer KB | verified | **verified** |
+| lafinancepourtous | verified | **verified** |
+| Commerce Bank | verified | **verified**, gap 0.63 |
+| Postbank | verified | **partial**, gap 0.01 — two genuine chains |
+| bancop | verified | **partial**, INSUFFICIENT_DETAIL_EVIDENCE |
+| BCP, Banco de Portugal | unsupported | **partial**, NO_RECONCILED_CHAIN |
+
+### Three defects found by building this
+
+1. **An amount spanned by no constraint counted as a chain entry.** A Capital One
+   parse consumed the closing-balance row as a trailing amount, which made the
+   correct chain look ambiguous *with itself* — a 0.009 gap driven entirely by the
+   entry-count term rewarding the extra fake entry.
+2. **Chains were identified by their anchors, not by their transactions.** Two
+   parses that extract the same amounts over the same balance span are the same
+   answer to the user even if one also anchored on a closing row. Signing on
+   anchors reported statements as ambiguous with themselves.
+3. **Alternatives were mined from any beam state.** A parse scoring far worse still
+   contains chains, and those can look well-dated, so the ambiguity check fired on
+   statements with a single sensible reading (Sparkasse fell to `partial`). Only
+   parses within `max(6, 12% of best)` are now treated as competing interpretations.
+
+Defect 1 is the fail-closed principle applied at the right level: unverified
+arithmetic must not become evidence, and must not reach the output.
+
+### Commerce Bank is still not right, and it is not a chain-selection problem
+
+The selected chain (`75.00 → 305.00`, 2 entries) is a category subtotal. The
+**transaction ledger is not in the candidate set at all** — the decoder discards it
+because the summary explains the arithmetic more cheaply. Chain selection cannot
+choose something that was never generated.
+
+This is brief §16 condition D. Resolving it needs the cross-chain subtotal
+relationship (`chain A's amounts are sums of chain B's`), which was explicitly
+deferred from this round.
+
+## Freeze assessment: `Blind Evaluation Candidate v0` — **not met**
+
+Two conditions are unmet:
+
+1. **Commerce Bank is unresolved.** Its detail ledger must become a candidate before
+   selection can pick it. That is the deferred subtotal work.
+2. **Postbank and bancop were reclassified**, from `verified` to `partial`. Postbank's
+   ambiguity looks genuine (two fully-dated reconciled chains, 0.931 vs 0.923), which
+   means the earlier `verified` was over-confident — but "the new answer is more
+   honest" and "the new answer is right" are different claims, and this has not been
+   checked against ground truth.
+
+Also note the shape of the numbers: **`partial` is now 4 of 11, and that is the honest
+number, not a regression.** The verification definition got stricter, and stricter
+definitions reduce coverage. Reporting `verified 5` while one of them is wrong would
+be worse than reporting `partial`.
+
+Freeze the weights and thresholds only after Commerce Bank is resolved and the
+reclassifications are checked. Thresholds in force:
+`minDetailScore 0.35`, `minChainScoreGap 0.15` (`chain-selection/select.ts`).

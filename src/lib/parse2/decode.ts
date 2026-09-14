@@ -105,8 +105,43 @@ export interface BalanceConstraint {
   evidenceQuality: number;
 }
 
+/**
+ * One financially self-consistent chain: an opening reading, a closing reading,
+ * and the amounts between them that explain the difference.
+ *
+ * A parse may contain several. Commerce Bank's sample holds a summary chain
+ * (`7126.11 + 3615.08 - 20.00 - 200.00 = 10521.19`) and a transaction ledger, and
+ * both satisfy the accounting constraints. Reporting them separately is what makes
+ * "which one is the detail?" a question the parser can answer instead of hiding.
+ */
+export interface ReconciledChain {
+  id: string;
+  /** Anchor readings, in document order. At least the opening and closing of the chain. */
+  anchors: Array<{ token: PdfToken; value: number; lineId: string }>;
+  constraints: BalanceConstraint[];
+  amounts: DecodedAmount[];
+  opening: number;
+  closing: number;
+  startLine: string;
+  endLine: string;
+  pageStart: number;
+  pageEnd: number;
+}
+
 export interface Parse {
   roles: Map<string, Role>;
+  /** Independent chains inside this parse. */
+  chains: ReconciledChain[];
+  /**
+   * Reconciled chains that appeared in near-optimal parses but not in the winner.
+   *
+   * The beam's objective maximises accounting evidence, so a detail ledger that
+   * costs more than the summary it sits beside can lose outright and vanish from
+   * the winning parse. Keeping the runner-up chains is what lets chain selection
+   * see a competing interpretation at all, and what lets `partial` mean something
+   * rather than "the parser shrugged".
+   */
+  alternatives: ReconciledChain[];
   amounts: DecodedAmount[];
   anchors: Array<{ token: PdfToken; value: number; lineId: string }>;
   constraints: BalanceConstraint[];
@@ -207,7 +242,62 @@ export function decode(lines: LineEvent[], options: { maxStates?: number; minCon
     if (beam.length > maxStates) beam = beam.slice(0, maxStates);
   }
 
-  return materialise(beam[0]);
+  const parse = materialise(beam[0]);
+
+  // Collect chains from competing parses, but only from parses that are
+  // *materially competitive on accounting*.
+  //
+  // Taking them from any beam state made the ambiguity check fire on statements
+  // that have a single sensible reading: a parse scoring far worse still contains
+  // chains, and those chains can look well-dated. An alternative only competes if
+  // the interpretation it belongs to was nearly as good an explanation of the
+  // arithmetic. Otherwise this is not ambiguity, it is just the runner-up.
+  const seen = new Set(parse.chains.map(chainSignature));
+  const alternatives: ReconciledChain[] = [];
+  const floor = COMPETITIVE_SCORE_FLOOR(beam[0].score);
+
+  for (const state of beam.slice(1, ALT_PARSE_DEPTH + 1)) {
+    if (state.score < floor) break;
+    for (const chain of materialise(state).chains) {
+      const signature = chainSignature(chain);
+      if (seen.has(signature)) continue;
+      seen.add(signature);
+      alternatives.push(chain);
+    }
+  }
+
+  return { ...parse, alternatives };
+}
+
+/** How many competing parses are mined for alternative chains. */
+const ALT_PARSE_DEPTH = 12;
+
+/**
+ * How much worse a parse may score and still count as a competing interpretation.
+ *
+ * Absolute slack plus a fraction of the best score, because the score accumulates
+ * per amount and per constraint and so scales with statement size. A statement
+ * with 200 amounts should tolerate more absolute difference than one with five.
+ */
+export function COMPETITIVE_SCORE_FLOOR(best: number): number {
+  return best - Math.max(6, Math.abs(best) * 0.12);
+}
+
+/**
+ * Identity of a chain is the transactions it produces, not the readings it used.
+ *
+ * Two parses that extract the same amounts over the same balance span are the same
+ * answer to the user, even if one also anchored on a closing-balance row and the
+ * other consumed it as a trailing amount. Signing on anchors made those two count
+ * as competing interpretations, which reported a statement as ambiguous with
+ * itself.
+ */
+function chainSignature(chain: ReconciledChain): string {
+  const amounts = chain.amounts
+    .map((amount) => amount.token.id)
+    .sort()
+    .join(',');
+  return `${chain.opening.toFixed(2)}->${chain.closing.toFixed(2)}|${amounts}`;
 }
 
 
@@ -363,6 +453,75 @@ function expandLine(
   );
 }
 
+/**
+ * Split a decision sequence into independent chains.
+ *
+ * A `chain` decision opens one; every satisfied `anchor` that follows extends it,
+ * and the amounts in between belong to it. This is a segmentation of the parse,
+ * not a new judgement — it invents no rule about what a chain is.
+ */
+function segmentChains(decisions: Decision[]): ReconciledChain[] {
+  const chains: ReconciledChain[] = [];
+  let current: ReconciledChain | null = null;
+  /**
+   * Amounts seen since the last accepted constraint.
+   *
+   * They are only promoted into the chain when a constraint spans them. An amount
+   * consumed after the closing anchor is spanned by nothing, so it is unverified
+   * arithmetic dressed up as a transaction, and it must not count as evidence or
+   * appear in the output. On a Capital One sample exactly this turned the closing
+   * balance row into a fourth "transaction" and made a correct parse look
+   * ambiguous with itself.
+   */
+  let pending: DecodedAmount[] = [];
+
+  const open = (token: PdfToken, value: number, lineId: string): ReconciledChain => ({
+    id: `chain${chains.length}`,
+    anchors: [{ token, value, lineId }],
+    constraints: [],
+    amounts: [],
+    opening: value,
+    closing: value,
+    startLine: lineId,
+    endLine: lineId,
+    pageStart: token.page,
+    pageEnd: token.page,
+  });
+
+  for (const decision of decisions) {
+    if (!decision.token) continue;
+    if (decision.kind === 'chain') {
+      if (current && current.constraints.length) chains.push(current);
+      current = open(decision.token, decision.signedValue ?? 0, decision.lineId ?? '');
+      pending = [];
+      continue;
+    }
+    if (!current) continue;
+    if (decision.kind === 'anchor' && decision.constraint) {
+      // Everything accumulated since the previous anchor is now spanned by a
+      // constraint, so it is verified and belongs to the chain.
+      current.amounts.push(...pending);
+      pending = [];
+      current.anchors.push({ token: decision.token, value: decision.signedValue ?? 0, lineId: decision.lineId ?? '' });
+      current.constraints.push(decision.constraint);
+      current.closing = decision.signedValue ?? 0;
+      current.endLine = decision.lineId ?? current.endLine;
+      current.pageEnd = Math.max(current.pageEnd, decision.token.page);
+      continue;
+    }
+    if (decision.kind === 'amount') {
+      pending.push({
+        token: decision.token,
+        value: decision.signedValue ?? 0,
+        role: 'amount',
+        lineId: decision.lineId ?? '',
+      });
+    }
+  }
+  if (current && current.constraints.length) chains.push(current);
+  return chains;
+}
+
 function materialise(final: State): Parse {
   const chain: Decision[] = [];
   for (let node: State | null = final; node && node.decision; node = node.parent) chain.push(node.decision);
@@ -400,6 +559,10 @@ function materialise(final: State): Parse {
 
   return {
     roles,
+    chains: segmentChains(chain),
+    // Filled in by `decode`, which is the only place that can see the competing
+    // parses; `materialise` only ever sees one of them.
+    alternatives: [],
     amounts,
     anchors,
     constraints,
