@@ -23,7 +23,9 @@
     "seq:money": "vite-node scripts/seq-money.ts --",
     "decode2": "vite-node scripts/decode2.ts --",
     "corpus:dump": "node scripts/corpus-inspect.mjs --",
-    "blind-eval:v0": "node scripts/blind-eval-v0.mjs"
+    "blind-eval:v0": "node scripts/blind-eval-v0.mjs",
+    "diag:primitives": "vite-node scripts/diag-primitives.mjs --",
+    "diag:trace": "vite-node scripts/diag-trace.mjs --"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.5",

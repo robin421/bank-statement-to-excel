@@ -40,18 +40,30 @@ console.log(`  running ${manifest.entries.length} statements in one batch\n`);
 function runOne(entry) {
   return new Promise((resolve) => {
     const outPath = path.join(OUT_DIR, `${entry.id}.json`);
-    const child = spawn('npx', ['vite-node', 'scripts/blind-eval-one.mjs', '--', entry.id, entry.path, outPath], {
+    // `detached: true` puts the worker in its own process group so the timeout can
+    // kill the whole tree. Spawning through `npx` created a wrapper whose grandchild
+    // survived SIGKILL: on C10 the driver recorded a timeout at 300s while the
+    // worker completed at 305.9s and overwrote it, so the artifact contradicted the
+    // run log. Launch node directly and kill the group.
+    const child = spawn(process.execPath, ['node_modules/vite-node/vite-node.mjs', 'scripts/blind-eval-one.mjs', '--', entry.id, entry.path, outPath], {
       stdio: ['ignore', 'ignore', 'pipe'],
+      detached: true,
       env: { ...process.env, NODE_OPTIONS: '--max-old-space-size=4096' },
     });
 
     let stderr = '';
+    let timedOut = false;
     child.stderr.on('data', (chunk) => {
       stderr += String(chunk);
     });
 
     const timer = setTimeout(() => {
-      child.kill('SIGKILL');
+      timedOut = true;
+      try {
+        process.kill(-child.pid, 'SIGKILL');
+      } catch {
+        child.kill('SIGKILL');
+      }
       fs.writeFileSync(
         outPath,
         `${JSON.stringify(
@@ -73,7 +85,10 @@ function runOne(entry) {
 
     child.on('close', (code) => {
       clearTimeout(timer);
+      // A worker that outlived the group kill must not be able to overwrite the
+      // timeout record, so the driver's verdict wins whenever it fired first.
       let termination = 'completed';
+      if (timedOut) return;
       if (code !== 0 && !fs.existsSync(outPath)) {
         fs.writeFileSync(
           outPath,

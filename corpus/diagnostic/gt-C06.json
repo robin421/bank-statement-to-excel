@@ -1,0 +1,52 @@
+{
+  "statementId": "C06",
+  "source": "corpus/court/C06-stretto-x130.pdf",
+  "bank": "Bank of America, N.A.",
+  "openingBalance": 200000.0,
+  "closingBalance": 63343.68,
+  "arithmeticVerified": true,
+  "evidence": "200000.00 + 70939.18 - 207595.50 = 63343.68 exact; deposits 32355.31+38583.87 = 70939.18 and other debits 91000+107308.04+2522.72+2230.12+34.62+4500 = 207595.50, both printed as subtotals.",
+  "transactions": [
+    {
+      "date": "04/12",
+      "amount": 32355.31,
+      "direction": "credit"
+    },
+    {
+      "date": "04/12",
+      "amount": 38583.87,
+      "direction": "credit"
+    },
+    {
+      "date": "04/09",
+      "amount": 91000.0,
+      "direction": "debit"
+    },
+    {
+      "date": "04/09",
+      "amount": 107308.04,
+      "direction": "debit"
+    },
+    {
+      "date": "04/13",
+      "amount": 2522.72,
+      "direction": "debit"
+    },
+    {
+      "date": "04/14",
+      "amount": 2230.12,
+      "direction": "debit"
+    },
+    {
+      "date": "04/15",
+      "amount": 34.62,
+      "direction": "debit"
+    },
+    {
+      "date": "04/15",
+      "amount": 4500.0,
+      "direction": "debit"
+    }
+  ],
+  "transactionNote": "amount is a MAGNITUDE; direction gives the sign for the balance chain."
+}

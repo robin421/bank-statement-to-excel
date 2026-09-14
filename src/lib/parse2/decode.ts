@@ -217,7 +217,33 @@ const round2 = (value: number): number => Math.round(value * 100) / 100;
  * keeps the search exact within the cap — the reachable sums between two anchors
  * are bounded by the number of sign assignments, not by the number of parses.
  */
-export function decode(lines: LineEvent[], options: { maxStates?: number; minConfidence?: number } = {}): Parse {
+/**
+ * Read-only search instrumentation.
+ *
+ * Records, per line, whether a watched `(lastAnchor, runningSum)` state survived the
+ * beam prune and what rank it held. It observes the search and cannot alter it: when
+ * `trace` is undefined (always, in production and in every regression run) no branch
+ * below is taken and the result is bit-identical. That claim is verified by
+ * re-running the frozen corpus and diffing the outcome.
+ *
+ * This exists because the blind run left one question open: was the correct chain
+ * never expressible, or was it expressible and pruned away? Widening the beam
+ * answers neither on its own — the rank tells you which.
+ */
+export interface SearchTrace {
+  watchKeys: Set<string>;
+  onStep: (step: number, info: {
+    beamBeforePrune: number;
+    beamAfterPrune: number;
+    cutoffScore: number;
+    watched: Array<{ key: string; presentBefore: boolean; rankBefore: number | null; survived: boolean }>;
+  }) => void;
+}
+
+export function decode(
+  lines: LineEvent[],
+  options: { maxStates?: number; minConfidence?: number; trace?: SearchTrace } = {},
+): Parse {
   const maxStates = options.maxStates ?? DEFAULT_MAX_STATES;
   const minConfidence = options.minConfidence ?? 0.55;
 
@@ -239,6 +265,7 @@ export function decode(lines: LineEvent[], options: { maxStates?: number; minCon
   };
 
   let beam: State[] = [root];
+  let traceStep = 0;
 
   for (const line of lines) {
     const next = new Map<string, State>();
@@ -272,8 +299,28 @@ export function decode(lines: LineEvent[], options: { maxStates?: number; minCon
       );
     }
 
-    beam = [...next.values()].sort((a, b) => b.score - a.score);
-    if (beam.length > maxStates) beam = beam.slice(0, maxStates);
+    const sorted = [...next.values()].sort((a, b) => b.score - a.score);
+
+    if (options.trace) {
+      const trace = options.trace;
+      const watched = [...trace.watchKeys].map((key) => {
+        const rankBefore = sorted.findIndex((state) => `${state.lastAnchor ?? 'x'}|${round2(state.runningSum)}` === key);
+        return {
+          key,
+          presentBefore: rankBefore >= 0,
+          rankBefore: rankBefore >= 0 ? rankBefore + 1 : null,
+          survived: rankBefore >= 0 && rankBefore < maxStates,
+        };
+      });
+      trace.onStep(traceStep++, {
+        beamBeforePrune: sorted.length,
+        beamAfterPrune: Math.min(sorted.length, maxStates),
+        cutoffScore: sorted.length > maxStates ? sorted[maxStates - 1].score : Number.NEGATIVE_INFINITY,
+        watched,
+      });
+    }
+
+    beam = sorted.length > maxStates ? sorted.slice(0, maxStates) : sorted;
   }
 
   const parse = materialise(beam[0]);
