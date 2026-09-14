@@ -47,7 +47,7 @@ const MONTHS: Record<string, number> = {
   // German. `Mär` and `März` normalise to `mar` and `marz`; the `ae` spellings
   // are for statements and exports that transliterate.
   januar: 1, jaen: 1, janner: 1, februar: 2, marz: 3, maer: 3, maerz: 3, mrz: 3,
-  mai: 5, juni: 6, juli: 7, august: 8, okt: 10, oktober: 10, dez: 12, dezember: 12,
+  mai: 5, juni: 6, juli: 7, okt: 10, oktober: 10, dez: 12, dezember: 12,
 
   // French
   janv: 1, janvier: 1, fevr: 2, fevrier: 2, mars: 3, avr: 4, avril: 4, juin: 6,
@@ -66,7 +66,7 @@ const MONTHS: Record<string, number> = {
   lug: 7, luglio: 7, settembre: 9, ott: 10, ottobre: 10, dicembre: 12,
 
   // Dutch
-  januari: 1, februari: 2, mrt: 3, maart: 3, mei: 5, juni: 6, juli: 7, augustus: 8,
+  januari: 1, februari: 2, mrt: 3, maart: 3, mei: 5, augustus: 8,
 };
 
 function monthNumber(raw: string): number | undefined {
