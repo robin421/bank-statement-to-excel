@@ -1,5 +1,7 @@
 # StatementToExcel
 
+[![CI](https://github.com/robin421/bank-statement-to-excel/actions/workflows/ci.yml/badge.svg)](https://github.com/robin421/bank-statement-to-excel/actions/workflows/ci.yml)
+
 A bank-statement → Excel/CSV converter that runs entirely in the browser, and checks its own output
 against the statement's running balance before offering it to you.
 
