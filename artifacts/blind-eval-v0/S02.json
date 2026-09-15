@@ -1,0 +1,582 @@
+{
+  "id": "S02",
+  "pdfPath": "corpus/candidates/S02-stretto-pleading-a.pdf",
+  "termination": "completed",
+  "durationMs": 114973,
+  "diagnosticsNote": "beam internals not instrumented; frozen parser was not modified",
+  "result": {
+    "status": "partial",
+    "reason": "AMBIGUOUS_RECONCILED_CHAINS",
+    "scoreGap": 0.008571428571428674,
+    "thresholds": {
+      "minDetailScore": 0.35,
+      "minChainScoreGap": 0.15
+    },
+    "selectedChain": null,
+    "candidateChains": [
+      {
+        "id": "chain24",
+        "opening": 300121.04,
+        "closing": 300121.04,
+        "constraints": 3,
+        "amounts": 2,
+        "amountValues": [
+          300121.04,
+          -300121.04
+        ],
+        "startLine": "L305",
+        "endLine": "L307",
+        "detailScore": 0.9314,
+        "dateCoverage": 1,
+        "datedAmountCoverage": 1,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 2,
+        "selected": false
+      },
+      {
+        "id": "chain20",
+        "opening": 7.75,
+        "closing": 2440.86,
+        "constraints": 4,
+        "amounts": 1,
+        "amountValues": [
+          2433.11
+        ],
+        "startLine": "L234",
+        "endLine": "L239",
+        "detailScore": 0.9229,
+        "dateCoverage": 1,
+        "datedAmountCoverage": 1,
+        "entryCount": 1,
+        "entriesWithTransactionDate": 1,
+        "selected": false
+      },
+      {
+        "id": "chain23",
+        "opening": 555.12,
+        "closing": 35000,
+        "constraints": 2,
+        "amounts": 11,
+        "amountValues": [
+          4088.75,
+          13930,
+          35000,
+          35000,
+          9573361.78,
+          5502,
+          30805,
+          149919.22,
+          216299.07,
+          -10064460.94,
+          35000
+        ],
+        "startLine": "L259",
+        "endLine": "L279",
+        "detailScore": 0.7769,
+        "dateCoverage": 0.9091,
+        "datedAmountCoverage": 0.5009,
+        "entryCount": 11,
+        "entriesWithTransactionDate": 10,
+        "selected": false
+      },
+      {
+        "id": "chain25",
+        "opening": 273672.55,
+        "closing": 273140.25,
+        "constraints": 2,
+        "amounts": 3,
+        "amountValues": [
+          -532.3,
+          532.3,
+          -532.3
+        ],
+        "startLine": "L325",
+        "endLine": "L328",
+        "detailScore": 0.3305,
+        "dateCoverage": 0.3333,
+        "datedAmountCoverage": 0.3333,
+        "entryCount": 3,
+        "entriesWithTransactionDate": 1,
+        "selected": false
+      },
+      {
+        "id": "chain16",
+        "opening": 29953.66,
+        "closing": 22875,
+        "constraints": 2,
+        "amounts": 4,
+        "amountValues": [
+          -425710.06,
+          425710.06,
+          -29953.66,
+          22875
+        ],
+        "startLine": "L185",
+        "endLine": "L207",
+        "detailScore": 0.1885,
+        "dateCoverage": 0.25,
+        "datedAmountCoverage": 0.0331,
+        "entryCount": 4,
+        "entriesWithTransactionDate": 1,
+        "selected": false
+      },
+      {
+        "id": "chain15",
+        "opening": -395756.4,
+        "closing": -29953.66,
+        "constraints": 3,
+        "amounts": 5,
+        "amountValues": [
+          395756.4,
+          29953.66,
+          -425710.06,
+          395756.4,
+          -29953.66
+        ],
+        "startLine": "L176",
+        "endLine": "L185",
+        "detailScore": 0.1652,
+        "dateCoverage": 0.2,
+        "datedAmountCoverage": 0.0235,
+        "entryCount": 5,
+        "entriesWithTransactionDate": 1,
+        "selected": false
+      },
+      {
+        "id": "chain14",
+        "opening": 8330603.25,
+        "closing": 28988.73,
+        "constraints": 5,
+        "amounts": 8,
+        "amountValues": [
+          28988.73,
+          -8330603.25,
+          8330603.25,
+          -8330603.25,
+          8330603.25,
+          -8330603.25,
+          8330603.25,
+          -8330603.25
+        ],
+        "startLine": "L164",
+        "endLine": "L170",
+        "detailScore": 0.0686,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 8,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain10",
+        "opening": 50000000,
+        "closing": -3,
+        "constraints": 2,
+        "amounts": 4,
+        "amountValues": [
+          -50000000,
+          -1,
+          -1,
+          -1
+        ],
+        "startLine": "L96",
+        "endLine": "L113",
+        "detailScore": 0.0343,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 4,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain0",
+        "opening": 532,
+        "closing": 7882,
+        "constraints": 1,
+        "amounts": 2,
+        "amountValues": [
+          7882,
+          -532
+        ],
+        "startLine": "L11",
+        "endLine": "L13",
+        "detailScore": 0.0171,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain13",
+        "opening": 50000000,
+        "closing": -250,
+        "constraints": 3,
+        "amounts": 2,
+        "amountValues": [
+          -50000000,
+          -250
+        ],
+        "startLine": "L132",
+        "endLine": "L144",
+        "detailScore": 0.0171,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain17",
+        "opening": 35.5,
+        "closing": 35.5,
+        "constraints": 1,
+        "amounts": 2,
+        "amountValues": [
+          22875,
+          -22875
+        ],
+        "startLine": "L207",
+        "endLine": "L208",
+        "detailScore": 0.0171,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain18",
+        "opening": 25777.55,
+        "closing": 25777.55,
+        "constraints": 1,
+        "amounts": 2,
+        "amountValues": [
+          25777.55,
+          -25777.55
+        ],
+        "startLine": "L211",
+        "endLine": "L210",
+        "detailScore": 0.0171,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain2",
+        "opening": 32311,
+        "closing": 791499,
+        "constraints": 1,
+        "amounts": 2,
+        "amountValues": [
+          791499,
+          -32311
+        ],
+        "startLine": "L38",
+        "endLine": "L38",
+        "detailScore": 0.0171,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain22",
+        "opening": 299565.92,
+        "closing": 300121.04,
+        "constraints": 1,
+        "amounts": 2,
+        "amountValues": [
+          10064460.94,
+          -10063905.82
+        ],
+        "startLine": "L258",
+        "endLine": "L258",
+        "detailScore": 0.0171,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain3",
+        "opening": 226,
+        "closing": 64826,
+        "constraints": 1,
+        "amounts": 2,
+        "amountValues": [
+          64826,
+          -226
+        ],
+        "startLine": "L39",
+        "endLine": "L39",
+        "detailScore": 0.0171,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain4",
+        "opening": 30805,
+        "closing": 707547,
+        "constraints": 1,
+        "amounts": 2,
+        "amountValues": [
+          707547,
+          -30805
+        ],
+        "startLine": "L40",
+        "endLine": "L40",
+        "detailScore": 0.0171,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain5",
+        "opening": 1280,
+        "closing": 19125,
+        "constraints": 1,
+        "amounts": 2,
+        "amountValues": [
+          19125,
+          -1280
+        ],
+        "startLine": "L41",
+        "endLine": "L41",
+        "detailScore": 0.0171,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain6",
+        "opening": 32311,
+        "closing": 791499,
+        "constraints": 1,
+        "amounts": 2,
+        "amountValues": [
+          791499,
+          -32311
+        ],
+        "startLine": "L51",
+        "endLine": "L51",
+        "detailScore": 0.0171,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain1",
+        "opening": 1038612,
+        "closing": 136091349,
+        "constraints": 2,
+        "amounts": 1,
+        "amountValues": [
+          135052737
+        ],
+        "startLine": "L18",
+        "endLine": "L21",
+        "detailScore": 0.0086,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 1,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain12",
+        "opening": -1,
+        "closing": -3,
+        "constraints": 3,
+        "amounts": 1,
+        "amountValues": [
+          -2
+        ],
+        "startLine": "L124",
+        "endLine": "L132",
+        "detailScore": 0.0086,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 1,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain19",
+        "opening": 2433.11,
+        "closing": 2440.86,
+        "constraints": 1,
+        "amounts": 1,
+        "amountValues": [
+          7.75
+        ],
+        "startLine": "L233",
+        "endLine": "L233",
+        "detailScore": 0.0086,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 1,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain25",
+        "opening": 273672.55,
+        "closing": 273140.25,
+        "constraints": 1,
+        "amounts": 1,
+        "amountValues": [
+          -532.3
+        ],
+        "startLine": "L325",
+        "endLine": "L322",
+        "detailScore": 0.0086,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 1,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain7",
+        "opening": -10063906,
+        "closing": -20563906,
+        "constraints": 1,
+        "amounts": 1,
+        "amountValues": [
+          -10500000
+        ],
+        "startLine": "L83",
+        "endLine": "L85",
+        "detailScore": 0.0086,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 1,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain8",
+        "opening": -10063906,
+        "closing": -10064438,
+        "constraints": 1,
+        "amounts": 1,
+        "amountValues": [
+          -532
+        ],
+        "startLine": "L88",
+        "endLine": "L90",
+        "detailScore": 0.0086,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 1,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain9",
+        "opening": -1,
+        "closing": -3,
+        "constraints": 1,
+        "amounts": 1,
+        "amountValues": [
+          -2
+        ],
+        "startLine": "L95",
+        "endLine": "L99",
+        "detailScore": 0.0086,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 1,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain11",
+        "opening": -1,
+        "closing": -1,
+        "constraints": 2,
+        "amounts": 0,
+        "amountValues": [],
+        "startLine": "L114",
+        "endLine": "L116",
+        "detailScore": 0,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 0,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain21",
+        "opening": -182,
+        "closing": -182,
+        "constraints": 1,
+        "amounts": 0,
+        "amountValues": [],
+        "startLine": "L228",
+        "endLine": "L255",
+        "detailScore": 0,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 0,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain26",
+        "opening": 532.3,
+        "closing": 532.3,
+        "constraints": 1,
+        "amounts": 0,
+        "amountValues": [],
+        "startLine": "L327",
+        "endLine": "L323",
+        "detailScore": 0,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 0,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      }
+    ],
+    "parseChainCount": 26,
+    "alternativeChainCount": 2,
+    "parseScore": 2372.55,
+    "terms": {
+      "constraintScore": 3459.599999999999,
+      "anchors": 74,
+      "amounts": 127,
+      "ignored": 0,
+      "unexplained": 802.29,
+      "contradictions": 0
+    },
+    "anchorCount": 47,
+    "constraintCount": 47,
+    "constraintsPassed": 47,
+    "dateOrder": {
+      "order": "MDY",
+      "ambiguous": false
+    },
+    "year": 2022,
+    "pages": 30,
+    "lines": 334,
+    "tokens": 6946,
+    "moneyCandidates": 676,
+    "maxMoneyPerLine": 9
+  },
+  "error": null
+}

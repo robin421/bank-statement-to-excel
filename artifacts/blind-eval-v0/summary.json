@@ -1,0 +1,63 @@
+{
+  "version": "blind-eval-v0",
+  "parserSnapshot": {
+    "commit": "9a047d4",
+    "dirty": false,
+    "beamWidth": 40000,
+    "maxRoleTokensPerLine": 5,
+    "minCandidateConfidence": 0.55,
+    "dateLookbackLines": 2,
+    "minDetailScore": 0.35,
+    "minChainScoreGap": 0.15,
+    "evidenceWeights": {
+      "dateCoverage": 1,
+      "datedAmountCoverage": 0.6,
+      "entryCount": 0.15,
+      "entryCountSaturation": 10
+    },
+    "knownTunedParameter": "beamWidth is empirical, not derived: 12k lost a correct chain that 40k recovers. Held fixed for this run.",
+    "fileHashes": {
+      "decode.ts": "ca3bb47c6554e932570b0d6db19ecabe126e359ed93243abada62665d6470cf0",
+      "chain-selection/select.ts": "6b4eb1c8d63f26fa989e5ee50b912f5e6e1b561ae4cc2bd72947bd5f99d6d323",
+      "chain-selection/evidence.ts": "dac306d4730962ed63fdaeeb3541357dfe7b2864609532a765a9c34cbb8d6877",
+      "amounts.ts": "17d5b82cd567c22230e1069ffcb317ceb6cbbb67c367cf9b29fb870b8f84c787",
+      "lines.ts": "acb8ba23741ffa0b703a950e2f26cf63c06db407895971960fb7c3a7bd94266b",
+      "tokens.ts": "bf4e91a064cd6d0fbbb9595ef68b19c8153e9d416ea62de38b972661b3df3bc1"
+    }
+  },
+  "ranAt": "2026-09-14T13:15:09.133Z",
+  "outcomes": [
+    {
+      "id": "A03",
+      "termination": "completed"
+    },
+    {
+      "id": "A04",
+      "termination": "completed"
+    },
+    {
+      "id": "A05",
+      "termination": "completed"
+    },
+    {
+      "id": "S02",
+      "termination": "completed"
+    },
+    {
+      "id": "G01",
+      "termination": "completed"
+    },
+    {
+      "id": "C05",
+      "termination": "completed"
+    },
+    {
+      "id": "C06",
+      "termination": "completed"
+    },
+    {
+      "id": "C10",
+      "termination": "timeout"
+    }
+  ]
+}

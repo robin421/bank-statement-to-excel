@@ -1,0 +1,128 @@
+{
+  "id": "A04",
+  "pdfPath": "corpus/candidates/A04-thebancorp-sample.pdf",
+  "termination": "completed",
+  "durationMs": 2681,
+  "diagnosticsNote": "beam internals not instrumented; frozen parser was not modified",
+  "result": {
+    "status": "verified",
+    "reason": "CLEAR_DETAIL_CHAIN",
+    "scoreGap": 0.9142857142857144,
+    "thresholds": {
+      "minDetailScore": 0.35,
+      "minChainScoreGap": 0.15
+    },
+    "selectedChain": {
+      "id": "chain1",
+      "opening": 0.12,
+      "closing": 14.63,
+      "constraints": 4,
+      "amounts": 2,
+      "amountValues": [
+        -0.12,
+        14.63
+      ],
+      "startLine": "L7",
+      "endLine": "L35"
+    },
+    "candidateChains": [
+      {
+        "id": "chain1",
+        "opening": 0.12,
+        "closing": 14.63,
+        "constraints": 4,
+        "amounts": 2,
+        "amountValues": [
+          -0.12,
+          14.63
+        ],
+        "startLine": "L7",
+        "endLine": "L35",
+        "detailScore": 0.9314,
+        "dateCoverage": 1,
+        "datedAmountCoverage": 1,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 2,
+        "selected": true
+      },
+      {
+        "id": "chain0",
+        "opening": 6.97,
+        "closing": 7.08,
+        "constraints": 1,
+        "amounts": 2,
+        "amountValues": [
+          13.68,
+          -13.57
+        ],
+        "startLine": "L3",
+        "endLine": "L6",
+        "detailScore": 0.0171,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain2",
+        "opening": 0.05,
+        "closing": 14.93,
+        "constraints": 2,
+        "amounts": 1,
+        "amountValues": [
+          14.88
+        ],
+        "startLine": "L36",
+        "endLine": "L40",
+        "detailScore": 0.0086,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 1,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      },
+      {
+        "id": "chain3",
+        "opening": 0.05,
+        "closing": 0.05,
+        "constraints": 1,
+        "amounts": 0,
+        "amountValues": [],
+        "startLine": "L40",
+        "endLine": "L54",
+        "detailScore": 0,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 0,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      }
+    ],
+    "parseChainCount": 4,
+    "alternativeChainCount": 0,
+    "parseScore": 205.61,
+    "terms": {
+      "constraintScore": 311.79999999999995,
+      "anchors": 12,
+      "amounts": 6,
+      "ignored": 0,
+      "unexplained": 78.99,
+      "contradictions": 0
+    },
+    "anchorCount": 8,
+    "constraintCount": 8,
+    "constraintsPassed": 8,
+    "dateOrder": {
+      "order": "MDY",
+      "ambiguous": false
+    },
+    "year": 2023,
+    "pages": 4,
+    "lines": 66,
+    "tokens": 738,
+    "moneyCandidates": 100,
+    "maxMoneyPerLine": 4
+  },
+  "error": null
+}

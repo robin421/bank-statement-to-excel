@@ -1,0 +1,103 @@
+{
+  "id": "A05",
+  "pdfPath": "corpus/candidates/A05-rbc-estatement.pdf",
+  "termination": "completed",
+  "durationMs": 2581,
+  "diagnosticsNote": "beam internals not instrumented; frozen parser was not modified",
+  "result": {
+    "status": "verified",
+    "reason": "CLEAR_DETAIL_CHAIN",
+    "scoreGap": 0.5029717363367738,
+    "thresholds": {
+      "minDetailScore": 0.35,
+      "minChainScoreGap": 0.15
+    },
+    "selectedChain": {
+      "id": "chain0",
+      "opening": 4247.14,
+      "closing": 3664.79,
+      "constraints": 1,
+      "amounts": 2,
+      "amountValues": [
+        145.15,
+        -727.5
+      ],
+      "startLine": "L3",
+      "endLine": "L6"
+    },
+    "candidateChains": [
+      {
+        "id": "chain0",
+        "opening": 4247.14,
+        "closing": 3664.79,
+        "constraints": 1,
+        "amounts": 2,
+        "amountValues": [
+          145.15,
+          -727.5
+        ],
+        "startLine": "L3",
+        "endLine": "L6",
+        "detailScore": 0.5887,
+        "dateCoverage": 0.5,
+        "datedAmountCoverage": 0.8337,
+        "entryCount": 2,
+        "entriesWithTransactionDate": 1,
+        "selected": true
+      },
+      {
+        "id": "chain1",
+        "opening": 4247.14,
+        "closing": 3783.36,
+        "constraints": 5,
+        "amounts": 11,
+        "amountValues": [
+          85,
+          0.15,
+          -100,
+          -47.82,
+          -0.93,
+          -40,
+          -148.11,
+          -60,
+          -20,
+          -125.13,
+          -6.94
+        ],
+        "startLine": "L10",
+        "endLine": "L21",
+        "detailScore": 0.0857,
+        "dateCoverage": 0,
+        "datedAmountCoverage": 0,
+        "entryCount": 11,
+        "entriesWithTransactionDate": 0,
+        "selected": false
+      }
+    ],
+    "parseChainCount": 2,
+    "alternativeChainCount": 0,
+    "parseScore": 530.1,
+    "terms": {
+      "constraintScore": 576,
+      "anchors": 8,
+      "amounts": 13,
+      "ignored": 0,
+      "unexplained": 12.76,
+      "contradictions": 0
+    },
+    "anchorCount": 6,
+    "constraintCount": 6,
+    "constraintsPassed": 6,
+    "dateOrder": {
+      "order": "DMY",
+      "ambiguous": false
+    },
+    "year": 2004,
+    "pages": 1,
+    "lines": 22,
+    "tokens": 253,
+    "moneyCandidates": 44,
+    "maxMoneyPerLine": 4
+  },
+  "error": null
+}
