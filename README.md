@@ -14,7 +14,11 @@ that invariant to pick the columns, fix the signs, and count the rows we failed 
 
 ## Live
 
-**https://bankstatementtoexcel.vercel.app** — deployed on Vercel (project `bank-statement-to-excel`).
+**https://www.wattflow.net** — deployed on Vercel (project `bank-statement-to-excel`).
+
+Source: **https://github.com/robin421/bank-statement-to-excel** (public). After cloning,
+run `git config core.hooksPath .githooks` to enable the pre-commit guard described in
+[Corpus policy](#corpus-policy).
 
 That host is a placeholder origin, not a brand decision. When the real domain is bought, set
 `PUBLIC_SITE_URL` in the Vercel project and redeploy — it is the only place an origin is hardcoded,
@@ -352,6 +356,48 @@ migrate or roll back beyond the deploy itself.
    layout claims you have not tested.
 
 ---
+
+## Corpus policy
+
+The repository is public. Two rules follow from that, and both are enforced rather
+than merely stated.
+
+**Real bank statements are never committed.** `fixtures/real/`, `corpus/court/`,
+`corpus/candidates/` and `corpus/dump/` are gitignored, and `.githooks/pre-commit`
+rejects any `.pdf` outside `fixtures/pdf/` as well as any file over 1 MB. Enable it
+once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The reason the hook exists rather than trusting `.gitignore`: ten real statement
+PDFs (about 56 MB) were committed to `corpus/court/` because that directory was
+never added to `.gitignore`, and they had to be purged from history with
+`git filter-repo` afterwards. Directory-by-directory rules only protect the paths
+someone remembered.
+
+What *is* committed from corpus work is the **aggregate evidence**: the acquisition
+reports, the blind-evaluation manifest with its ground truth, and the frozen v0
+result artifacts. A report states a conclusion; those files are the measurements
+behind it.
+
+**Frozen results are append-only.** `artifacts/blind-eval-v0/` is the record of the
+one blind run this parser version ever received. It is never edited, recomputed or
+reinterpreted. Corrections go in a new document, so that a reader can always see
+what was known before a change was made rather than only what is believed now.
+
+Files that have been run through the parser are no longer blind. The 8 statements of
+the v0 set and the 19 of the regression corpus may be used for regression only;
+coverage claims require statements that have never been executed.
+
+### What CI does and does not prove
+
+`.github/workflows/ci.yml` runs typecheck, unit tests, the static build and the
+internal link checker. Because the real corpus is gitignored, the real-statement
+tests **skip** in CI. A green run therefore says nothing about real bank statements,
+and the workflow says so in a comment. Real-corpus regression is run locally, where
+the fixtures exist.
 
 ## Deliberate non-goals
 

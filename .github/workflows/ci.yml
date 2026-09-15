@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # pdf.js 6 and Astro 7 both require >= 22.13.
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # Typecheck, unit tests, static build, and the internal link checker.
+      #
+      # KNOWN AND INTENTIONAL: the real-statement corpus (fixtures/real/) is
+      # gitignored — those are third-party documents and several are real account
+      # statements. `tests/real-corpus.spec.ts` therefore skips them here, so this
+      # job proves the synthetic corpus, the exporters, the locale rules, the OFX
+      # path, the build and the links. It does NOT prove anything about real bank
+      # statements, and a green run must not be read as such. Real-corpus
+      # regression is run locally where the fixtures exist.
+      - run: npm run verify
+
+      # The browser smoke suite needs a Playwright browser, which is a large
+      # download. It is deliberately not run here: the deployed-site check is done
+      # locally against production, where it also asserts the CSP and the
+      # "no external requests during conversion" claim in a real browser.
