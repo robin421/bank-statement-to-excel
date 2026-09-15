@@ -1,0 +1,76 @@
+All rights reserved.
+
+Copyright (c) 2026 the repository owner. All rights reserved.
+
+--------------------------------------------------------------------------------
+PLAIN-LANGUAGE SUMMARY (not a substitute for the terms below)
+--------------------------------------------------------------------------------
+
+This repository is PUBLIC, which means its source code can be read. It does NOT
+mean the code may be reused.
+
+Public visibility does not grant a licence. Absent a licence granting rights, the
+default position applies: you may read this code, and you may not copy it, modify
+it, redistribute it, or use it commercially.
+
+Specifically, no permission is granted to:
+
+  - copy, reproduce or mirror the source, in whole or in part;
+  - create derivative works, forks or ports;
+  - redistribute or sublicense, including in a bundle, product or dataset;
+  - use the code, in whole or in part, in a commercial product or service;
+  - deploy, host or operate it as a service;
+  - train machine-learning models on it.
+
+The repository is public because the engineering record is worth being legible —
+the architecture notes, the blind-evaluation methodology, and the corpus policy
+are written to be read and learned from. Reading and learning are permitted.
+Copying the implementation is not.
+
+--------------------------------------------------------------------------------
+NO WARRANTY
+--------------------------------------------------------------------------------
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This software converts financial documents. It performs a mechanical
+transformation of a file supplied by its user and does not provide financial,
+legal, tax or accounting advice. See docs/ and the project README for the
+accuracy limits that are documented and enforced.
+
+--------------------------------------------------------------------------------
+THIRD-PARTY COMPONENTS AND DOCUMENTS
+--------------------------------------------------------------------------------
+
+This section exists because the repository references material it does not own,
+and a blanket "all rights reserved" notice must not be read as claiming it.
+
+  - npm dependencies (Astro, React, pdf.js, write-excel-file, pdf-lib and others)
+    carry their own licences. See package.json and each package's own LICENSE file.
+
+  - Bank names, Intuit QuickBooks, Xero and other product names are trademarks of
+    their respective owners. They appear here only to describe file formats and
+    statement layouts. This project is not affiliated with, endorsed by or
+    sponsored by any of them.
+
+  - The corpus reports under corpus/ cite the public URLs from which sample
+    statements were obtained, and quote the figures used as ground truth. Those
+    statements remain the property of their issuers. No third-party document is
+    redistributed in this repository.
+
+--------------------------------------------------------------------------------
+LICENCE STATUS
+--------------------------------------------------------------------------------
+
+This is a deliberate choice, not an oversight. The project is source-available
+rather than open source.
+
+Releasing it under a permissive licence is irreversible in practice: anyone who
+obtains a copy under such terms keeps those rights permanently, even if the
+licence is changed later. Choosing the restrictive default keeps every option
+open, including adopting a permissive licence at any future date.

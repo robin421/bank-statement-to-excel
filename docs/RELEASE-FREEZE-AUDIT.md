@@ -134,18 +134,30 @@ this round forbids unnecessary cleanup.
 
 Confirmed it does not exist anywhere inside the repository.
 
-## 14. LICENSE — intentionally unresolved
+## 14. LICENSE — resolved, as source-available
 
-The repository has **no LICENSE file**. This audit did not add one and did not treat
-public visibility as implying open source.
+The audit found no LICENSE file and recorded it as an unresolved owner decision rather
+than defaulting to open source. It has since been resolved, in the only direction that
+is reversible.
 
-Legal position: **public source visibility does not grant reuse rights.** Absent a
-licence, the default is all rights reserved, so the code is viewable but others may not
-copy, modify, redistribute or use it commercially.
+`LICENSE` now states **all rights reserved**, with a plain-language summary of what is
+and is not permitted, a no-warranty clause, and a third-party section making clear that
+the blanket notice does not claim the npm dependencies, the bank trademarks quoted in
+the corpus reports, or the third-party statements those reports cite.
 
-If the intent is source-available-but-not-reusable, that is a separate
-`source-available / proprietary licence` decision. Choosing a licence is a legal
-decision for the owner, and this round deliberately did not make it.
+The direction was chosen on irreversibility, not preference:
+
+```
+permissive licence, wanted proprietary  ->  anyone who cloned meanwhile keeps those
+                                            rights permanently, and they cannot be revoked
+proprietary now, wanted permissive later ->  change one file; nothing is lost
+```
+
+Those are not symmetric, so the restrictive default was taken. It keeps every option
+open, including adopting a permissive licence at any future date.
+
+The README names the position at the top and links to the file, so a reader cannot
+mistake public visibility for a grant of rights.
 
 ---
 

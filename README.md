@@ -22,6 +22,12 @@ Source: **https://github.com/robin421/bank-statement-to-excel** (public). After 
 run `git config core.hooksPath .githooks` to enable the pre-commit guard described in
 [Corpus policy](#corpus-policy).
 
+**Licence: source-available, all rights reserved — see [LICENSE](LICENSE).** The
+repository is public so the engineering record can be read: the architecture notes, the
+blind-evaluation methodology and the corpus policy are written to be learned from.
+Public visibility does not grant reuse rights, and the code may not be copied,
+redistributed or used commercially.
+
 That host is a placeholder origin, not a brand decision. When the real domain is bought, set
 `PUBLIC_SITE_URL` in the Vercel project and redeploy — it is the only place an origin is hardcoded,
 and canonicals, the sitemap, `robots.txt` and the OG tags all derive from it.
