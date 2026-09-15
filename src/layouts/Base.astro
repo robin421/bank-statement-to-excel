@@ -3,6 +3,7 @@ import '../styles/global.css';
 import { SITE } from '../data/site.mjs';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Analytics from '../components/Analytics.astro';
 import { DEFAULT_LOCALE, LOCALES, type LocaleCode } from '../i18n';
 
 export interface Props {
@@ -119,6 +120,7 @@ const baseSchema = {
 
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
+    <Analytics />
     <Header locale={locale} translations={props.translations} />
     <main id="main">
       <slot />

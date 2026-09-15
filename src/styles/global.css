@@ -980,3 +980,61 @@ table.data tr.row--flagged td {
 .callout-list .icon--no {
   color: var(--danger);
 }
+
+
+/* ------------------------------------------------------------ consent gate */
+
+/**
+ * Analytics consent banner.
+ *
+ * Fixed to the bottom rather than centred as a modal: the converter has to stay
+ * usable while the question is on screen. A visitor who ignores it can still
+ * convert a statement, which is the whole point of the tool.
+ */
+.consent {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 60;
+  padding: 0.9rem var(--gutter) calc(0.9rem + env(safe-area-inset-bottom, 0px));
+  background: var(--paper-raised);
+  border-top: 1px solid var(--rule-strong);
+  box-shadow: 0 -6px 24px -12px rgba(19, 23, 32, 0.25);
+}
+
+.consent[hidden] {
+  display: none;
+}
+
+.consent__inner {
+  max-width: var(--page);
+  margin-inline: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+}
+
+.consent__text {
+  flex: 1 1 24rem;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.consent__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+@media (max-width: 560px) {
+  .consent__actions {
+    margin-left: 0;
+    width: 100%;
+  }
+  .consent__actions .btn {
+    flex: 1;
+  }
+}

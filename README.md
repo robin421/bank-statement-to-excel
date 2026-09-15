@@ -365,6 +365,67 @@ migrate or roll back beyond the deploy itself.
 
 ---
 
+## Analytics and consent
+
+Two analytics products, with different privacy properties, and the difference is the
+point.
+
+**Cloudflare Web Analytics** — cookieless, no fingerprinting, no consent banner needed.
+Aggregate page views, referrers and country.
+
+**Google Analytics 4** — opt-in, and **nothing about it runs until the visitor
+accepts.** No script, no cookie, no ping. Not even a cookieless one.
+
+That last part is a deliberate departure from the usual setup. Google Consent Mode
+with `analytics_storage: denied` by default is compliant and is the right choice when
+conversion modelling matters — but it still sends cookieless pings before anyone
+agreed. On a site whose headline claim is that nothing leaves your machine, making
+third-party requests before consent while telling the visitor the opposite is not a
+trade worth making. So the tag is loaded from the click handler, and Consent Mode
+defaults are still set inline so that anything Google-related loading later — AdSense,
+if it is ever enabled — starts from a refusal rather than a guess.
+
+Consent is stored in `localStorage` under `analytics-consent`, not a cookie, so
+recording the decision does not create the thing the decision is about. Clearing site
+data asks again.
+
+### What the events carry
+
+The funnel is `statement_submitted` → `statement_parsed` → `export_download`, plus
+`statement_error`. Parameters are counts, ratios and category names:
+
+```
+pages, rows, reconcile_rate, quality, source, reason, preset, date_format,
+export_locale
+```
+
+**Nothing read out of the statement.** No descriptions, amounts, balances, dates,
+account numbers or file names. `tests/analytics.spec.ts` scans every `track()` call
+site and fails on any parameter outside that list, so
+`description: transaction.description` cannot ship — it breaks the build rather than
+silently sending a merchant name to Google.
+
+### Configuration
+
+Set `PUBLIC_GA4_ID` (for example `G-XXXXXXXXXX`) in the environment. Leaving it empty —
+the default in this repository — disables the whole feature: no script, no banner, no
+third-party request.
+
+### How the privacy claim is tested
+
+The browser smoke suite carries out a real conversion and asserts four things:
+
+| Check | Claim |
+|---|---|
+| no external requests before consent | "nothing runs until you allow it" |
+| no request carries statement content | matched against strings that exist only in the fixture |
+| no request outside the connect-src allowlist | the CSP is the enforcement, and it is verified |
+| consenting loads the tag, banner does not reappear | the feature actually works, and is not merely inert |
+
+A single "no external requests at all" assertion would have had to be deleted to
+accommodate analytics. Splitting it into claims that stay true in both configurations
+keeps the guarantee instead of trading it away.
+
 ## Corpus policy
 
 The repository is public. Two rules follow from that, and both are enforced rather

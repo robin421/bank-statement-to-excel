@@ -1,0 +1,59 @@
+---
+/**
+ * Analytics consent gate.
+ *
+ * Renders nothing unless a measurement id is configured, which is the default in
+ * this repository — no script, no banner, no request.
+ *
+ * The inline script below runs before any third-party tag can and sets Consent
+ * Mode defaults to denied, so that anything Google-related that loads later
+ * (AdSense, if it is ever enabled) starts from a refusal rather than a guess. It
+ * deliberately does NOT load gtag.js. That happens only on Accept, from
+ * `lib/analytics/consent.ts`.
+ *
+ * The banner markup is static and hidden so it cannot shift layout, and it is not
+ * a framework island: it must be interactive before hydration would have finished.
+ */
+import { GA4_MEASUREMENT_ID } from '../lib/analytics/gtag';
+
+const enabled = Boolean(GA4_MEASUREMENT_ID);
+---
+
+{
+  enabled && (
+    <>
+      <script
+        is:inline
+        set:html={`
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+          window.gtag('consent', 'default', {
+            analytics_storage: 'denied',
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            wait_for_update: 500
+          });
+        `}
+      />
+
+      <aside id="consent-banner" class="consent" hidden aria-label="Analytics consent">
+        <div class="consent__inner">
+          <p class="consent__text">
+            <strong>May we measure how the tool is used?</strong> Your statement stays in this browser either way —
+            it is never uploaded. Analytics tells us which pages and features are worth improving; it sets cookies and
+            sends page views to Google. Nothing is sent unless you allow it.
+          </p>
+          <div class="consent__actions">
+            <button type="button" class="btn btn--ghost" data-consent="denied">No thanks</button>
+            <button type="button" class="btn btn--primary" data-consent="granted">Allow analytics</button>
+          </div>
+        </div>
+      </aside>
+
+      <script>
+        import '../lib/analytics/consent';
+      </script>
+    </>
+  )
+}

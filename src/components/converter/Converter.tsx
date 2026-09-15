@@ -6,6 +6,7 @@ import { DATE_FORMATS, type DateFormat } from '../../lib/exporters/dates';
 import type { StatementResult } from '../../lib/parse';
 import { DEFAULT_LOCALE, useTranslations, type LocaleCode } from '../../i18n';
 import { defaultExportLocaleFor, exportLocalesFor, getExportLocale } from '../../i18n/locales';
+import { track } from '../../lib/analytics/gtag';
 import Preview from './Preview';
 
 const MAX_BYTES = 60 * 1024 * 1024;
@@ -82,6 +83,15 @@ export default function Converter({ locale = DEFAULT_LOCALE, compact = false, af
         setFileName(file.name);
         setResult(parsed);
         setStatus('ready');
+        // The funnel this site exists to measure: submitted -> parsed -> downloaded.
+        // Counts, a ratio and category names. No descriptions, amounts or dates.
+        track('statement_parsed', {
+          pages: parsed.meta.pages,
+          rows: parsed.transactions.length,
+          reconcile_rate: Math.round(parsed.reconciliation.passRate * 100) / 100,
+          quality: parsed.quality.status,
+          source: parsed.meta.source ?? 'pdf',
+        });
         // Every statement is different, so start from the export locale's own
         // date convention rather than the preset's guess.
         setDateFormat(getExportLocale(exportLocale).dateFormat);
@@ -90,8 +100,17 @@ export default function Converter({ locale = DEFAULT_LOCALE, compact = false, af
         if (caught instanceof PdfPasswordRequiredError) {
           setStatus('password');
           setPasswordError(passwordAttempt ? message : '');
+          track('statement_error', { reason: 'password_required' });
           return;
         }
+        track('statement_error', {
+          reason:
+            caught instanceof PdfTooLargeError
+              ? 'too_large'
+              : caught instanceof PdfNoTextLayerError
+                ? 'no_text_layer'
+                : 'unreadable',
+        });
         setError(
           caught instanceof PdfTooLargeError || caught instanceof PdfNoTextLayerError
             ? message
@@ -114,6 +133,8 @@ export default function Converter({ locale = DEFAULT_LOCALE, compact = false, af
       }
       setPassword('');
       setDateOrderOverride('auto');
+      // Counts and categories only. Never the file name, never its contents.
+      track('statement_submitted');
       void run(file);
     },
     [run],
@@ -134,6 +155,8 @@ export default function Converter({ locale = DEFAULT_LOCALE, compact = false, af
       setPreparing(true);
       try {
         const artifact = await buildExport(result, { preset: which, exportLocale, dateFormat, sourceName: fileName });
+        // The end of the funnel. Format and row count only — nothing from the statement.
+        track('export_download', { preset: which, date_format: dateFormat, export_locale: exportLocale, rows: result.transactions.length });
         const blob =
           artifact.bytes !== undefined
             ? new Blob([artifact.bytes as unknown as BlobPart], { type: artifact.mimeType })

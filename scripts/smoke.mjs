@@ -123,9 +123,81 @@ async function main() {
     check('QuickBooks preset has one row per transaction', qbText.trim().split('\r\n').length - 1 === rowCount);
     fs.rmSync(qbPath, { force: true });
 
-    // The privacy claim: no request may carry the statement anywhere.
-    const external = requests.filter((url) => !url.startsWith(BASE) && !url.startsWith('blob:') && !url.startsWith('data:'));
-    check('no external network requests during conversion', external.length === 0, external.slice(0, 4).join(', '));
+    /*
+     * The privacy claim, tested in three parts rather than one.
+     *
+     * The old single assertion — "no external request at all" — stops being the
+     * right test once Google Analytics is wired in, because a consenting visitor is
+     * supposed to produce analytics requests. Weakening it to accommodate that would
+     * have thrown away the guarantee. Instead it is split into claims that stay true
+     * under either configuration:
+     *
+     *   1. with no consent given — which is the state in this run — still zero
+     *      external requests, so "nothing runs until you allow it" is enforced
+     *   2. no outbound request ever carries statement content
+     *   3. nothing is sent to a host outside the CSP connect-src allowlist
+     */
+
+    // 1. Nothing third-party may load before consent.
+    const external = requests.filter(
+      (url) => !url.startsWith(BASE) && !url.startsWith('blob:') && !url.startsWith('data:'),
+    );
+    check('no external requests before consent', external.length === 0, external.slice(0, 4).join(', '));
+
+    check(
+      'analytics consent banner is shown, so the choice is offered rather than assumed',
+      (await page.locator('#consent-banner').count()) > 0,
+    );
+
+    // 2. Statement content must not appear in any outbound request. Checked against
+    //    strings that exist only inside the fixture statement.
+    const STATEMENT_MARKERS = ['ACME PAYROLL', 'NORTHWIND TRADING', 'WHOLE FOODS', '4821 MAIN ST'];
+    const leaked = requests.filter((url) =>
+      STATEMENT_MARKERS.some((marker) => decodeURIComponent(url).toUpperCase().includes(marker)),
+    );
+    check('no request carries statement content', leaked.length === 0, leaked.slice(0, 3).join(', '));
+
+    // 3. Allowlist, mirroring the CSP connect-src directive.
+    const ALLOWED_EXTERNAL = [
+      'static.cloudflareinsights.com',
+      'cloudflareinsights.com',
+      'www.google-analytics.com',
+      'google-analytics.com',
+      'analytics.google.com',
+      'www.googletagmanager.com',
+    ];
+    const offAllowlist = external.filter((url) => !ALLOWED_EXTERNAL.some((host) => url.includes(host)));
+    check('no request to a host outside the connect-src allowlist', offAllowlist.length === 0, offAllowlist.slice(0, 3).join(', '));
+
+    /*
+     * The consenting path, when analytics is configured in this build.
+     *
+     * "Nothing loads before consent" is only half the feature. The other half is
+     * that analytics actually works once allowed, so this drives the real banner,
+     * then asserts the tag was fetched and that doing so broke no CSP rule. Skipped
+     * when no measurement id is configured, which is the repository default.
+     */
+    if ((await page.locator('#consent-banner').count()) > 0) {
+      const before = requests.length;
+      await page.locator('#consent-banner [data-consent="granted"]').click();
+      await page.waitForFunction(() => Boolean(window.__analyticsLoaded), undefined, { timeout: 15_000 });
+      await page.waitForTimeout(1500);
+
+      const afterConsent = requests.slice(before);
+      check(
+        'consenting loads the analytics tag',
+        afterConsent.some((url) => url.includes('googletagmanager.com')),
+        afterConsent.join(', ').slice(0, 120),
+      );
+      check(
+        'the banner does not reappear after a decision',
+        await page.locator('#consent-banner').isHidden(),
+      );
+      check(
+        'analytics traffic keeps statement content out',
+        afterConsent.every((url) => !STATEMENT_MARKERS.some((m) => decodeURIComponent(url).toUpperCase().includes(m))),
+      );
+    }
 
     const uploads = requests.filter(
       (url) =>

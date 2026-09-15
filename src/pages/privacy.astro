@@ -40,8 +40,40 @@ const updated = '18 February 2025';
         does not require a consent banner in the EU or UK.
       </p>
       <p>
-        We deliberately do not run Google Analytics or any other cookie-based analytics product on this site, and we do
-        not use session recording, heatmaps or advertising pixels to profile individual visitors.
+        We also offer <strong>Google Analytics 4</strong>, and we do not load it unless you allow it. Nothing is sent to
+        Google until you press <em>Allow analytics</em> — not a page view, not a cookie, not a script request. If you press
+        <em>No thanks</em>, or simply ignore the banner, Google Analytics never runs.
+      </p>
+      <p>
+        <strong>What Google Analytics would receive.</strong> Page views (the address without any query string), a coarse
+        device and country signal, and events describing how the converter is used — how many pages a PDF had, how many
+        rows were extracted, whether the balance check passed, which export format was chosen. Those events carry counts,
+        booleans and format names only.
+      </p>
+      <p>
+        <strong>What it never receives.</strong> Nothing read out of your statement: no transaction descriptions, no
+        amounts, no balances, no dates, no account numbers, and not even the file name. There is no code path that could
+        send them — see the note on enforcement below.
+      </p>
+
+      <h2>Cookies and your choice</h2>
+      <p>
+        Your analytics decision is stored in this browser's <code>localStorage</code> under the key
+        <code>analytics-consent</code>, not in a cookie, so recording the choice does not itself create the thing being
+        asked about. It contains one of two words and nothing else.
+      </p>
+      <p>
+        You can change your mind at any time by clearing site data for this site in your browser settings. You will be
+        asked again on your next visit. Refusing analytics never affects the converter: it works identically either way.
+      </p>
+
+      <h2>How the privacy claim is enforced</h2>
+      <p>
+        "Your statement never leaves your device" is not only a promise here. The site is served with a
+        Content-Security-Policy whose <code>connect-src</code> directive lists every host this page is permitted to send
+        data to, and your browser enforces it. There is no endpoint belonging to us that accepts a file. A browser test in
+        the repository carries out a real conversion and fails if any request is made to a host outside that list, or if
+        any outbound request carries statement data.
       </p>
 
       <h2>Advertising</h2>
