@@ -134,10 +134,26 @@ describe('real statement corpus', () => {
   });
 
   it('documents every fixture that is excluded from correctness evidence', () => {
-    // An exclusion without a recorded reason is how a wrong ground truth hides.
+    // The reason is the invariant: it is policy, and it must hold everywhere,
+    // including a fresh clone where no corpus file exists at all. An exclusion
+    // without a recorded reason is how a wrong ground truth hides.
     for (const [name, reason] of Object.entries(EXCLUDED_FROM_CORRECTNESS)) {
-      expect(fs.existsSync(path.join(CORPUS_DIR, name)), `${name} is excluded but absent`).toBe(true);
       expect(reason.length, `${name} needs a reason`).toBeGreaterThan(30);
+      expect(reason, `${name} should name the cause`).toMatch(/SOURCE_NOT_SELF_CONSISTENT|CORRUPTED|NOT_A_STATEMENT/);
+    }
+  });
+
+  it('only excludes fixtures that actually exist, when the corpus is present', () => {
+    // Existence is a local condition, not a policy one: fixtures/real/ is
+    // gitignored, so a clean clone has no corpus and this check is meaningless
+    // there. Coupling the two made a fresh clone fail, which is how this split
+    // was found.
+    if (!fs.existsSync(CORPUS_DIR)) {
+      expect(available).toHaveLength(0);
+      return;
+    }
+    for (const name of Object.keys(EXCLUDED_FROM_CORRECTNESS)) {
+      expect(fs.existsSync(path.join(CORPUS_DIR, name)), `${name} is excluded but absent`).toBe(true);
     }
   });
 });
