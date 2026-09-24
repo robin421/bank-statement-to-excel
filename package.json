@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && node scripts/strip-appledouble.mjs dist",
+    "build": "astro build && node scripts/strip-appledouble.mjs dist && node scripts/alias-sitemap.mjs",
     "preview": "astro preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "check:links": "node scripts/check-links.mjs",
