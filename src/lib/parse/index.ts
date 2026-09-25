@@ -4,7 +4,7 @@ import { buildRows } from './rows';
 import { classifyCell, detectColumns, type ColumnModel } from './columns';
 import { inferDateOrder, guessStatementYear, parseDate, type DateOrder } from './date';
 import { rankRoleHypotheses, type Transaction } from './transactions';
-import type { ReconcileReport } from './reconcile';
+import { flagMismatches, type ReconcileReport } from './reconcile';
 import { assessQuality, type QualityReport } from './quality';
 
 export interface ConvertOptions extends ExtractTextOptions {
@@ -62,6 +62,10 @@ export function convertPages(pages: PdfPageText[], options: ConvertOptions = {})
 
   const transactions = best ? best.transactions : [];
   const reconciliation = best ? best.reconciliation : { checked: 0, matched: 0, passRate: 0, mismatches: [], signCorrections: 0 };
+
+  // The preview and the Notes column both promise that rows which break the
+  // running-balance chain are marked, so carry each mismatch onto its row.
+  flagMismatches(transactions, reconciliation);
 
   const warnings: string[] = [];
   if (dateOrderAmbiguous) {
