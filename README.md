@@ -1,5 +1,65 @@
 # StatementToExcel
 
+**Convert a bank statement PDF to Excel or CSV in your browser. The file is never uploaded, and every row is checked against the statement's running balance.**
+
+👉 **https://www.wattflow.net** · free · no sign-up
+
+## What it does
+
+- Reads the text-based PDF statements you download from online banking, and OFX / QFX exports
+- Rebuilds the transaction table from the positions of the text on the page (no per-bank templates)
+- Checks every row: previous balance + amount = balance. Rows that don't reconcile are flagged, not hidden.
+- Exports:
+  - **Excel (.xlsx)**: *Transactions* (Date, Description, Debit, Credit, Amount, Balance, Notes), *Summary* (what was verified) and *Raw* (the source line behind each row)
+  - **CSV**: correct quoting, UTF-8 with BOM, comma or semicolon delimiter
+  - **QuickBooks Online CSV** (Date, Description, Amount) and **Xero CSV** (Date, Amount, Payee, Description, Reference)
+- Date/number formats for the US, UK, Australia, Canada and India. Interface in English, Español, Deutsch, Français, Português and हिन्दी.
+
+## Privacy: processing is local
+
+The PDF is opened and parsed by JavaScript in your browser tab. There is no upload endpoint, no storage and no queue. After the page has loaded, the converter works offline. The end-to-end smoke test in this repo checks this by watching every network request the page makes during a conversion. Google Analytics only loads after you accept the consent banner, and your statement's contents are never sent either way.
+
+## Supported input
+
+| Input | Supported |
+|---|---|
+| Text-based PDF from online banking (up to 60 MB / 200 pages) | ✅ |
+| OFX / QFX export | ✅ |
+| Scanned or photographed statement (image PDF, JPG, PNG) | ❌ Needs OCR. See [Scanned statements](https://www.wattflow.net/scanned/). |
+| PDF with a broken text layer (some custom bank fonts) | ❌ Detected and reported. No rows are made up. |
+
+## Limits
+
+- No scans or photos (see above)
+- One statement at a time; no batch mode yet
+- No categorisation of spending
+- It is a conversion tool, not an audit. Spot-check the output against the original statement before you file, reconcile or lend against it.
+
+## Pages for specific jobs
+
+- [PDF bank statement to Excel](https://www.wattflow.net/pdf-bank-statement-to-excel/)
+- [Bank statement to CSV](https://www.wattflow.net/bank-statement-to-csv/)
+- [Bank statement to QuickBooks Online CSV](https://www.wattflow.net/quickbooks-csv/)
+- [Bank statement to Xero CSV](https://www.wattflow.net/xero-csv/)
+- [OFX / QFX to CSV and Excel](https://www.wattflow.net/ofx-qfx-to-csv/)
+- [Extract transactions from a statement PDF](https://www.wattflow.net/extract-transactions/)
+
+## How it's funded
+
+Free, with no subscription and no row limit. The site is supported by advertising and by referrals to OCR services for scanned statements the tool can't read.
+
+## Licence
+
+**Source-available, all rights reserved.** See [LICENSE](LICENSE). You may read the code and the engineering notes. You may not copy, redistribute or use them commercially.
+
+## Feedback
+
+A statement that doesn't reconcile is the most useful bug report. Please open an issue describing the layout (**never attach a real statement**).
+
+---
+
+## For developers
+
 [![CI](https://github.com/robin421/bank-statement-to-excel/actions/workflows/ci.yml/badge.svg)](https://github.com/robin421/bank-statement-to-excel/actions/workflows/ci.yml)
 
 A bank-statement → Excel/CSV converter that runs entirely in the browser, and checks its own output
@@ -14,7 +74,7 @@ that invariant to pick the columns, fix the signs, and count the rows we failed 
 - **Honesty claim:** a scanned PDF is refused with an explanation rather than converted into
   plausible-but-wrong rows.
 
-## Live
+### Live
 
 **https://www.wattflow.net** — deployed on Vercel (project `bank-statement-to-excel`).
 
@@ -28,13 +88,9 @@ blind-evaluation methodology and the corpus policy are written to be learned fro
 Public visibility does not grant reuse rights, and the code may not be copied,
 redistributed or used commercially.
 
-That host is a placeholder origin, not a brand decision. When the real domain is bought, set
-`PUBLIC_SITE_URL` in the Vercel project and redeploy — it is the only place an origin is hardcoded,
-and canonicals, the sitemap, `robots.txt` and the OG tags all derive from it.
-
 ---
 
-## Quick start
+### Quick start
 
 ```bash
 npm install
@@ -53,12 +109,12 @@ Other scripts:
 | `npm run smoke` | Playwright end-to-end test; pass a URL to test a deployment |
 | `npm run fixtures` | Regenerate the synthetic statement corpus |
 
-`npm run smoke https://bankstatementtoexcel.vercel.app` runs the whole suite against production,
+`npm run smoke https://www.wattflow.net` runs the whole suite against production,
 which is the only way to verify that the deployed CSP has not broken pdf.js's worker.
 
 ---
 
-## The accuracy gate
+### The accuracy gate
 
 `npm test` is not a smoke test. It parses a corpus of synthetic statements with known contents and
 fails if the parser drops or invents rows:
@@ -80,7 +136,7 @@ garbage-text-layer PDFs.
 
 ---
 
-## How the parser works
+### How the parser works
 
 ```
 PDF bytes
@@ -106,7 +162,7 @@ running balance from the ledger balance so the same exporters and the same verif
 
 ---
 
-## Layout
+### Layout
 
 ```
 src/
@@ -128,7 +184,7 @@ the whole pipeline is unit-testable in Node and cannot accidentally depend on th
 
 ---
 
-## Testing against real statements, not just our own
+### Testing against real statements, not just our own
 
 The synthetic corpus scored **100%** while real Sparkasse and Postbank statements
 parsed to **zero rows**. A corpus you generate yourself tests your assumptions,
@@ -149,7 +205,7 @@ The baseline is a **floor, not a target**. Several of these layouts do not parse
 properly yet. Raise the numbers as the parser improves; never lower them to make
 a build pass.
 
-### Current state of the real corpus
+#### Current state of the real corpus
 
 ```
 parsed        9
@@ -161,7 +217,7 @@ publishable   1
 which is the bar for a bank page. One out of eleven is the honest number, and the
 test asserts it so it cannot quietly be assumed higher.
 
-### Getting the corpus
+#### Getting the corpus
 
 Banks publish sample statements for customers. Search the bank's own domain for
 `filetype:pdf "sample statement"` — a statement downloaded from anywhere else is
@@ -173,7 +229,7 @@ npm run inspect:statement -- fixtures/real/x.pdf 40 bands         # what the par
 npm run verify:real                                                # re-record the baseline
 ```
 
-### Bugs these real statements found
+#### Bugs these real statements found
 
 Every one of these passed the synthetic corpus:
 
@@ -195,7 +251,7 @@ Every one of these passed the synthetic corpus:
   real ones and destroyed the column model. Amounts are now sanity-capped.
 - **Band matching took the first overlap** rather than the nearest anchor.
 
-## Bank pages, and why most of them do not exist
+### Bank pages, and why most of them do not exist
 
 `/banks/` explains how to get a readable file out of any bank. Individual
 `/banks/<bank>/` pages **only exist for banks we have tested a real statement
@@ -218,7 +274,7 @@ They are written down because a hypothesis is a test plan. The gate is
 never publishable and (b) a note cannot claim `confirmed` without a verification
 behind it.
 
-### The verification workflow
+#### The verification workflow
 
 Put the statement in `fixtures/real/` (gitignored — statements are PII and must
 never be committed) and run:
@@ -250,7 +306,7 @@ The page then generates itself, and it carries the real test result rather than 
 claim. Adding a bank to `BANKS` without a verification changes nothing — the page
 still will not be built.
 
-## Languages
+### Languages
 
 Six interface languages, and — separately — sixteen **export locales**.
 
@@ -280,7 +336,7 @@ So the rules the code enforces (and `tests/locales.spec.ts` asserts):
 - **XLSX writes typed values**, so Excel applies the reader's own locale — the
   one output format that cannot get a decimal separator wrong.
 
-### Adding a language
+#### Adding a language
 
 1. Add the locale to `LOCALES` and its export formats to `EXPORT_LOCALES` in
    `src/i18n/locales.ts`.
@@ -295,7 +351,7 @@ they name the banks of that market, state that market's number and date
 conventions, and target the queries people actually type there. A flat
 translation would be thin content competing with itself.
 
-### Translation status
+#### Translation status
 
 `LOCALES[code].translationStatus` is `needs-review` for every non-English
 locale. The structure and the market facts are deliberate; **the prose needs a
@@ -308,7 +364,7 @@ They are not listed as alternates on other locales — `hreflang` pointing at a
 `translations` prop on `Base.astro`, and the sitemap integration only emits
 `xhtml:link` for paths that really exist in more than one language.
 
-## Configuration
+### Configuration
 
 Copy `.env.example` to `.env`:
 
@@ -321,7 +377,7 @@ Copy `.env.example` to `.env`:
 
 ---
 
-## Deploying
+### Deploying
 
 Vercel, already wired up (`vercel.json`):
 
@@ -345,7 +401,7 @@ detection. `vercel.json` also sets:
 `dist/` is a plain static directory, so any static host also works. There is no backend to scale,
 migrate or roll back beyond the deploy itself.
 
-### Go-live checklist
+#### Go-live checklist
 
 1. **Day-0 keyword validation (not done — do this before spending on content).** The keyword map in
    `src/data/keywords.ts` is a hypothesis. Check the five primaries in a real SERP tool and, more
@@ -365,7 +421,7 @@ migrate or roll back beyond the deploy itself.
 
 ---
 
-## Analytics and consent
+### Analytics and consent
 
 Two analytics products, with different privacy properties, and the difference is the
 point.
@@ -389,7 +445,7 @@ Consent is stored in `localStorage` under `analytics-consent`, not a cookie, so
 recording the decision does not create the thing the decision is about. Clearing site
 data asks again.
 
-### What the events carry
+#### What the events carry
 
 The funnel is `statement_submitted` → `statement_parsed` → `export_download`, plus
 `statement_error`. Parameters are counts, ratios and category names:
@@ -405,13 +461,13 @@ site and fails on any parameter outside that list, so
 `description: transaction.description` cannot ship — it breaks the build rather than
 silently sending a merchant name to Google.
 
-### Configuration
+#### Configuration
 
 Set `PUBLIC_GA4_ID` (for example `G-XXXXXXXXXX`) in the environment. Leaving it empty —
 the default in this repository — disables the whole feature: no script, no banner, no
 third-party request.
 
-### How the privacy claim is tested
+#### How the privacy claim is tested
 
 The browser smoke suite carries out a real conversion and asserts four things:
 
@@ -426,7 +482,7 @@ A single "no external requests at all" assertion would have had to be deleted to
 accommodate analytics. Splitting it into claims that stay true in both configurations
 keeps the guarantee instead of trading it away.
 
-## Corpus policy
+### Corpus policy
 
 The repository is public. Two rules follow from that, and both are enforced rather
 than merely stated.
@@ -460,7 +516,7 @@ Files that have been run through the parser are no longer blind. The 8 statement
 the v0 set and the 19 of the regression corpus may be used for regression only;
 coverage claims require statements that have never been executed.
 
-### What CI does and does not prove
+#### What CI does and does not prove
 
 `.github/workflows/ci.yml` runs typecheck, unit tests, the static build and the
 internal link checker. Because the real corpus is gitignored, the real-statement
@@ -468,7 +524,7 @@ tests **skip** in CI. A green run therefore says nothing about real bank stateme
 and the workflow says so in a comment. Real-corpus regression is run locally, where
 the fixtures exist.
 
-## Deliberate non-goals
+### Deliberate non-goals
 
 - **No OCR.** Accurate OCR on a dense table needs real compute. `/scanned` says so and routes people
   to a referral instead of pretending.
