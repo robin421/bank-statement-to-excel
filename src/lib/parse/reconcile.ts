@@ -81,3 +81,15 @@ export function reconciliationScore(amounts: number[], balances: Array<number | 
 function round2(value: number): number {
   return Math.round(value * 100) / 100;
 }
+
+/**
+ * Mark every row that breaks the running-balance chain with a
+ * `balance-mismatch` flag, so the preview highlights it and the Notes column
+ * of the export says so. Idempotent.
+ */
+export function flagMismatches(rows: Array<{ flags: string[] }>, report: Pick<ReconcileReport, 'mismatches'>): void {
+  for (const mismatch of report.mismatches) {
+    const row = rows[mismatch.index];
+    if (row && !row.flags.includes('balance-mismatch')) row.flags.push('balance-mismatch');
+  }
+}

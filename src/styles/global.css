@@ -922,6 +922,23 @@ table.data tr.row--flagged td {
   text-decoration: underline;
 }
 
+.footer-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+.footer-badges__label {
+  font-size: 0.8125rem;
+  color: var(--ink-muted);
+}
+.footer-badges img {
+  display: block;
+  height: 40px;
+  width: auto;
+}
+
 .footer-legal {
   margin-top: 2rem;
   padding-top: 1.2rem;

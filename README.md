@@ -409,8 +409,8 @@ migrate or roll back beyond the deploy itself.
    **template**, not a converter. If that is the mix, the H1 and the above-the-fold copy change. Also
    confirm the `bank statement converter` and `csv bank statement converter` phrasings.
 2. **Buy the domain**, set `PUBLIC_SITE_URL` in Vercel to it, add the domain in the Vercel project,
-   redeploy, then confirm canonicals and `sitemap-index.xml` point at it.
-3. Verify the property in Google Search Console and submit `sitemap-index.xml`.
+   redeploy, then confirm canonicals and `/sitemap.xml` point at it.
+3. Verify the property in Google Search Console and submit `https://www.wattflow.net/sitemap.xml` (urlset). `sitemap-index.xml` still works if already submitted.
 4. Set `PUBLIC_CF_ANALYTICS_TOKEN` (Cloudflare Web Analytics is cookieless — no cookie banner needed).
    Note the CSP already allows `static.cloudflareinsights.com`.
 5. Apply for AdSense **after** the content pages are indexed. Ad slots are below the fold only, and they

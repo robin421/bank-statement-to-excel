@@ -26,4 +26,14 @@ export const SITE = {
   // address on a reserved TLD reaches nobody, and reviewers do check.
   email: 'hello@wattflow.net',
   twitter: '',
+  /** Default social preview image (1200x630) in public/. */
+  ogImage: '/og.png',
+  ogImageAlt: 'StatementToExcel: bank statement PDF to Excel/CSV, in your browser',
+  /**
+   * "Featured on" directory badges shown in the footer. Empty until each
+   * directory issues its badge; the footer renders nothing while this is empty.
+   * Each entry: { href, src, alt, width, height, rel? } where rel follows the
+   * directory's own requirement (some ask for dofollow, some accept nofollow).
+   */
+  featuredBadges: [],
 };

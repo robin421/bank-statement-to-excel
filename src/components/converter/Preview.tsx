@@ -86,6 +86,11 @@ export default function Preview({
     );
   }
 
+  // The mismatch count gets its own localized note below; don't repeat the
+  // parser's English sentence above it.
+  const warnings = result.warnings.filter(
+    (warning) => !(reconciliation.mismatches.length > 0 && /do not reconcile against the running balance/.test(warning)),
+  );
   const flaggedCount = transactions.filter((row) => row.flags.some((flag) => flag !== 'multiline-description')).length;
 
   return (
@@ -128,9 +133,9 @@ export default function Preview({
       </div>
 
       <div className="converter__body stack" style={{ ['--stack-gap' as string]: '0.85rem' }}>
-        {result.warnings.length > 0 && (
+        {warnings.length > 0 && (
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '0.5rem' }}>
-            {result.warnings.map((warning) => (
+            {warnings.map((warning) => (
               <li key={warning} className="note note--warn">
                 {warning}
               </li>
