@@ -15,7 +15,7 @@ const year = new Date().getFullYear();
  * against its own balance, the only honest link is to the overview.
  */
 const tested = verifiedBanks();
-const badges = (SITE.featuredBadges ?? []) as Array<{ href: string; src: string; alt: string; width?: number; height?: number; rel?: string }>;
+const badges = (SITE.featuredBadges ?? []) as string[];
 const bankLinks = tested.slice(0, 5).map((bank) => ({ href: `/banks/${bank.slug}/`, label: bank.name }));
 
 const groups = [
@@ -79,10 +79,8 @@ const groups = [
       badges.length > 0 && (
         <div class="footer-badges" aria-label="Featured on">
           <span class="footer-badges__label">Featured on</span>
-          {badges.map((badge) => (
-            <a href={badge.href} rel={badge.rel} target="_blank">
-              <img src={badge.src} alt={badge.alt} width={badge.width} height={badge.height} loading="lazy" decoding="async" />
-            </a>
+          {badges.map((html) => (
+            <span class="footer-badge" set:html={html} />
           ))}
         </div>
       )

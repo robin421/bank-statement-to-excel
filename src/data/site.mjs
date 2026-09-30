@@ -30,10 +30,16 @@ export const SITE = {
   ogImage: '/og.png',
   ogImageAlt: 'StatementToExcel: bank statement PDF to Excel/CSV, in your browser',
   /**
-   * "Featured on" directory badges shown in the footer. Empty until each
-   * directory issues its badge; the footer renders nothing while this is empty.
-   * Each entry: { href, src, alt, width, height, rel? } where rel follows the
-   * directory's own requirement (some ask for dofollow, some accept nofollow).
+   * "Featured on" directory badges shown in every page footer (nothing renders
+   * when the list is empty).
+   * Each entry is a directory's embed snippet as raw HTML, rendered verbatim.
+   * Add the image host to img-src in vercel.json's CSP when adding one.
    */
-  featuredBadges: [],
+  featuredBadges: [
+    // Verbatim embed snippets from each directory (Fazier, Twelve Tools, Startup Fame).
+    // Their free tiers verify by finding this exact markup, so don't reformat.
+    '<a href="https://fazier.com" target="_blank"><img src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=light" alt="Fazier badge" /></a>',
+    '<a href="https://twelve.tools" target="_blank"><img src="https://twelve.tools/badge0-white.svg" alt="Featured&#0032;on&#0032;Twelve&#0032;Tools" width="200" height="54"></a>',
+    '<a href="https://startupfa.me/s/statementtoexcel?utm_source=www.wattflow.net" target="_blank"><img src="https://startupfa.me/badges/featured-badge.webp" alt="StatementToExcel - Featured on Startup Fame" width="171" height="54" /></a>',
+  ],
 };
