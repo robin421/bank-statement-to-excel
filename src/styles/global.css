@@ -933,9 +933,13 @@ table.data tr.row--flagged td {
   font-size: 0.8125rem;
   color: var(--ink-muted);
 }
+.footer-badge,
+.footer-badge a {
+  display: block;
+}
 .footer-badges img {
   display: block;
-  height: 40px;
+  height: 48px;
   width: auto;
 }
 
