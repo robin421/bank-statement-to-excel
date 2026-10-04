@@ -53,7 +53,6 @@ const ogTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
 const ogImageUrl = new URL(props.ogImage ?? SITE.ogImage, origin).href;
 
 const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
-const adsenseClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
 
 // Only declare alternates when the page actually exists in more than one
 // language; a lone hreflang pointing at a 404 wastes crawl budget. Skipped on
@@ -116,14 +115,6 @@ const baseSchema = {
         is:inline
         src="https://static.cloudflareinsights.com/beacon.min.js"
         data-cf-beacon={JSON.stringify({ token: cfToken })}
-      />
-    )}
-    {adsenseClient && (
-      <script
-        async
-        is:inline
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
-        crossorigin="anonymous"
       />
     )}
   </head>

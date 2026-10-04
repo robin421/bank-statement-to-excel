@@ -177,3 +177,75 @@ describe('the tag loader', () => {
     expect(appended).toHaveLength(0);
   });
 });
+
+describe('the ads loader', () => {
+  beforeEach(() => {
+    vi.unstubAllEnvs();
+    vi.resetModules();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+    vi.resetModules();
+  });
+
+  function stubAdBrowser() {
+    const appended: Array<{ src?: string }> = [];
+    const gtag = vi.fn();
+    vi.stubGlobal('window', { dataLayer: [] as unknown[], gtag });
+    vi.stubGlobal('document', {
+      head: { appendChild: (node: { src?: string }) => appended.push(node) },
+      createElement: () => ({}),
+    });
+    return { appended, gtag };
+  }
+
+  it('does nothing when no publisher id is configured', async () => {
+    const { appended } = stubAdBrowser();
+    const { loadAdsense } = await import('../src/lib/analytics/gtag');
+    loadAdsense();
+    expect(appended).toHaveLength(0);
+  });
+
+  it('loads the AdSense library and grants advertising consent once allowed', async () => {
+    vi.stubEnv('PUBLIC_ADSENSE_CLIENT', 'ca-pub-1234567890123456');
+    vi.resetModules();
+    const { appended, gtag } = stubAdBrowser();
+    const { ADSENSE_CLIENT_ID, loadAdsense } = await import('../src/lib/analytics/gtag');
+    expect(ADSENSE_CLIENT_ID).toBe('ca-pub-1234567890123456');
+
+    loadAdsense();
+
+    expect(appended).toHaveLength(1);
+    expect(appended[0].src).toContain('pagead2.googlesyndication.com');
+    expect(appended[0].src).toContain('client=ca-pub-1234567890123456');
+    expect(gtag).toHaveBeenCalledWith('consent', 'update', {
+      ad_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted',
+    });
+  });
+
+  it('is idempotent, so a double accept injects the library once', async () => {
+    vi.stubEnv('PUBLIC_ADSENSE_CLIENT', 'ca-pub-1234567890123456');
+    vi.resetModules();
+    const { appended } = stubAdBrowser();
+    const { loadAdsense } = await import('../src/lib/analytics/gtag');
+    loadAdsense();
+    loadAdsense();
+    expect(appended).toHaveLength(1);
+  });
+
+  it('never grants analytics_storage when only ads are enabled', async () => {
+    vi.stubEnv('PUBLIC_ADSENSE_CLIENT', 'ca-pub-1234567890123456');
+    vi.resetModules();
+    const { gtag } = stubAdBrowser();
+    const { loadAdsense } = await import('../src/lib/analytics/gtag');
+    loadAdsense();
+
+    const consentUpdates = gtag.mock.calls.filter((call) => call[0] === 'consent');
+    expect(consentUpdates).toHaveLength(1);
+    expect(consentUpdates[0][2]).not.toHaveProperty('analytics_storage');
+  });
+});

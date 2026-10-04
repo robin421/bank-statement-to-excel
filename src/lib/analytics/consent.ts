@@ -1,4 +1,11 @@
-import { GA4_MEASUREMENT_ID, loadAnalytics, readConsent, writeConsent } from './gtag';
+import {
+  ADSENSE_CLIENT_ID,
+  GA4_MEASUREMENT_ID,
+  loadAdsense,
+  loadAnalytics,
+  readConsent,
+  writeConsent,
+} from './gtag';
 
 /**
  * Browser entry point for the consent banner.
@@ -13,6 +20,16 @@ import { GA4_MEASUREMENT_ID, loadAnalytics, readConsent, writeConsent } from './
  *   3. only an explicit Accept ever loads a third-party script
  */
 
+/**
+ * Load every Google tag the build is configured for. Each loader no-ops when its
+ * own id is unset, and each grants only the consent type it owns: analytics and
+ * advertising are independent, so accepting one never silently enables the other.
+ */
+function loadGranted(): void {
+  if (GA4_MEASUREMENT_ID) loadAnalytics();
+  if (ADSENSE_CLIENT_ID) loadAdsense();
+}
+
 function wireBanner(): void {
   const banner = document.getElementById('consent-banner');
   if (!banner) return;
@@ -20,7 +37,7 @@ function wireBanner(): void {
   const stored = readConsent();
 
   if (stored === 'granted') {
-    loadAnalytics();
+    loadGranted();
     return;
   }
   if (stored === 'denied') {
@@ -36,11 +53,11 @@ function wireBanner(): void {
     const choice = button.dataset.consent === 'granted' ? 'granted' : 'denied';
     writeConsent(choice);
     banner.hidden = true;
-    if (choice === 'granted') loadAnalytics();
+    if (choice === 'granted') loadGranted();
   });
 }
 
-if (GA4_MEASUREMENT_ID) {
+if (GA4_MEASUREMENT_ID || ADSENSE_CLIENT_ID) {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', wireBanner, { once: true });
   } else {

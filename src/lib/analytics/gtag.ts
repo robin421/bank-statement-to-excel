@@ -14,11 +14,17 @@
  * Consent is stored in `localStorage`, not a cookie, so the choice itself does not
  * create the thing it is asking about.
  *
- * With no measurement id configured — the default in this repository — none of this
- * runs: no script, no banner, no request.
+ * AdSense is held to the same rule. Ad slots may render their markup early, but
+ * `adsbygoogle.js` itself is a third-party script and is injected only from the
+ * consent click handler, alongside gtag.js.
+ *
+ * With neither a measurement id nor a publisher id configured — the default in
+ * this repository — none of this runs: no script, no banner, no request.
  */
 
 export const GA4_MEASUREMENT_ID = (import.meta.env.PUBLIC_GA4_ID ?? '').trim();
+
+export const ADSENSE_CLIENT_ID = (import.meta.env.PUBLIC_ADSENSE_CLIENT ?? '').trim();
 
 export const CONSENT_STORAGE_KEY = 'analytics-consent';
 
@@ -53,10 +59,13 @@ declare global {
      * that nothing loaded before consent.
      */
     __analyticsLoaded?: boolean;
+    /** Set once the AdSense library has been injected, for the same reason. */
+    __adsenseLoaded?: boolean;
   }
 }
 
 let loaded = false;
+let adsenseLoaded = false;
 
 /**
  * Load Google Analytics 4. Only ever called after explicit consent.
@@ -89,6 +98,46 @@ export function loadAnalytics(): void {
   const script = document.createElement('script');
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA4_MEASUREMENT_ID)}`;
+  document.head.appendChild(script);
+}
+
+/**
+ * Load the AdSense library. Only ever called after explicit consent.
+ *
+ * The ad slots render their `<ins>` markup as soon as a publisher id is set,
+ * but the library that fills them is a third-party script, so it follows the
+ * same rule as analytics: **nothing loads until the visitor accepts.** Until
+ * then the slot's `(adsbygoogle = window.adsbygoogle || []).push({})` call just
+ * queues an entry, which the library replays when it finally arrives.
+ *
+ * Updates advertising consent only. `analytics_storage` belongs to
+ * `loadAnalytics` and is deliberately left untouched, so enabling ads never
+ * turns analytics on (and vice versa).
+ *
+ * Idempotent, so a double accept cannot inject the script twice.
+ */
+export function loadAdsense(): void {
+  if (adsenseLoaded || !ADSENSE_CLIENT_ID || typeof document === 'undefined') return;
+  adsenseLoaded = true;
+  window.__adsenseLoaded = true;
+
+  window.dataLayer = window.dataLayer ?? [];
+  window.gtag =
+    window.gtag ??
+    function gtag(...args: unknown[]) {
+      window.dataLayer?.push(args);
+    };
+
+  window.gtag('consent', 'update', {
+    ad_storage: 'granted',
+    ad_user_data: 'granted',
+    ad_personalization: 'granted',
+  });
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.crossOrigin = 'anonymous';
+  script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(ADSENSE_CLIENT_ID)}`;
   document.head.appendChild(script);
 }
 

@@ -170,23 +170,29 @@ async function main() {
     check('no request to a host outside the connect-src allowlist', offAllowlist.length === 0, offAllowlist.slice(0, 3).join(', '));
 
     /*
-     * The consenting path, when analytics is configured in this build.
+     * The consenting path, when a Google tag is configured in this build.
      *
      * "Nothing loads before consent" is only half the feature. The other half is
-     * that analytics actually works once allowed, so this drives the real banner,
+     * that the tag actually works once allowed, so this drives the real banner,
      * then asserts the tag was fetched and that doing so broke no CSP rule. Skipped
-     * when no measurement id is configured, which is the repository default.
+     * when neither a measurement nor a publisher id is configured, which is the
+     * repository default. Either tag satisfies this: analytics and ads are gated
+     * by the same decision, so whichever is configured must load from the click.
      */
     if ((await page.locator('#consent-banner').count()) > 0) {
       const before = requests.length;
       await page.locator('#consent-banner [data-consent="granted"]').click();
-      await page.waitForFunction(() => Boolean(window.__analyticsLoaded), undefined, { timeout: 15_000 });
+      await page.waitForFunction(() => Boolean(window.__analyticsLoaded || window.__adsenseLoaded), undefined, {
+        timeout: 15_000,
+      });
       await page.waitForTimeout(1500);
 
       const afterConsent = requests.slice(before);
       check(
-        'consenting loads the analytics tag',
-        afterConsent.some((url) => url.includes('googletagmanager.com')),
+        'consenting loads the configured Google tag',
+        afterConsent.some(
+          (url) => url.includes('googletagmanager.com') || url.includes('pagead2.googlesyndication.com'),
+        ),
         afterConsent.join(', ').slice(0, 120),
       );
       check(
