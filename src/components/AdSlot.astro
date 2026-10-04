@@ -8,7 +8,7 @@
  * appear below the fold, and never on a page that has no content.
  */
 export interface Props {
-  slot?: string;
+  adSlot?: string;
   label?: string;
   format?: 'auto' | 'horizontal' | 'rectangle';
 }
@@ -25,7 +25,7 @@ const client = import.meta.env.PUBLIC_ADSENSE_CLIENT;
           class="adsbygoogle"
           style="display:block;width:100%"
           data-ad-client={client}
-          data-ad-slot={Astro.props.slot ?? ''}
+          data-ad-slot={Astro.props.adSlot ?? ''}
           data-ad-format={Astro.props.format ?? 'auto'}
           data-full-width-responsive="true"
         />
