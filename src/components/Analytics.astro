@@ -2,12 +2,11 @@
 /**
  * Analytics and advertising tags, standard mode.
  *
- * Renders nothing unless a Google measurement or publisher id is configured,
- * which is the default in this repository — no script, no request.
+ * Uses the plain synchronous gtag.js snippet (same pattern as bendcalc's
+ * inject-web-seo.py) instead of Astro-bundled modules, to eliminate any
+ * build-tooling variables from the tracking path.
  *
- * When an id is set, a single client script imports the tag module and loads the
- * configured tag immediately on page view. There is no consent banner and no
- * stored decision: the tags load directly.
+ * Renders nothing unless a Google measurement or publisher id is configured.
  */
 import { ADSENSE_CLIENT_ID, GA4_MEASUREMENT_ID } from '../lib/analytics/gtag';
 
@@ -16,10 +15,28 @@ const enabled = Boolean(GA4_MEASUREMENT_ID || ADSENSE_CLIENT_ID);
 
 {
   enabled && (
-    <script>
-      import { ADSENSE_CLIENT_ID, GA4_MEASUREMENT_ID, loadAdsense, loadAnalytics } from '../lib/analytics/gtag';
-      if (GA4_MEASUREMENT_ID) loadAnalytics();
-      if (ADSENSE_CLIENT_ID) loadAdsense();
-    </script>
+    <>
+      {GA4_MEASUREMENT_ID && (
+        <>
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_MEASUREMENT_ID}`}></script>
+          <script
+            is:inline
+            set:html={`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA4_MEASUREMENT_ID}', { anonymize_ip: true });
+            `}
+          />
+        </>
+      )}
+      {ADSENSE_CLIENT_ID && (
+        <script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
+          crossorigin="anonymous"
+        ></script>
+      )}
+    </>
   )
 }
