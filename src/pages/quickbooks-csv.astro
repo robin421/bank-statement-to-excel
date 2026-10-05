@@ -66,7 +66,8 @@ const related = [
           <p class="small muted">
             Three columns, nothing else. Deposits positive, payments negative. If your statement prints withdrawals as
             positive numbers in a separate column, the converter still writes them negative here — that is the point of
-            the preset.
+            the preset. Want debit, credit and balance columns for your own review as well? Convert the same{' '}
+            <a href="/pdf-bank-statement-to-excel/">PDF bank statement to Excel</a> alongside the import file.
           </p>
         </div>
         <div class="prose">
@@ -119,7 +120,10 @@ const related = [
       <p>
         Compare three numbers: the number of rows in your CSV, the number of transactions in the review queue, and the
         closing balance on the statement. If the row counts match and the final running balance matches the statement's
-        closing balance, the import is complete. That check is exactly what the tool's balance verification is for.
+        closing balance, the import is complete. That check is exactly what the tool's balance verification is for. If
+        the counts do not match, the cause is usually in how the rows were read from the PDF —{' '}
+        <a href="/blog/excel-from-pdf-bank-statement/">why a PDF bank statement is hard to get into a spreadsheet</a>{' '}
+        walks through where that goes wrong.
       </p>
       <h3>If the import fails</h3>
       <ul>

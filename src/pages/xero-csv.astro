@@ -82,7 +82,9 @@ const related = [
             Xero needs signed amounts: money in positive, money out negative. A statement that prints withdrawals as
             positive numbers in a separate column loses that direction on the way into a single Amount column, so the
             converter signs them for you — decided from the column each value was printed in and confirmed against the
-            statement's running balance.
+            statement's running balance. Both depend on reading the PDF correctly in the first place; the guide on{' '}
+            <a href="/blog/excel-from-pdf-bank-statement/">why turning a PDF bank statement into Excel usually goes wrong</a>{' '}
+            explains that step.
           </p>
         </div>
       </div>
@@ -102,8 +104,9 @@ const related = [
       <h3>Confirm it worked</h3>
       <p>
         Xero will tell you the statement's opening and closing balance once the file is read. Compare that closing balance
-        with the one printed on your PDF. If they match, every row made it across with the right sign. The converter's
-        Summary sheet records the same closing figure so you have both in front of you.
+        with the one printed on your PDF. If they match, every row made it across with the right sign. The Summary sheet
+        in the <a href="/pdf-bank-statement-to-excel/">PDF bank statement to Excel workbook</a> records the same closing
+        figure, so you have both in front of you.
       </p>
       <h3>If the import is rejected</h3>
       <ul>
