@@ -1,63 +1,28 @@
 /**
- * Analytics, and the consent that gates it.
+ * Google Analytics 4 and AdSense, in standard mode.
  *
- * The whole product is positioned on "your statement never leaves your machine",
- * and there is a browser test that enforces it. So analytics is built to a stricter
- * rule than the usual: **nothing loads until the visitor accepts.**
+ * Both tags load on page view as soon as their id is configured: no banner, no
+ * consent gate, no stored decision. This is the industry-standard setup, and it
+ * is what the privacy policy describes.
  *
- * The common alternative is Google Consent Mode with `analytics_storage: denied` by
- * default, which still sends cookieless pings before consent. That is compliant, and
- * it is the right choice for sites that need conversion modelling. It is the wrong
- * choice here, because it would mean the page makes third-party requests before
- * anyone agreed to them while the same page tells the visitor it does not.
- *
- * Consent is stored in `localStorage`, not a cookie, so the choice itself does not
- * create the thing it is asking about.
- *
- * AdSense is held to the same rule. Ad slots may render their markup early, but
- * `adsbygoogle.js` itself is a third-party script and is injected only from the
- * consent click handler, alongside gtag.js.
+ * The product still promises that the statement never leaves the machine, so
+ * `track()` keeps its own guard: events carry counts, booleans and preset names,
+ * never anything read out of a statement. The gtag `config` call also strips the
+ * query string from the reported page location.
  *
  * With neither a measurement id nor a publisher id configured — the default in
- * this repository — none of this runs: no script, no banner, no request.
+ * this repository — none of this runs: no script, no request.
  */
 
 export const GA4_MEASUREMENT_ID = (import.meta.env.PUBLIC_GA4_ID ?? '').trim();
 
 export const ADSENSE_CLIENT_ID = (import.meta.env.PUBLIC_ADSENSE_CLIENT ?? '').trim();
 
-export const CONSENT_STORAGE_KEY = 'analytics-consent';
-
-export type ConsentChoice = 'granted' | 'denied' | null;
-
-export function readConsent(): ConsentChoice {
-  if (typeof window === 'undefined') return null;
-  try {
-    const stored = window.localStorage.getItem(CONSENT_STORAGE_KEY);
-    return stored === 'granted' || stored === 'denied' ? stored : null;
-  } catch {
-    // Private mode, or storage disabled. Treat as undecided, never as consent.
-    return null;
-  }
-}
-
-export function writeConsent(choice: Exclude<ConsentChoice, null>): void {
-  try {
-    window.localStorage.setItem(CONSENT_STORAGE_KEY, choice);
-  } catch {
-    // Failing to persist means the visitor is asked again next visit. Acceptable.
-  }
-}
-
 declare global {
   interface Window {
     dataLayer?: unknown[];
     gtag?: (...args: unknown[]) => void;
-    /**
-     * Set once the tag has been injected. Exposed so the browser smoke test can
-     * assert that consenting actually loaded analytics, rather than only asserting
-     * that nothing loaded before consent.
-     */
+    /** Set once the tag has been injected, so tests can observe the load. */
     __analyticsLoaded?: boolean;
     /** Set once the AdSense library has been injected, for the same reason. */
     __adsenseLoaded?: boolean;
@@ -68,8 +33,8 @@ let loaded = false;
 let adsenseLoaded = false;
 
 /**
- * Load Google Analytics 4. Only ever called after explicit consent.
- * Idempotent, so a double accept cannot inject the tag twice.
+ * Load Google Analytics 4. Called on page view; idempotent, so a second call
+ * cannot inject the tag twice.
  */
 export function loadAnalytics(): void {
   if (loaded || !GA4_MEASUREMENT_ID || typeof document === 'undefined') return;
@@ -81,12 +46,6 @@ export function loadAnalytics(): void {
     window.dataLayer?.push(args);
   };
 
-  window.gtag('consent', 'update', {
-    analytics_storage: 'granted',
-    ad_storage: 'denied',
-    ad_user_data: 'denied',
-    ad_personalization: 'denied',
-  });
   window.gtag('js', new Date());
   window.gtag('config', GA4_MEASUREMENT_ID, {
     // The statement is never sent, but there is no reason to send the full URL
@@ -102,37 +61,17 @@ export function loadAnalytics(): void {
 }
 
 /**
- * Load the AdSense library. Only ever called after explicit consent.
+ * Load the AdSense library. Called on page view; idempotent, so a second call
+ * cannot inject the script twice.
  *
- * The ad slots render their `<ins>` markup as soon as a publisher id is set,
- * but the library that fills them is a third-party script, so it follows the
- * same rule as analytics: **nothing loads until the visitor accepts.** Until
- * then the slot's `(adsbygoogle = window.adsbygoogle || []).push({})` call just
- * queues an entry, which the library replays when it finally arrives.
- *
- * Updates advertising consent only. `analytics_storage` belongs to
- * `loadAnalytics` and is deliberately left untouched, so enabling ads never
- * turns analytics on (and vice versa).
- *
- * Idempotent, so a double accept cannot inject the script twice.
+ * The ad slots render their `<ins>` markup as soon as a publisher id is set. The
+ * slot's `(adsbygoogle = window.adsbygoogle || []).push({})` call queues an entry
+ * until the library arrives, then replays it.
  */
 export function loadAdsense(): void {
   if (adsenseLoaded || !ADSENSE_CLIENT_ID || typeof document === 'undefined') return;
   adsenseLoaded = true;
   window.__adsenseLoaded = true;
-
-  window.dataLayer = window.dataLayer ?? [];
-  window.gtag =
-    window.gtag ??
-    function gtag(...args: unknown[]) {
-      window.dataLayer?.push(args);
-    };
-
-  window.gtag('consent', 'update', {
-    ad_storage: 'granted',
-    ad_user_data: 'granted',
-    ad_personalization: 'granted',
-  });
 
   const script = document.createElement('script');
   script.async = true;
@@ -141,15 +80,11 @@ export function loadAdsense(): void {
   document.head.appendChild(script);
 }
 
-export function hasConsent(): boolean {
-  return readConsent() === 'granted';
-}
-
 /**
  * Send a GA4 event.
  *
- * A no-op unless analytics was actually loaded, so event call sites do not need to
- * know whether analytics is configured or consented to.
+ * A no-op unless analytics was actually loaded, so event call sites do not need
+ * to know whether analytics is configured.
  *
  * **Never pass anything derived from the statement.** Events carry counts, booleans
  * and preset names — `rows`, `pages`, `reconcile_rate`, `status`, `preset` — and

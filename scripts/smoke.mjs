@@ -126,28 +126,22 @@ async function main() {
     /*
      * The privacy claim, tested in three parts rather than one.
      *
-     * The old single assertion — "no external request at all" — stops being the
-     * right test once Google Analytics is wired in, because a consenting visitor is
-     * supposed to produce analytics requests. Weakening it to accommodate that would
-     * have thrown away the guarantee. Instead it is split into claims that stay true
-     * under either configuration:
+     * Google tags load on page view in standard mode when an id is configured, so a
+     * configured build is expected to make third-party requests. This smoke run uses
+     * the repository default build, which configures neither a measurement nor a
+     * publisher id, so the baseline is still zero third-party requests. The claim is
+     * split into checks that stay true under either configuration:
      *
-     *   1. with no consent given — which is the state in this run — still zero
-     *      external requests, so "nothing runs until you allow it" is enforced
+     *   1. with no Google id configured — the state in this run — zero external requests
      *   2. no outbound request ever carries statement content
      *   3. nothing is sent to a host outside the CSP connect-src allowlist
      */
 
-    // 1. Nothing third-party may load before consent.
+    // 1. No third-party requests in this build, which configures no Google tags.
     const external = requests.filter(
       (url) => !url.startsWith(BASE) && !url.startsWith('blob:') && !url.startsWith('data:'),
     );
-    check('no external requests before consent', external.length === 0, external.slice(0, 4).join(', '));
-
-    check(
-      'analytics consent banner is shown, so the choice is offered rather than assumed',
-      (await page.locator('#consent-banner').count()) > 0,
-    );
+    check('no external requests on load in this build', external.length === 0, external.slice(0, 4).join(', '));
 
     // 2. Statement content must not appear in any outbound request. Checked against
     //    strings that exist only inside the fixture statement.
@@ -168,42 +162,6 @@ async function main() {
     ];
     const offAllowlist = external.filter((url) => !ALLOWED_EXTERNAL.some((host) => url.includes(host)));
     check('no request to a host outside the connect-src allowlist', offAllowlist.length === 0, offAllowlist.slice(0, 3).join(', '));
-
-    /*
-     * The consenting path, when a Google tag is configured in this build.
-     *
-     * "Nothing loads before consent" is only half the feature. The other half is
-     * that the tag actually works once allowed, so this drives the real banner,
-     * then asserts the tag was fetched and that doing so broke no CSP rule. Skipped
-     * when neither a measurement nor a publisher id is configured, which is the
-     * repository default. Either tag satisfies this: analytics and ads are gated
-     * by the same decision, so whichever is configured must load from the click.
-     */
-    if ((await page.locator('#consent-banner').count()) > 0) {
-      const before = requests.length;
-      await page.locator('#consent-banner [data-consent="granted"]').click();
-      await page.waitForFunction(() => Boolean(window.__analyticsLoaded || window.__adsenseLoaded), undefined, {
-        timeout: 15_000,
-      });
-      await page.waitForTimeout(1500);
-
-      const afterConsent = requests.slice(before);
-      check(
-        'consenting loads the configured Google tag',
-        afterConsent.some(
-          (url) => url.includes('googletagmanager.com') || url.includes('pagead2.googlesyndication.com'),
-        ),
-        afterConsent.join(', ').slice(0, 120),
-      );
-      check(
-        'the banner does not reappear after a decision',
-        await page.locator('#consent-banner').isHidden(),
-      );
-      check(
-        'analytics traffic keeps statement content out',
-        afterConsent.every((url) => !STATEMENT_MARKERS.some((m) => decodeURIComponent(url).toUpperCase().includes(m))),
-      );
-    }
 
     const uploads = requests.filter(
       (url) =>

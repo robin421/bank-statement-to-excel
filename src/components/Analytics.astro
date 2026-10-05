@@ -1,18 +1,13 @@
 ---
 /**
- * Analytics and advertising consent gate.
+ * Analytics and advertising tags, standard mode.
  *
  * Renders nothing unless a Google measurement or publisher id is configured,
- * which is the default in this repository — no script, no banner, no request.
+ * which is the default in this repository — no script, no request.
  *
- * The inline script below runs before any third-party tag can and sets Consent
- * Mode defaults to denied, so that anything Google-related that loads later
- * (gtag.js and adsbygoogle.js alike) starts from a refusal rather than a guess.
- * It deliberately does NOT load either tag. That happens only on Accept, from
- * `lib/analytics/consent.ts`.
- *
- * The banner markup is static and hidden so it cannot shift layout, and it is not
- * a framework island: it must be interactive before hydration would have finished.
+ * When an id is set, a single client script imports the tag module and loads the
+ * configured tag immediately on page view. There is no consent banner and no
+ * stored decision: the tags load directly.
  */
 import { ADSENSE_CLIENT_ID, GA4_MEASUREMENT_ID } from '../lib/analytics/gtag';
 
@@ -21,39 +16,10 @@ const enabled = Boolean(GA4_MEASUREMENT_ID || ADSENSE_CLIENT_ID);
 
 {
   enabled && (
-    <>
-      <script
-        is:inline
-        set:html={`
-          window.dataLayer = window.dataLayer || [];
-          window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
-          window.gtag('consent', 'default', {
-            analytics_storage: 'denied',
-            ad_storage: 'denied',
-            ad_user_data: 'denied',
-            ad_personalization: 'denied',
-            wait_for_update: 500
-          });
-        `}
-      />
-
-      <aside id="consent-banner" class="consent" hidden aria-label="Analytics and advertising consent">
-        <div class="consent__inner">
-          <p class="consent__text">
-            <strong>May we measure usage and show ads?</strong> Your statement stays in this browser either way — it is
-            never uploaded, so ads never see it. Analytics tells us which pages and features are worth improving, and
-            ads keep the tool free. Both set cookies and send data to Google; nothing is sent unless you allow it.
-          </p>
-          <div class="consent__actions">
-            <button type="button" class="btn btn--ghost" data-consent="denied">No thanks</button>
-            <button type="button" class="btn btn--primary" data-consent="granted">Allow</button>
-          </div>
-        </div>
-      </aside>
-
-      <script>
-        import '../lib/analytics/consent';
-      </script>
-    </>
+    <script>
+      import { ADSENSE_CLIENT_ID, GA4_MEASUREMENT_ID, loadAdsense, loadAnalytics } from '../lib/analytics/gtag';
+      if (GA4_MEASUREMENT_ID) loadAnalytics();
+      if (ADSENSE_CLIENT_ID) loadAdsense();
+    </script>
   )
 }

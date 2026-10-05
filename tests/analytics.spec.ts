@@ -86,79 +86,34 @@ describe('analytics event call sites', () => {
   });
 });
 
-describe('consent state', () => {
-  let store: Map<string, string>;
-
-  beforeEach(() => {
-    store = new Map();
-    vi.stubGlobal('window', {
-      localStorage: {
-        getItem: (key: string) => store.get(key) ?? null,
-        setItem: (key: string, value: string) => void store.set(key, value),
-      },
-    });
-    vi.resetModules();
-  });
-
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
-  it('treats an absent decision as undecided, never as consent', async () => {
-    const { readConsent } = await import('../src/lib/analytics/gtag');
-    expect(readConsent()).toBeNull();
-  });
-
-  it('round-trips a decision', async () => {
-    const { readConsent, writeConsent } = await import('../src/lib/analytics/gtag');
-    writeConsent('denied');
-    expect(readConsent()).toBe('denied');
-    writeConsent('granted');
-    expect(readConsent()).toBe('granted');
-  });
-
-  it('ignores a corrupted stored value rather than guessing', async () => {
-    store.set('analytics-consent', 'yes-please');
-    const { readConsent, hasConsent } = await import('../src/lib/analytics/gtag');
-    expect(readConsent()).toBeNull();
-    expect(hasConsent()).toBe(false);
-  });
-
-  it('treats unavailable storage as undecided, not as consent', async () => {
-    vi.stubGlobal('window', {
-      localStorage: {
-        getItem: () => {
-          throw new Error('storage disabled');
-        },
-        setItem: () => {
-          throw new Error('storage disabled');
-        },
-      },
-    });
-    vi.resetModules();
-    const { readConsent, hasConsent } = await import('../src/lib/analytics/gtag');
-    expect(readConsent()).toBeNull();
-    expect(hasConsent()).toBe(false);
-  });
-});
-
 describe('the tag loader', () => {
+  beforeEach(() => {
+    vi.unstubAllEnvs();
+    vi.resetModules();
+  });
+
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
     vi.resetModules();
   });
 
   function stubBrowser() {
-    const appended: Array<{ src?: string }> = [];
-    vi.stubGlobal('window', {
+    const appended: Array<{ src?: string; async?: boolean }> = [];
+    const win: {
+      location: { origin: string; pathname: string };
+      dataLayer: unknown[];
+      __analyticsLoaded?: boolean;
+    } = {
       location: { origin: 'https://example.test', pathname: '/de/' },
-      dataLayer: [] as unknown[],
-    });
+      dataLayer: [],
+    };
+    vi.stubGlobal('window', win);
     vi.stubGlobal('document', {
       head: { appendChild: (node: { src?: string }) => appended.push(node) },
       createElement: () => ({}),
     });
-    return { appended };
+    return { appended, win };
   }
 
   it('does nothing when no measurement id is configured', async () => {
@@ -170,11 +125,29 @@ describe('the tag loader', () => {
     expect(() => track('statement_submitted')).not.toThrow();
   });
 
-  it('is inert before consent is granted, so nothing is sent by merely visiting', async () => {
+  it('injects gtag.js immediately when a measurement id is configured', async () => {
+    vi.stubEnv('PUBLIC_GA4_ID', 'G-TEST123456');
+    vi.resetModules();
+    const { appended, win } = stubBrowser();
+    const { GA4_MEASUREMENT_ID, loadAnalytics } = await import('../src/lib/analytics/gtag');
+    expect(GA4_MEASUREMENT_ID).toBe('G-TEST123456');
+
+    loadAnalytics();
+
+    expect(appended).toHaveLength(1);
+    expect(appended[0].src).toContain('googletagmanager.com');
+    expect(appended[0].src).toContain('id=G-TEST123456');
+    expect(win.__analyticsLoaded).toBe(true);
+  });
+
+  it('is idempotent, so a second call injects the tag once', async () => {
+    vi.stubEnv('PUBLIC_GA4_ID', 'G-TEST123456');
+    vi.resetModules();
     const { appended } = stubBrowser();
-    const { track } = await import('../src/lib/analytics/gtag');
-    track('statement_parsed', { rows: 42 });
-    expect(appended).toHaveLength(0);
+    const { loadAnalytics } = await import('../src/lib/analytics/gtag');
+    loadAnalytics();
+    loadAnalytics();
+    expect(appended).toHaveLength(1);
   });
 });
 
@@ -191,14 +164,14 @@ describe('the ads loader', () => {
   });
 
   function stubAdBrowser() {
-    const appended: Array<{ src?: string }> = [];
-    const gtag = vi.fn();
-    vi.stubGlobal('window', { dataLayer: [] as unknown[], gtag });
+    const appended: Array<{ src?: string; crossOrigin?: string }> = [];
+    const win: { __adsenseLoaded?: boolean } = {};
+    vi.stubGlobal('window', win);
     vi.stubGlobal('document', {
       head: { appendChild: (node: { src?: string }) => appended.push(node) },
       createElement: () => ({}),
     });
-    return { appended, gtag };
+    return { appended, win };
   }
 
   it('does nothing when no publisher id is configured', async () => {
@@ -208,10 +181,10 @@ describe('the ads loader', () => {
     expect(appended).toHaveLength(0);
   });
 
-  it('loads the AdSense library and grants advertising consent once allowed', async () => {
+  it('loads the AdSense library when a publisher id is configured', async () => {
     vi.stubEnv('PUBLIC_ADSENSE_CLIENT', 'ca-pub-1234567890123456');
     vi.resetModules();
-    const { appended, gtag } = stubAdBrowser();
+    const { appended, win } = stubAdBrowser();
     const { ADSENSE_CLIENT_ID, loadAdsense } = await import('../src/lib/analytics/gtag');
     expect(ADSENSE_CLIENT_ID).toBe('ca-pub-1234567890123456');
 
@@ -220,14 +193,10 @@ describe('the ads loader', () => {
     expect(appended).toHaveLength(1);
     expect(appended[0].src).toContain('pagead2.googlesyndication.com');
     expect(appended[0].src).toContain('client=ca-pub-1234567890123456');
-    expect(gtag).toHaveBeenCalledWith('consent', 'update', {
-      ad_storage: 'granted',
-      ad_user_data: 'granted',
-      ad_personalization: 'granted',
-    });
+    expect(win.__adsenseLoaded).toBe(true);
   });
 
-  it('is idempotent, so a double accept injects the library once', async () => {
+  it('is idempotent, so a double call injects the library once', async () => {
     vi.stubEnv('PUBLIC_ADSENSE_CLIENT', 'ca-pub-1234567890123456');
     vi.resetModules();
     const { appended } = stubAdBrowser();
@@ -235,17 +204,5 @@ describe('the ads loader', () => {
     loadAdsense();
     loadAdsense();
     expect(appended).toHaveLength(1);
-  });
-
-  it('never grants analytics_storage when only ads are enabled', async () => {
-    vi.stubEnv('PUBLIC_ADSENSE_CLIENT', 'ca-pub-1234567890123456');
-    vi.resetModules();
-    const { gtag } = stubAdBrowser();
-    const { loadAdsense } = await import('../src/lib/analytics/gtag');
-    loadAdsense();
-
-    const consentUpdates = gtag.mock.calls.filter((call) => call[0] === 'consent');
-    expect(consentUpdates).toHaveLength(1);
-    expect(consentUpdates[0][2]).not.toHaveProperty('analytics_storage');
   });
 });

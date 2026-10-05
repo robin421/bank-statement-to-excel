@@ -17,7 +17,7 @@
 
 ## Privacy: processing is local
 
-The PDF is opened and parsed by JavaScript in your browser tab. There is no upload endpoint, no storage and no queue. After the page has loaded, the converter works offline. The end-to-end smoke test in this repo checks this by watching every network request the page makes during a conversion. Google Analytics only loads after you accept the consent banner, and your statement's contents are never sent either way.
+The PDF is opened and parsed by JavaScript in your browser tab. There is no upload endpoint, no storage and no queue. After the page has loaded, the converter works offline. The end-to-end smoke test in this repo checks this by watching every network request the page makes during a conversion. Google Analytics loads on page view, and your statement's contents are never sent either way.
 
 ## Supported input
 
@@ -421,29 +421,22 @@ migrate or roll back beyond the deploy itself.
 
 ---
 
-### Analytics and consent
+### Analytics
 
 Two analytics products, with different privacy properties, and the difference is the
 point.
 
-**Cloudflare Web Analytics** — cookieless, no fingerprinting, no consent banner needed.
+**Cloudflare Web Analytics** — cookieless, no fingerprinting, no cookie banner needed.
 Aggregate page views, referrers and country.
 
-**Google Analytics 4** — opt-in, and **nothing about it runs until the visitor
-accepts.** No script, no cookie, no ping. Not even a cookieless one.
+**Google Analytics 4** — standard mode. When `PUBLIC_GA4_ID` is set, gtag.js loads on
+every page view and sets cookies, like any ordinary analytics tag. There is no consent
+banner and no stored decision.
 
-That last part is a deliberate departure from the usual setup. Google Consent Mode
-with `analytics_storage: denied` by default is compliant and is the right choice when
-conversion modelling matters — but it still sends cookieless pings before anyone
-agreed. On a site whose headline claim is that nothing leaves your machine, making
-third-party requests before consent while telling the visitor the opposite is not a
-trade worth making. So the tag is loaded from the click handler, and Consent Mode
-defaults are still set inline so that anything Google-related loading later — AdSense,
-if it is ever enabled — starts from a refusal rather than a guess.
-
-Consent is stored in `localStorage` under `analytics-consent`, not a cookie, so
-recording the decision does not create the thing the decision is about. Clearing site
-data asks again.
+The tag is worth calling out anyway because the product's headline claim is that
+nothing leaves your machine. Google Analytics never sees the statement: the gtag
+config strips the query string from the reported page location, and the events carry
+only counts, ratios and category names.
 
 #### What the events carry
 
@@ -464,23 +457,23 @@ silently sending a merchant name to Google.
 #### Configuration
 
 Set `PUBLIC_GA4_ID` (for example `G-XXXXXXXXXX`) in the environment. Leaving it empty —
-the default in this repository — disables the whole feature: no script, no banner, no
-third-party request.
+the default in this repository — disables the feature: no script, no third-party
+request.
 
 #### How the privacy claim is tested
 
-The browser smoke suite carries out a real conversion and asserts four things:
+The browser smoke suite carries out a real conversion and asserts three things:
 
 | Check | Claim |
 |---|---|
-| no external requests before consent | "nothing runs until you allow it" |
+| no external requests on load in this build | the repository default configures no Google tags, so the baseline is zero third-party requests |
 | no request carries statement content | matched against strings that exist only in the fixture |
 | no request outside the connect-src allowlist | the CSP is the enforcement, and it is verified |
-| consenting loads the tag, banner does not reappear | the feature actually works, and is not merely inert |
 
-A single "no external requests at all" assertion would have had to be deleted to
-accommodate analytics. Splitting it into claims that stay true in both configurations
-keeps the guarantee instead of trading it away.
+The default build configures no Google ids, so the smoke run still expects zero
+third-party requests. A build with ids configured is expected to make them, which is
+why the guarantee is asserted on request contents and destinations rather than on the
+total count.
 
 ### Corpus policy
 
