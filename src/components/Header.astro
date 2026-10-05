@@ -48,6 +48,18 @@ function targetFor(code: LocaleCode): string {
     <nav class="site-nav" aria-label="Main">
       {links.map((link) => <a href={link.href}>{link.label}</a>)}
     </nav>
+    {
+      /* 移动端适配规范 §5：≤720px 时主导航收进汉堡菜单（CSS 控制显隐）。
+         <details> 实现：无 JS 可用，与语言切换器"无 JS 可工作"的原则一致。 */
+    }
+    <details class="nav-toggle">
+      <summary aria-label="Open menu">
+        <span class="nav-toggle__icon" aria-hidden="true"></span>
+      </summary>
+      <nav class="nav-panel" aria-label="Main">
+        {links.map((link) => <a href={link.href}>{link.label}</a>)}
+      </nav>
+    </details>
     <nav class="locale-switcher" aria-label="Language">
       {
         LOCALE_CODES.map((code) => (

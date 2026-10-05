@@ -56,6 +56,15 @@ html {
   scroll-behavior: smooth;
 }
 
+/*
+ * 移动端适配规范 §2：页面级横向滚动是 bug。
+ * overflow-x: clip（而非 hidden）做兜底：不创建滚动容器，不影响 sticky 定位。
+ */
+html,
+body {
+  overflow-x: clip;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -140,6 +149,18 @@ samp {
   padding: 0.08em 0.34em;
 }
 
+/* 移动端适配规范 §2：代码块允许局部横滑，但容器本身不许超出视口。 */
+pre {
+  overflow: auto;
+  max-width: 100%;
+}
+
+/* 移动端适配规范 §2：图片永远不许撑出容器。 */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 strong {
   font-weight: 660;
 }
@@ -155,6 +176,12 @@ strong {
 
 .prose {
   max-width: var(--measure);
+}
+
+/* 移动端适配规范 §2：长 URL / 长单词（德语复合词等）在窄屏不断行会撑出页面。 */
+.prose p,
+.prose li {
+  overflow-wrap: break-word;
 }
 
 .prose > ul,
@@ -270,9 +297,119 @@ strong {
   color: var(--ink);
 }
 
+/* ------------------------------------------------- mobile nav (≤720px) */
+
+.nav-toggle {
+  display: none;
+}
+
 @media (max-width: 720px) {
   .site-nav {
     display: none;
+  }
+
+  .site-header__inner {
+    gap: 0.75rem;
+  }
+
+  .locale-switcher {
+    margin-left: 0;
+  }
+
+  /* 汉堡菜单：<details> 实现，无 JS 可用，见 Header.astro。 */
+  .nav-toggle {
+    display: block;
+    position: relative;
+    flex: none;
+    margin-left: auto;
+  }
+  .nav-toggle > summary {
+    list-style: none;
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    margin: 0 -8px 0 0;
+  }
+  .nav-toggle > summary::-webkit-details-marker {
+    display: none;
+  }
+  .nav-toggle > summary:hover {
+    background: var(--paper-sunken);
+  }
+  .nav-toggle > summary:focus-visible {
+    outline: 2.5px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .nav-toggle__icon,
+  .nav-toggle__icon::before,
+  .nav-toggle__icon::after {
+    display: block;
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--ink);
+  }
+  .nav-toggle__icon {
+    position: relative;
+  }
+  .nav-toggle__icon::before,
+  .nav-toggle__icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+  .nav-toggle__icon::before {
+    top: -6px;
+  }
+  .nav-toggle__icon::after {
+    top: 6px;
+  }
+  .nav-toggle[open] .nav-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 12rem;
+    display: grid;
+    padding: 0.4rem;
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    z-index: 50;
+  }
+  .nav-panel a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 560;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+  .nav-panel a:hover {
+    background: var(--paper-sunken);
+  }
+
+  /*
+   * 移动端适配规范 §3：
+   * - 表单控件 <16px 会在 iOS Safari 聚焦时触发页面自动缩放；
+   * - 主要按钮触控目标不小于 44px。
+   */
+  .input,
+  .select {
+    font-size: 16px;
+  }
+  .btn {
+    min-height: 44px;
+  }
+  .btn--link {
+    min-height: 0;
   }
 }
 
@@ -353,6 +490,16 @@ strong {
   max-width: 100%;
 }
 
+/*
+ * 移动端适配规范 §2/§3：.field 在 flex 容器里时必须能收缩（min-width: 0），
+ * 否则下拉框会被最长的 option 撑出视口（2026-10-06 实测：360px 下下载栏的
+ * "Numbers and dates" 下拉框被 .converter 的 overflow: hidden 静默裁掉）。
+ */
+.field > .select,
+.field > .input {
+  width: 100%;
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -387,13 +534,14 @@ strong {
 .card-grid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  /* 移动端适配规范 §2：min 永远写 min(Xpx, 100%)，轨道不许撑出容器。 */
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
 }
 
 .grid-2 {
   display: grid;
   gap: clamp(1.2rem, 3vw, 2.4rem);
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   align-items: start;
 }
 
@@ -473,6 +621,15 @@ strong {
   border: 1px solid var(--rule);
   border-radius: var(--radius-sm);
   background: var(--paper-raised);
+  /* 移动端适配规范 §2：表格横滑不带到页面。 */
+  overscroll-behavior-x: contain;
+}
+
+/* 嵌在卡片里的无边框表格横滑容器（首页示例表）。 */
+.table-wrap--flush {
+  border: 0;
+  border-radius: 0;
+  max-height: none;
 }
 
 table.data {
@@ -634,6 +791,12 @@ table.data tr.row--flagged td {
   background: var(--paper-sunken);
 }
 
+/* 移动端适配规范 §2：允许收缩换行，不被下拉框内容撑开。 */
+.download-bar > .field {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
 .download-bar__actions {
   display: flex;
   flex-wrap: wrap;
@@ -661,6 +824,9 @@ table.data tr.row--flagged td {
 
 .privacy-strip__locale {
   gap: 0.5rem !important;
+  /* 移动端适配规范 §2：允许被 flex 容器压缩，不被下拉框撑出视口。 */
+  min-width: 0;
+  max-width: 100%;
 }
 
 .privacy-strip__locale label {
@@ -674,6 +840,8 @@ table.data tr.row--flagged td {
 .privacy-strip__locale .select {
   padding: 0.25rem 0.45rem;
   font-size: 0.82rem;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Language switcher in the header */
@@ -773,7 +941,7 @@ table.data tr.row--flagged td {
   margin: 0;
   display: grid;
   gap: 1.2rem;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
 }
 
 .steps li {
@@ -844,7 +1012,7 @@ table.data tr.row--flagged td {
 .related {
   display: grid;
   gap: 0.75rem;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
   padding: 0;
   margin: 0;
   list-style: none;
@@ -876,6 +1044,7 @@ table.data tr.row--flagged td {
   display: grid;
   place-items: center;
   min-height: 90px;
+  max-width: 100%;
   margin: 2rem auto;
   padding: 0.5rem;
   border: 1px dashed var(--rule-strong);
@@ -897,7 +1066,7 @@ table.data tr.row--flagged td {
 .footer-grid {
   display: grid;
   gap: 1.6rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
 }
 .footer-grid h3 {
   font-size: 0.78rem;
