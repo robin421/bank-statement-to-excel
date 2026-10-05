@@ -105,6 +105,8 @@ const related = [
       <h2 id="locale-heading">The three things that break bank CSVs</h2>
       <p>
         Almost every "the CSV is wrong" problem is one of these, and none of them are about the transactions themselves.
+        Getting the rows out of the PDF correctly is a separate problem, explained in{' '}
+        <a href="/blog/excel-from-pdf-bank-statement/">why converting a PDF bank statement to Excel usually goes wrong</a>.
       </p>
       <h3>1. The decimal separator</h3>
       <p>
@@ -115,8 +117,9 @@ const related = [
       <h3>2. The delimiter</h3>
       <p>
         Excel's behaviour depends on the machine's regional settings. If your copy expects a semicolon, a
-        comma-separated file lands in one column. Switch the delimiter and it opens correctly. (Or take the .xlsx,
-        which has no delimiter to get wrong.)
+        comma-separated file lands in one column. Switch the delimiter and it opens correctly. (Or{' '}
+        <a href="/pdf-bank-statement-to-excel/">convert the PDF bank statement to an Excel workbook</a> instead — an
+        .xlsx has no delimiter to get wrong.)
       </p>
       <h3>3. The date</h3>
       <p>

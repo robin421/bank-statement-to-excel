@@ -140,7 +140,9 @@ const related = [
           <h3>Rows are extracted and checked</h3>
           <p>
             The converter rebuilds the table from the PDF's text positions, then verifies every row against the running
-            balance the statement prints. Anything that does not add up gets flagged.
+            balance the statement prints. Anything that does not add up gets flagged. Here is{' '}
+            <a href="/pdf-bank-statement-to-excel/">why generic PDF-to-Excel converters mangle bank statement tables</a>{' '}
+            and what this one does differently.
           </p>
         </li>
         <li>
@@ -281,7 +283,9 @@ const related = [
           <span class="icon icon--no" aria-hidden="true">✕</span>
           <span>
             <strong>PDFs whose text layer is broken.</strong> Some banks print with custom fonts that decode to
-            nonsense. The converter detects this and says so rather than inventing rows.
+            nonsense. The converter detects this and says so rather than inventing rows. The guide to{' '}
+            <a href="/blog/excel-from-pdf-bank-statement/">why getting Excel from a PDF bank statement usually goes wrong</a>{' '}
+            covers this and the other common failure modes.
           </span>
         </li>
         <li>
