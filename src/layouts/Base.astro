@@ -52,7 +52,7 @@ const canonicalUrl = new URL(pathname, origin).href;
 const ogTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
 const ogImageUrl = new URL(props.ogImage ?? SITE.ogImage, origin).href;
 
-const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
+const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || "9a41b657cc1243b2abba6cf4192b67b4";
 
 // Only declare alternates when the page actually exists in more than one
 // language; a lone hreflang pointing at a 404 wastes crawl budget. Skipped on
