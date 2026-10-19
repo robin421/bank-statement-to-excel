@@ -48,6 +48,647 @@
           "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob: https://fazier.com https://twelve.tools https://startupfa.me https://www.google-analytics.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://adservice.google.com https://fundingchoicesmessages.google.com; worker-src 'self' blob:; connect-src 'self' https://cloudflareinsights.com https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com"
         }
       ]
+    },
+    {
+      "source": "/(favicon\\.svg|apple-touch-icon\\.png)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/en",
+      "destination": "https://blog.wattflow.net/en",
+      "permanent": true
+    },
+    {
+      "source": "/en/:splat*",
+      "destination": "https://blog.wattflow.net/en/:splat",
+      "permanent": true
+    },
+    {
+      "source": "/zh",
+      "destination": "https://blog.wattflow.net/zh",
+      "permanent": true
+    },
+    {
+      "source": "/zh/:splat*",
+      "destination": "https://blog.wattflow.net/zh/:splat",
+      "permanent": true
+    },
+    {
+      "source": "/projects",
+      "destination": "https://blog.wattflow.net/en/projects",
+      "permanent": true
+    },
+    {
+      "source": "/projects/markdown-csv-to-figma-table",
+      "destination": "https://blog.wattflow.net/en/projects/markdown-csv-to-figma-table",
+      "permanent": true
+    },
+    {
+      "source": "/projects/notion-saver",
+      "destination": "https://blog.wattflow.net/en/projects/notion-saver",
+      "permanent": true
+    },
+    {
+      "source": "/projects/stitch-code-to-figma",
+      "destination": "https://blog.wattflow.net/en/projects/stitch-code-to-figma",
+      "permanent": true
+    },
+    {
+      "source": "/projects/vibeorbit",
+      "destination": "https://blog.wattflow.net/en/projects/vibeorbit",
+      "permanent": true
+    },
+    {
+      "source": "/radar",
+      "destination": "https://blog.wattflow.net/en/radar",
+      "permanent": true
+    },
+    {
+      "source": "/radar/sample",
+      "destination": "https://blog.wattflow.net/en/radar/sample",
+      "permanent": true
+    },
+    {
+      "source": "/resume",
+      "destination": "https://blog.wattflow.net/en/about",
+      "permanent": true
+    },
+    {
+      "source": "/rss.xml",
+      "destination": "https://blog.wattflow.net/rss.xml",
+      "permanent": true
+    },
+    {
+      "source": "/blog/about-design-proposals",
+      "destination": "https://blog.wattflow.net/en/blog/about-design-proposals",
+      "permanent": true
+    },
+    {
+      "source": "/blog/action-sheets-and-alerts-design",
+      "destination": "https://blog.wattflow.net/en/blog/action-sheets-and-alerts-design",
+      "permanent": true
+    },
+    {
+      "source": "/blog/agile-sms-risk-control",
+      "destination": "https://blog.wattflow.net/en/blog/agile-sms-risk-control",
+      "permanent": true
+    },
+    {
+      "source": "/blog/alipay-ar-innovation",
+      "destination": "https://blog.wattflow.net/en/blog/alipay-ar-innovation",
+      "permanent": true
+    },
+    {
+      "source": "/blog/amazon-product-pricing-strategy",
+      "destination": "https://blog.wattflow.net/en/blog/amazon-product-pricing-strategy",
+      "permanent": true
+    },
+    {
+      "source": "/blog/app-channel-tracking-analytics",
+      "destination": "https://blog.wattflow.net/en/blog/app-channel-tracking-analytics",
+      "permanent": true
+    },
+    {
+      "source": "/blog/app-shang-xian-zhun-bei-qing-dan",
+      "destination": "https://blog.wattflow.net/en/blog/app-shang-xian-zhun-bei-qing-dan",
+      "permanent": true
+    },
+    {
+      "source": "/blog/casual-notes",
+      "destination": "https://blog.wattflow.net/en/blog/casual-notes",
+      "permanent": true
+    },
+    {
+      "source": "/blog/chan-pin-zhi-biao",
+      "destination": "https://blog.wattflow.net/en/blog/chan-pin-zhi-biao",
+      "permanent": true
+    },
+    {
+      "source": "/blog/chatgpt-prompt-principle-from-deeplearning-ai",
+      "destination": "https://blog.wattflow.net/en/blog/chatgpt-prompt-principle-from-deeplearning-ai",
+      "permanent": true
+    },
+    {
+      "source": "/blog/community-product-summary",
+      "destination": "https://blog.wattflow.net/en/blog/community-product-summary",
+      "permanent": true
+    },
+    {
+      "source": "/blog/correct-form-validation-design",
+      "destination": "https://blog.wattflow.net/en/blog/correct-form-validation-design",
+      "permanent": true
+    },
+    {
+      "source": "/blog/creative-thinking-methods",
+      "destination": "https://blog.wattflow.net/en/blog/creative-thinking-methods",
+      "permanent": true
+    },
+    {
+      "source": "/blog/design-goals-and-actions",
+      "destination": "https://blog.wattflow.net/en/blog/design-goals-and-actions",
+      "permanent": true
+    },
+    {
+      "source": "/blog/design-login-free-checkout",
+      "destination": "https://blog.wattflow.net/en/blog/design-login-free-checkout",
+      "permanent": true
+    },
+    {
+      "source": "/blog/design-solves-business-limitations",
+      "destination": "https://blog.wattflow.net/en/blog/design-solves-business-limitations",
+      "permanent": true
+    },
+    {
+      "source": "/blog/dont-be-evil",
+      "destination": "https://blog.wattflow.net/en/blog/dont-be-evil",
+      "permanent": true
+    },
+    {
+      "source": "/blog/gaming-to-product-insights",
+      "destination": "https://blog.wattflow.net/en/blog/gaming-to-product-insights",
+      "permanent": true
+    },
+    {
+      "source": "/blog/googleplay-zheng-ce",
+      "destination": "https://blog.wattflow.net/en/blog/googleplay-zheng-ce",
+      "permanent": true
+    },
+    {
+      "source": "/blog/guan-yu-xuan-ze-chu-hai-gong-ju-lei-xiang-mu-de-si",
+      "destination": "https://blog.wattflow.net/en/blog/guan-yu-xuan-ze-chu-hai-gong-ju-lei-xiang-mu-de-si",
+      "permanent": true
+    },
+    {
+      "source": "/blog/how-google-and-amazon-do-product",
+      "destination": "https://blog.wattflow.net/en/blog/how-google-and-amazon-do-product",
+      "permanent": true
+    },
+    {
+      "source": "/blog/html5-applications-discussion",
+      "destination": "https://blog.wattflow.net/en/blog/html5-applications-discussion",
+      "permanent": true
+    },
+    {
+      "source": "/blog/insurance-premium-calculation",
+      "destination": "https://blog.wattflow.net/en/blog/insurance-premium-calculation",
+      "permanent": true
+    },
+    {
+      "source": "/blog/interaction-designers-insights",
+      "destination": "https://blog.wattflow.net/en/blog/interaction-designers-insights",
+      "permanent": true
+    },
+    {
+      "source": "/blog/invitation-sharing-design",
+      "destination": "https://blog.wattflow.net/en/blog/invitation-sharing-design",
+      "permanent": true
+    },
+    {
+      "source": "/blog/jian-yu-chan-zi-mian",
+      "destination": "https://blog.wattflow.net/en/blog/jian-yu-chan-zi-mian",
+      "permanent": true
+    },
+    {
+      "source": "/blog/lizard-law-reading-notes",
+      "destination": "https://blog.wattflow.net/en/blog/lizard-law-reading-notes",
+      "permanent": true
+    },
+    {
+      "source": "/blog/mac-quantumult-x-wu-fa-dai-li-de-wen-ti-jie-jue",
+      "destination": "https://blog.wattflow.net/en/blog/mac-quantumult-x-wu-fa-dai-li-de-wen-ti-jie-jue",
+      "permanent": true
+    },
+    {
+      "source": "/blog/phone-cleaner-product-design",
+      "destination": "https://blog.wattflow.net/en/blog/phone-cleaner-product-design",
+      "permanent": true
+    },
+    {
+      "source": "/blog/product-requirements-thinking",
+      "destination": "https://blog.wattflow.net/en/blog/product-requirements-thinking",
+      "permanent": true
+    },
+    {
+      "source": "/blog/project-optimization-notes",
+      "destination": "https://blog.wattflow.net/en/blog/project-optimization-notes",
+      "permanent": true
+    },
+    {
+      "source": "/blog/project-retrospective",
+      "destination": "https://blog.wattflow.net/en/blog/project-retrospective",
+      "permanent": true
+    },
+    {
+      "source": "/blog/project-summary",
+      "destination": "https://blog.wattflow.net/en/blog/project-summary",
+      "permanent": true
+    },
+    {
+      "source": "/blog/prompt-does-not-equal-ai-product",
+      "destination": "https://blog.wattflow.net/en/blog/prompt-does-not-equal-ai-product",
+      "permanent": true
+    },
+    {
+      "source": "/blog/python-count-list-duplicates",
+      "destination": "https://blog.wattflow.net/en/blog/python-count-list-duplicates",
+      "permanent": true
+    },
+    {
+      "source": "/blog/python-ltv-fitting",
+      "destination": "https://blog.wattflow.net/en/blog/python-ltv-fitting",
+      "permanent": true
+    },
+    {
+      "source": "/blog/read-more-write-blog",
+      "destination": "https://blog.wattflow.net/en/blog/read-more-write-blog",
+      "permanent": true
+    },
+    {
+      "source": "/blog/reading-fragmented-knowledge",
+      "destination": "https://blog.wattflow.net/en/blog/reading-fragmented-knowledge",
+      "permanent": true
+    },
+    {
+      "source": "/blog/recent-summary",
+      "destination": "https://blog.wattflow.net/en/blog/recent-summary",
+      "permanent": true
+    },
+    {
+      "source": "/blog/recent-work-summary",
+      "destination": "https://blog.wattflow.net/en/blog/recent-work-summary",
+      "permanent": true
+    },
+    {
+      "source": "/blog/recommended-book-list",
+      "destination": "https://blog.wattflow.net/en/blog/recommended-book-list",
+      "permanent": true
+    },
+    {
+      "source": "/blog/renowned-design-teams-research",
+      "destination": "https://blog.wattflow.net/en/blog/renowned-design-teams-research",
+      "permanent": true
+    },
+    {
+      "source": "/blog/simplified-insurance-purchase-design",
+      "destination": "https://blog.wattflow.net/en/blog/simplified-insurance-purchase-design",
+      "permanent": true
+    },
+    {
+      "source": "/blog/sketch-alpha-masking-tutorial",
+      "destination": "https://blog.wattflow.net/en/blog/sketch-alpha-masking-tutorial",
+      "permanent": true
+    },
+    {
+      "source": "/blog/sou-suo-fang-fa",
+      "destination": "https://blog.wattflow.net/en/blog/sou-suo-fang-fa",
+      "permanent": true
+    },
+    {
+      "source": "/blog/thoughts-on-danshari",
+      "destination": "https://blog.wattflow.net/en/blog/thoughts-on-danshari",
+      "permanent": true
+    },
+    {
+      "source": "/blog/tong-zhi-yin-dao-de-luo-ji",
+      "destination": "https://blog.wattflow.net/en/blog/tong-zhi-yin-dao-de-luo-ji",
+      "permanent": true
+    },
+    {
+      "source": "/blog/uber-people-as-destination-design",
+      "destination": "https://blog.wattflow.net/en/blog/uber-people-as-destination-design",
+      "permanent": true
+    },
+    {
+      "source": "/blog/ugc-community-research-notes",
+      "destination": "https://blog.wattflow.net/en/blog/ugc-community-research-notes",
+      "permanent": true
+    },
+    {
+      "source": "/blog/unhealthy-product-metrics",
+      "destination": "https://blog.wattflow.net/en/blog/unhealthy-product-metrics",
+      "permanent": true
+    },
+    {
+      "source": "/blog/uninstall-attribution-analysis",
+      "destination": "https://blog.wattflow.net/en/blog/uninstall-attribution-analysis",
+      "permanent": true
+    },
+    {
+      "source": "/blog/use-gpt3-to-summarize-google-play-reviews",
+      "destination": "https://blog.wattflow.net/en/blog/use-gpt3-to-summarize-google-play-reviews",
+      "permanent": true
+    },
+    {
+      "source": "/blog/use-python-to-download-reviews-of-a-specific-app-o",
+      "destination": "https://blog.wattflow.net/en/blog/use-python-to-download-reviews-of-a-specific-app-o",
+      "permanent": true
+    },
+    {
+      "source": "/blog/user-models-and-use-cases",
+      "destination": "https://blog.wattflow.net/en/blog/user-models-and-use-cases",
+      "permanent": true
+    },
+    {
+      "source": "/blog/utm-channel-tracking-in-one-minute",
+      "destination": "https://blog.wattflow.net/en/blog/utm-channel-tracking-in-one-minute",
+      "permanent": true
+    },
+    {
+      "source": "/blog/vibe-coding-internal-feedback-saas",
+      "destination": "https://blog.wattflow.net/en/blog/vibe-coding-internal-feedback-saas",
+      "permanent": true
+    },
+    {
+      "source": "/blog/web-browser-icon-settings",
+      "destination": "https://blog.wattflow.net/en/blog/web-browser-icon-settings",
+      "permanent": true
+    },
+    {
+      "source": "/blog/wechat-product-rules-analysis",
+      "destination": "https://blog.wattflow.net/en/blog/wechat-product-rules-analysis",
+      "permanent": true
+    },
+    {
+      "source": "/blog/weekly-summary",
+      "destination": "https://blog.wattflow.net/en/blog/weekly-summary",
+      "permanent": true
+    },
+    {
+      "source": "/blog/writing-news-leads-methods",
+      "destination": "https://blog.wattflow.net/en/blog/writing-news-leads-methods",
+      "permanent": true
+    },
+    {
+      "source": "/blog/ying-xiao-zhong-de-xin-li-xue",
+      "destination": "https://blog.wattflow.net/en/blog/ying-xiao-zhong-de-xin-li-xue",
+      "permanent": true
+    },
+    {
+      "source": "/blog/yongtrae-kai-fa-hai-yuanfigma-zhong-de-she-ji-gao",
+      "destination": "https://blog.wattflow.net/en/blog/yongtrae-kai-fa-hai-yuanfigma-zhong-de-she-ji-gao",
+      "permanent": true
+    },
+    {
+      "source": "/blog/yu-yin-fangapp-zao-qi-chan-pin-bei-ji-xing-zhi-bia",
+      "destination": "https://blog.wattflow.net/en/blog/yu-yin-fangapp-zao-qi-chan-pin-bei-ji-xing-zhi-bia",
+      "permanent": true
+    },
+    {
+      "source": "/blog/yue-hui-lei-ying-yong-de-fu-fei-bian-xian",
+      "destination": "https://blog.wattflow.net/en/blog/yue-hui-lei-ying-yong-de-fu-fei-bian-xian",
+      "permanent": true
+    },
+    {
+      "source": "/blog/zi-ji-zong-jie-deprompt-jing-yan",
+      "destination": "https://blog.wattflow.net/en/blog/zi-ji-zong-jie-deprompt-jing-yan",
+      "permanent": true
+    },
+    {
+      "source": "/blog/daily-active-users-anomaly-analysis",
+      "destination": "https://blog.wattflow.net/zh/blog/daily-active-users-anomaly-analysis",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-2bb9bee0a",
+      "destination": "https://blog.wattflow.net/en/blog/amazon-product-pricing-strategy",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-2b8a567b0",
+      "destination": "https://blog.wattflow.net/en/blog/community-product-summary",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-2b7b69954",
+      "destination": "https://blog.wattflow.net/en/blog/python-count-list-duplicates",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-1ca923ed5",
+      "destination": "https://blog.wattflow.net/en/blog/unhealthy-product-metrics",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-1ca9231b7",
+      "destination": "https://blog.wattflow.net/en/blog/phone-cleaner-product-design",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-1ca6f775c",
+      "destination": "https://blog.wattflow.net/en/blog/python-ltv-fitting",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-1c94b9cf3",
+      "destination": "https://blog.wattflow.net/en/blog/ugc-community-research-notes",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-1ca9231c5",
+      "destination": "https://blog.wattflow.net/en/blog/uninstall-attribution-analysis",
+      "permanent": true
+    },
+    {
+      "source": "/blog/%E6%95%8F%E6%8D%B7%E7%9F%AD%E4%BF%A1%E9%A3%8E%E6%8E%A7%E6%96%B9%E6%A1%88",
+      "destination": "https://blog.wattflow.net/en/blog/agile-sms-risk-control",
+      "permanent": true
+    },
+    {
+      "source": "/blog/2026-06-02-b7889d54",
+      "destination": "https://blog.wattflow.net/zh/blog/daily-active-users-anomaly-analysis",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-126386c7",
+      "destination": "https://blog.wattflow.net/en/blog/recent-work-summary",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-189cff7",
+      "destination": "https://blog.wattflow.net/en/blog/read-more-write-blog",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-18a7051",
+      "destination": "https://blog.wattflow.net/en/blog/thoughts-on-danshari",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-43f25e1",
+      "destination": "https://blog.wattflow.net/en/blog/sketch-alpha-masking-tutorial",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-4c975c7",
+      "destination": "https://blog.wattflow.net/en/blog/web-browser-icon-settings",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-597292d",
+      "destination": "https://blog.wattflow.net/en/blog/recent-summary",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-5cf38a2",
+      "destination": "https://blog.wattflow.net/en/blog/casual-notes",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-6809686",
+      "destination": "https://blog.wattflow.net/en/blog/recommended-book-list",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-73a0726",
+      "destination": "https://blog.wattflow.net/en/blog/design-goals-and-actions",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-a5f721f",
+      "destination": "https://blog.wattflow.net/en/blog/interaction-designers-insights",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-a732e97",
+      "destination": "https://blog.wattflow.net/en/blog/dont-be-evil",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-a851fc8",
+      "destination": "https://blog.wattflow.net/en/blog/creative-thinking-methods",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-bcf4008",
+      "destination": "https://blog.wattflow.net/en/blog/about-design-proposals",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-bd2336e",
+      "destination": "https://blog.wattflow.net/en/blog/insurance-premium-calculation",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-becb0e0",
+      "destination": "https://blog.wattflow.net/en/blog/html5-applications-discussion",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-c515f05",
+      "destination": "https://blog.wattflow.net/en/blog/simplified-insurance-purchase-design",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-c53dc71",
+      "destination": "https://blog.wattflow.net/en/blog/correct-form-validation-design",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-c564c63",
+      "destination": "https://blog.wattflow.net/en/blog/design-solves-business-limitations",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-c56d122",
+      "destination": "https://blog.wattflow.net/en/blog/design-login-free-checkout",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-ca57981",
+      "destination": "https://blog.wattflow.net/en/blog/weekly-summary",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-ca57bf5",
+      "destination": "https://blog.wattflow.net/en/blog/invitation-sharing-design",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-ca9da8a",
+      "destination": "https://blog.wattflow.net/en/blog/user-models-and-use-cases",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-caf6af0",
+      "destination": "https://blog.wattflow.net/en/blog/action-sheets-and-alerts-design",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-cfa6302",
+      "destination": "https://blog.wattflow.net/en/blog/gaming-to-product-insights",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-d65496a",
+      "destination": "https://blog.wattflow.net/en/blog/product-requirements-thinking",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-d654999",
+      "destination": "https://blog.wattflow.net/en/blog/uber-people-as-destination-design",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-d6611ee",
+      "destination": "https://blog.wattflow.net/en/blog/alipay-ar-innovation",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-d688cfd",
+      "destination": "https://blog.wattflow.net/en/blog/renowned-design-teams-research",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-d76ce5f",
+      "destination": "https://blog.wattflow.net/en/blog/project-retrospective",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-d7b5f13",
+      "destination": "https://blog.wattflow.net/en/blog/reading-fragmented-knowledge",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-d81d01d",
+      "destination": "https://blog.wattflow.net/en/blog/project-optimization-notes",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-dbd6de3",
+      "destination": "https://blog.wattflow.net/en/blog/project-summary",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-ddc14e6",
+      "destination": "https://blog.wattflow.net/en/blog/wechat-product-rules-analysis",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-e0dc2f5",
+      "destination": "https://blog.wattflow.net/en/blog/lizard-law-reading-notes",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-e192570",
+      "destination": "https://blog.wattflow.net/en/blog/app-channel-tracking-analytics",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-e1cb450",
+      "destination": "https://blog.wattflow.net/en/blog/how-google-and-amazon-do-product",
+      "permanent": true
+    },
+    {
+      "source": "/blog/213214-e230ca5",
+      "destination": "https://blog.wattflow.net/en/blog/writing-news-leads-methods",
+      "permanent": true
     }
   ]
 }

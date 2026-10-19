@@ -19,7 +19,8 @@ not equally good:
    converter reads it](/ofx-qfx-to-csv/) and the dates cannot be misread.
 2. **CSV export** — usually fine, but bank-made CSVs vary between exports in ways that trip up automated tools.
 3. **The PDF download** — the right choice when there is no data export, and what most people have. Make sure you take
-   the *download*, not a copy of what the browser is showing you; the in-browser viewer is sometimes an image.
+   the *download*, not a copy of what the browser is showing you; the in-browser viewer is sometimes an image. A PDF
+   has no real table inside it, which is [why generic converters turn a statement into one long column](/blog/excel-from-pdf-bank-statement/).
 4. **A printout scanned or photographed** — the worst option, and the only one that genuinely needs OCR. Avoiding it is
    usually a matter of finding the download button.
 
@@ -61,7 +62,8 @@ the workbook. But it is worth knowing why the check works, because it is the sam
 ## Step 4: Get the format your next step needs
 
 - **Excel workbook** — for reading, sorting, or sending to an accountant. Dates arrive as real dates and amounts as real
-  numbers, so you can sum and pivot immediately.
+  numbers, so you can sum and pivot immediately. [What the PDF bank statement to Excel workbook contains](/pdf-bank-statement-to-excel/)
+  covers the Summary and Raw sheets in detail.
 - **CSV** — for an importer, a script, or a database. [Details on delimiters and encodings here](/bank-statement-to-csv/).
 - **QuickBooks Online** — [the three-column shape it requires](/quickbooks-csv/).
 - **Xero** — [the `*Date`/`*Amount` header set](/xero-csv/), or import OFX directly if your bank provides it.
