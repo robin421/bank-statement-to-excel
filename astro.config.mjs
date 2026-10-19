@@ -4,6 +4,7 @@ import { loadEnv } from 'vite';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import { LOCALE_CODES } from './src/i18n/locales.ts';
+import { lastmodForUrl } from './scripts/sitemap-lastmod.mjs';
 
 /**
  * Resolve the canonical origin at config time.
@@ -33,6 +34,14 @@ export default defineConfig({
       i18n: {
         defaultLocale: 'en',
         locales: Object.fromEntries(LOCALE_CODES.map((code) => [code, code])),
+      },
+      // <lastmod> = date of the last git commit that touched the page's source
+      // file. Omitted (rather than faked) when it cannot be known: shallow
+      // clones, dynamic routes, or no git at all.
+      serialize(item) {
+        const lastmod = lastmodForUrl(item.url);
+        if (lastmod) item.lastmod = lastmod;
+        return item;
       },
     }),
   ],

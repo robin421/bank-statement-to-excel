@@ -1,0 +1,6 @@
+# Cloudflare Pages response headers.
+# GSC indexed the favicon as if it were a page; keep assets like it out of the index.
+/favicon.svg
+  X-Robots-Tag: noindex
+/apple-touch-icon.png
+  X-Robots-Tag: noindex
