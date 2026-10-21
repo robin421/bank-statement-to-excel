@@ -14,11 +14,12 @@ const O = LEGACY_ORIGIN;
 const enc = (s) => s.split('/').map((p) => encodeURIComponent(p)).join('/');
 
 /** [from, to] pairs. `from` never has a trailing slash; splats end in /*. */
+// Order matters on Cloudflare Pages: once a splat rule appears, every later
+// rule is counted against the 100 *dynamic* limit and the rest are silently
+// dropped. Keep every static rule first and the splats at the very end.
 const rules = [
   ['/en', `${O}/en`],
-  ['/en/*', `${O}/en/:splat`],
   ['/zh', `${O}/zh`],
-  ['/zh/*', `${O}/zh/:splat`],
   ['/projects', `${O}/en/projects`],
   ...LEGACY_PROJECTS.map((p) => [`/projects/${p}`, `${O}/en/projects/${p}`]),
   ['/radar', `${O}/en/radar`],
@@ -26,7 +27,19 @@ const rules = [
   ['/resume', `${O}/en/about`],
   ['/rss.xml', `${O}/rss.xml`],
   ...Object.entries(LEGACY_BLOG_SLUGS).map(([slug, to]) => [`/blog/${enc(slug)}`, `${O}${to}`]),
+  ['/en/*', `${O}/en/:splat`],
+  ['/zh/*', `${O}/zh/:splat`],
 ];
+
+{
+  const firstSplat = rules.findIndex(([from]) => from.includes('*'));
+  const lateStatic = rules.slice(firstSplat).find(([from]) => !from.includes('*'));
+  const dynamic = rules.filter(([from]) => from.includes('*')).length;
+  if (lateStatic || dynamic > 100 || rules.length * 2 > 2000) {
+    console.error('legacy-redirects: static rules must precede splats; ≤100 dynamic, ≤2000 static');
+    process.exit(1);
+  }
+}
 
 function pagesFile() {
   const lines = [

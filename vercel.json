@@ -66,18 +66,8 @@
       "permanent": true
     },
     {
-      "source": "/en/:splat*",
-      "destination": "https://blog.wattflow.net/en/:splat",
-      "permanent": true
-    },
-    {
       "source": "/zh",
       "destination": "https://blog.wattflow.net/zh",
-      "permanent": true
-    },
-    {
-      "source": "/zh/:splat*",
-      "destination": "https://blog.wattflow.net/zh/:splat",
       "permanent": true
     },
     {
@@ -688,6 +678,16 @@
     {
       "source": "/blog/213214-e230ca5",
       "destination": "https://blog.wattflow.net/en/blog/writing-news-leads-methods",
+      "permanent": true
+    },
+    {
+      "source": "/en/:splat*",
+      "destination": "https://blog.wattflow.net/en/:splat",
+      "permanent": true
+    },
+    {
+      "source": "/zh/:splat*",
+      "destination": "https://blog.wattflow.net/zh/:splat",
       "permanent": true
     }
   ]
