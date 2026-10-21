@@ -2,10 +2,8 @@
 # Old personal-site URLs (now on blog.wattflow.net) that GSC reports as 404 on www.
 /en https://blog.wattflow.net/en 301
 /en/ https://blog.wattflow.net/en 301
-/en/* https://blog.wattflow.net/en/:splat 301
 /zh https://blog.wattflow.net/zh 301
 /zh/ https://blog.wattflow.net/zh 301
-/zh/* https://blog.wattflow.net/zh/:splat 301
 /projects https://blog.wattflow.net/en/projects 301
 /projects/ https://blog.wattflow.net/en/projects 301
 /projects/markdown-csv-to-figma-table https://blog.wattflow.net/en/projects/markdown-csv-to-figma-table 301
@@ -250,3 +248,5 @@
 /blog/213214-e1cb450/ https://blog.wattflow.net/en/blog/how-google-and-amazon-do-product 301
 /blog/213214-e230ca5 https://blog.wattflow.net/en/blog/writing-news-leads-methods 301
 /blog/213214-e230ca5/ https://blog.wattflow.net/en/blog/writing-news-leads-methods 301
+/en/* https://blog.wattflow.net/en/:splat 301
+/zh/* https://blog.wattflow.net/zh/:splat 301
