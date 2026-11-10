@@ -29,6 +29,8 @@ export interface Props {
   canonicalPath?: string;
   /** Social preview image path (1200x630). Defaults to the site-wide image. */
   ogImage?: string;
+  /** Use `title` verbatim (no "| StatementToExcel" suffix). For non-statement sections such as the tax tools. */
+  fullTitle?: boolean;
 }
 
 const props = Astro.props as Props;
@@ -49,7 +51,7 @@ const origin = Astro.site ?? SITE.url;
 const rawPath = props.canonicalPath ?? Astro.url.pathname;
 const pathname = rawPath.endsWith('/') ? rawPath : `${rawPath}/`;
 const canonicalUrl = new URL(pathname, origin).href;
-const ogTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
+const ogTitle = props.fullTitle || title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
 const ogImageUrl = new URL(props.ogImage ?? SITE.ogImage, origin).href;
 
 const cfToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || "9a41b657cc1243b2abba6cf4192b67b4";

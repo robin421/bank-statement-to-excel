@@ -1,0 +1,96 @@
+---
+import Base from '../layouts/Base.astro';
+import Faq from '../components/Faq.astro';
+import RelatedLinks from '../components/RelatedLinks.astro';
+import AdSlot from '../components/AdSlot.astro';
+import TaxCalculator from '../components/tax/TaxCalculator.astro';
+import TaxSources from '../components/tax/TaxSources.astro';
+import AppPromo from '../components/tax/AppPromo.astro';
+import { TT_FAQ, SRC } from '../lib/tax/content';
+import { taxPageSchema } from '../lib/tax/schema';
+import { SITE } from '../data/site.mjs';
+
+const title = 'W-2 Box 12 Code TT: What It Means for 2026 Taxes | WattFlow';
+const description =
+  'Box 12 code TT on your 2026 W-2 is your qualified overtime. What it means, why it caps your no tax on overtime deduction, and what to do if it is missing or wrong.';
+const schema = taxPageSchema({ origin: Astro.site?.href ?? SITE.url, path: '/w2-box-12-code-tt/', name: 'W-2 Box 12 Code TT', description, app: false });
+const related = [
+  { href: '/no-tax-on-overtime-calculator/', title: 'No tax on overtime calculator', blurb: 'Full calculator with an estimate mode and tax-saved figure.' },
+  { href: '/no-tax-on-tips-calculator/', title: 'No tax on tips calculator', blurb: 'Code TP, box 14b and 1099 tips.' },
+];
+---
+
+<Base title={title} description={description} fullTitle locale="en" schema={schema}>
+  <section class="section section--tight">
+    <div class="page" style="max-width:48rem">
+      <p class="eyebrow">Tax year 2026</p>
+      <h1>W-2 Box 12 Code TT: What It Means for Your 2026 Taxes</h1>
+      <p class="lede">
+        Code TT in box 12 of your 2026 Form W-2 is the total qualified overtime compensation your employer paid you — the
+        premium above your regular rate that the FLSA requires. It’s the number you use for the no tax on overtime
+        deduction, and for 2026 you can’t deduct more than it shows.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="what-heading">
+    <div class="page" style="max-width:48rem">
+      <h2 id="what-heading">What code TT is</h2>
+      <p>
+        Code TT is one of the new box 12 codes on the 2026 Form W-2. It reports only the qualified part of your overtime —
+        for time-and-a-half, the “half”. Your overtime pay still counts as wages, and Social Security and Medicare tax
+        still apply to it. The tips codes are separate: code TP for cash tips and box 14b for your tipped occupation code.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="why-heading">
+    <div class="page" style="max-width:48rem">
+      <h2 id="why-heading">Why it matters</h2>
+      <p>
+        For tax years after 2025 the IRS says you may not consider any qualified overtime above what is reported in box 12
+        code TT. The 2025 relief that let workers figure the amount themselves (Notice 2025-69) doesn’t apply any more.
+        From 2026, code TT is the only figure that counts.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="wrong-heading">
+    <div class="page" style="max-width:48rem">
+      <h2 id="wrong-heading">TT missing or wrong: ask for a W-2c</h2>
+      <p>
+        If code TT is missing or lower than the qualified overtime you were paid, ask your employer for a corrected W-2
+        (Form W-2c). If the employer won’t or can’t correct it, you can only use the amount that was reported. A substitute
+        W-2 (Form 4852) can’t be used for this deduction.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="over-heading">
+    <div class="page" style="max-width:48rem">
+      <h2 id="over-heading">Overstated TT</h2>
+      <p>
+        If code TT is higher than what you were actually paid, you may only use the actual amount. The IRS example: an
+        employer paid $5,000 of qualified overtime but reported $10,000 — the employee can include no more than $5,000.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="calc-heading">
+    <div class="page" style="max-width:48rem">
+      <h2 id="calc-heading">Calculate your deduction</h2>
+      <p class="small">Enter the code TT amount from your W-2. For an estimate from your hours, use the full <a href="/no-tax-on-overtime-calculator/">no tax on overtime calculator</a>.</p>
+      <TaxCalculator kind="overtime" compact />
+    </div>
+  </section>
+
+  <AppPromo />
+
+  <AdSlot adSlot="tax-tt-mid" />
+
+  <Faq items={TT_FAQ} heading="Code TT FAQ" />
+
+  <RelatedLinks heading="Related" items={related} />
+
+  <TaxSources sources={[SRC.iw2, SRC.fw2, SRC.fs202613, SRC.n2569, SRC.s1a]} />
+</Base>

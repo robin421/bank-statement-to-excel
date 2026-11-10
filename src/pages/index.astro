@@ -17,7 +17,7 @@ const homeTranslations = Object.fromEntries(
 const softwareSchema = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
-  name: `${SITE.name} — Bank Statement to Excel Converter`,
+  name: `${SITE.name} — Bank Statement Converter`,
   applicationCategory: 'FinanceApplication',
   operatingSystem: 'Any (runs in the browser)',
   description:
@@ -87,8 +87,8 @@ const related = [
 ---
 
 <Base
-  title="Bank Statement to Excel Converter — Free, Private, In-Browser"
-  description="Convert a bank statement PDF to Excel (.xlsx) or CSV for free. Runs entirely in your browser — your statement is never uploaded. Every row is checked against the statement's running balance. QuickBooks and Xero presets included."
+  title="Bank Statement Converter (PDF to Excel/CSV) | StatementToExcel"
+  description="Free bank statement converter: turn a statement PDF into Excel (.xlsx) or CSV. Runs entirely in your browser — your statement is never uploaded. Every row is checked against the statement's running balance. QuickBooks and Xero presets included."
   locale="en"
   translations={homeTranslations}
   schema={[softwareSchema]}
@@ -97,10 +97,11 @@ const related = [
     <div class="page">
       <div style="max-width:44rem">
         <p class="eyebrow">Free · No sign-up · Nothing uploaded</p>
-        <h1>Convert a bank statement PDF to Excel</h1>
+        <h1>Free bank statement converter: PDF to Excel or CSV</h1>
         <p class="lede">
           Drop in a statement from your online banking and get a clean spreadsheet back — with every row checked against
-          the statement's own running balance, so you can see whether the output can be trusted before you use it.
+          the statement's own running balance, so you can see whether the output can be trusted before you use it. Need a
+          workbook specifically? See <a href="/pdf-bank-statement-to-excel/">PDF bank statement to Excel</a>.
         </p>
       </div>
 
@@ -284,7 +285,7 @@ const related = [
           <span>
             <strong>PDFs whose text layer is broken.</strong> Some banks print with custom fonts that decode to
             nonsense. The converter detects this and says so rather than inventing rows. The guide to{' '}
-            <a href="/blog/excel-from-pdf-bank-statement/">why getting Excel from a PDF bank statement usually goes wrong</a>{' '}
+            <a href="/blog/excel-from-pdf-bank-statement/">why PDF to Excel puts a bank statement in one column</a>{' '}
             covers this and the other common failure modes.
           </span>
         </li>
