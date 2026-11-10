@@ -16,7 +16,6 @@ export const SRC = {
   rp2532: { label: 'IRS Rev. Proc. 2025-32 — 2026 tax rate tables and standard deduction', url: 'https://www.irs.gov/pub/irs-drop/rp-25-32.pdf' },
   ttoc: { label: 'IRS — Occupations that customarily and regularly received tips (IRS.gov/TippedOccupations)', url: 'https://www.irs.gov/forms-pubs/occupations-that-customarily-and-regularly-received-tips-on-or-before-dec-31-2024' },
   finalRegs: { label: 'IRS — Final regulations listing tipped occupations and defining qualified tips', url: 'https://www.irs.gov/newsroom/treasury-irs-issue-final-regulations-listing-occupations-where-workers-customarily-and-regularly-receive-tips-under-the-one-big-beautiful-bill' },
-  fedReg: { label: 'Federal Register, 2026-04-13 — Occupations that customarily and regularly received tips; definition of qualified tips', url: 'https://www.federalregister.gov/documents/2026/04/13/2026-07104/occupations-that-customarily-and-regularly-received-tips-definition-of-qualified-tips' },
 } satisfies Record<string, Source>;
 
 export const DISCLAIMER = (date = TAX_UPDATED) =>
