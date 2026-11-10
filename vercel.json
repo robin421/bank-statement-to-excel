@@ -681,6 +681,21 @@
       "permanent": true
     },
     {
+      "source": "/no-tax-on-overtime-calculator",
+      "destination": "https://tax.wattflow.net/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/no-tax-on-tips-calculator",
+      "destination": "https://tax.wattflow.net/no-tax-on-tips-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/w2-box-12-code-tt",
+      "destination": "https://tax.wattflow.net/w2-box-12-code-tt/",
+      "permanent": true
+    },
+    {
       "source": "/en/:splat*",
       "destination": "https://blog.wattflow.net/en/:splat",
       "permanent": true

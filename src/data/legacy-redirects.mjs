@@ -135,3 +135,10 @@ export const LEGACY_PROJECTS = [
   "stitch-code-to-figma",
   "vibeorbit"
 ];
+
+/**
+ * Tax calculator pages moved to their own site on 2026-11-10 (repo robin421/wattflow-tax, Vercel).
+ * Same path on tax.wattflow.net, permanent.
+ */
+export const TAX_ORIGIN = 'https://tax.wattflow.net';
+export const TAX_MOVED = ['/no-tax-on-overtime-calculator', '/no-tax-on-tips-calculator', '/w2-box-12-code-tt'];
