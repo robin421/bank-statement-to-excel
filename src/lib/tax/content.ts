@@ -7,7 +7,14 @@ export interface Source { label: string; url: string }
 
 export const SRC = {
   fs202503: { label: 'IRS FS-2025-03 — One, Big, Beautiful Bill Act: tax deductions for working Americans and seniors', url: 'https://www.irs.gov/newsroom/one-big-beautiful-bill-act-tax-deductions-for-working-americans-and-seniors' },
-  s1a: { label: 'IRS — Schedule 1-A (Form 1040)', url: 'https://www.irs.gov/pub/irs-pdf/f1040s1a.pdf' },
+  s1a: { label: 'IRS — Schedule 1-A (Form 1040), 2025 final form', url: 'https://www.irs.gov/pub/irs-pdf/f1040s1a.pdf' },
+  s1a2026: { label: 'IRS — 2026 Schedule 1-A (Form 1040), early-release draft created 6/16/26 (“DRAFT—DO NOT FILE”)', url: 'https://www.irs.gov/pub/irs-dft/f1040s1a--dft.pdf' },
+  i1040: { label: 'IRS — 2025 Instructions for Form 1040, “Instructions for Schedule 1-A” (pages 101–106)', url: 'https://www.irs.gov/pub/irs-pdf/i1040gi.pdf' },
+  f1040dft: { label: 'IRS — 2026 Form 1040, early-release draft (line 13a, additional deductions from Schedule 1-A)', url: 'https://www.irs.gov/pub/irs-dft/f1040--dft.pdf' },
+  f1099necDft: { label: 'IRS — 2026 Form 1099-NEC, early-release draft (box 1b cash tips, 1c TTOC, 1d overtime)', url: 'https://www.irs.gov/pub/irs-dft/f1099nec--dft.pdf' },
+  f1099miscDft: { label: 'IRS — 2026 Form 1099-MISC, early-release draft (box 13a cash tips, 13b TTOC, 14 overtime)', url: 'https://www.irs.gov/pub/irs-dft/f1099msc--dft.pdf' },
+  f1099kDft: { label: 'IRS — 2026 Form 1099-K, early-release draft (box 1c cash tips, 1d TTOC)', url: 'https://www.irs.gov/pub/irs-dft/f1099k--dft.pdf' },
+  s1aNews: { label: 'IRS — Schedule 1-A, Additional Deductions: what to know about the new form', url: 'https://www.irs.gov/newsroom/schedule-1-a-additional-deductions-what-to-know-about-the-new-form' },
   fs202613: { label: 'IRS FS-2026-13 — Questions and answers about the deduction for qualified overtime compensation (Aug. 2026)', url: 'https://www.irs.gov/pub/taxpros/fs-2026-13.pdf' },
   otQa: { label: 'IRS — Questions and answers about the new deduction for qualified overtime compensation', url: 'https://www.irs.gov/newsroom/questions-and-answers-about-the-new-deduction-for-qualified-overtime-compensation' },
   n2569: { label: 'IRS Notice 2025-69 — qualified tips and qualified overtime compensation', url: 'https://www.irs.gov/pub/irs-drop/n-25-69.pdf' },
@@ -55,4 +62,23 @@ export const TT_FAQ = [
   { q: 'Can I use Form 4852 if my employer won’t correct code TT?', a: 'No. The IRS says Form 4852 does not satisfy the reporting requirement, so overtime reported only on Form 4852 can’t be used for the deduction.' },
   { q: 'What if code TT is too high?', a: 'You may only use the qualified overtime you were actually paid. If TT is overstated, deduct the actual amount, not the reported one.' },
   { q: 'Why doesn’t my 2025 W-2 have code TT?', a: 'For 2025, employers were not required to report qualified overtime separately; Notice 2025-69 lets you figure the amount yourself for that year. Code TT starts with the 2026 Form W-2.' },
+];
+
+export const S1A_FAQ = [
+  { q: 'What is Schedule 1-A?', a: 'Schedule 1-A (Form 1040), “Additional Deductions”, is the form you attach to Form 1040, 1040-SR or 1040-NR to claim the no tax on tips, no tax on overtime, car loan interest and enhanced senior deductions. The total from its last line goes on Form 1040 (line 13a on the 2026 draft; line 13b on the 2025 form).' },
+  { q: 'Do I need to itemize to use Schedule 1-A?', a: 'No. The IRS instructions say you can claim these deductions whether you take the standard deduction or itemize on Schedule A.' },
+  { q: 'Can married couples filing separately use it for tips or overtime?', a: 'No. The form says that if you are married you must file jointly to claim the tips or overtime deduction, and the person who received the tips or overtime needs a valid Social Security number.' },
+  { q: 'Is the $25,000 tips limit doubled on a joint return?', a: 'No. Line 9 on the 2026 draft caps qualified tips at $25,000 for every filing status. The overtime cap on line 21 is $12,500, or $25,000 if married filing jointly — a combined limit, not per spouse.' },
+  { q: 'How is the income phase-out worked out?', a: 'Take your MAGI from line 3, subtract $150,000 ($300,000 joint), divide by $1,000 and round down to a whole number, then multiply by $100. That amount is taken off the capped deduction. If MAGI is at or below the threshold there is no reduction.' },
+  { q: 'Why are the line numbers different from my 2025 return?', a: 'The 2026 draft adds rows for each employer, business and Form 1099, so Part II now runs from line 4 to line 15 and Part III from line 16 to line 27 (2025: lines 4–13 and 14a–21). The final 2026 form may still change; check the line labels, not just the numbers.' },
+  { q: 'What goes in line 4 column (iii) for a W-2 job?', a: 'The qualified tips included in Form W-2 box 12 code TP for that employer. The draft points to instructions that are not yet published for 2026; the W-2 instructions say tips with only occupation code 000 in box 14b are not qualified.' },
+  { q: 'I am self-employed. Can I deduct all of my tips?', a: 'Only up to the net income of the business the tips came from. On the 2026 draft, column (xiii) of line 6 takes the smaller of that net figure and the tips shown on your Forms 1099.' },
+];
+
+export const HUB_FAQ = [
+  { q: 'Are tips and overtime tax-free now?', a: 'No. For 2025 through 2028 they are federal income-tax deductions, not exclusions. Social Security and Medicare (or self-employment tax) still apply, and state income tax depends on your state.' },
+  { q: 'Can I claim both the tips and the overtime deduction?', a: 'Yes, if you qualify for each. They are separate parts of Schedule 1-A (Part II for tips, Part III for overtime) with separate caps, and both are allowed with the standard deduction.' },
+  { q: 'What are the limits?', a: 'Tips: up to $25,000 per return, for every filing status. Overtime: up to $12,500, or $25,000 married filing jointly. Both shrink by $100 for every full $1,000 of MAGI over $150,000 ($300,000 joint).' },
+  { q: 'Which W-2 boxes do I need for 2026?', a: 'Box 12 code TT for qualified overtime, box 12 code TP for cash tips reported to your employer, and box 14b for your Treasury Tipped Occupation Code.' },
+  { q: 'Is anything I type sent to a server?', a: 'No. The calculators run entirely in your browser; there is no account and nothing is uploaded.' },
 ];

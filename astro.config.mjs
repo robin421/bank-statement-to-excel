@@ -3,7 +3,6 @@ import { defineConfig } from 'astro/config';
 import { loadEnv } from 'vite';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
-import { LOCALE_CODES } from './src/i18n/locales.ts';
 import { lastmodForUrl } from './scripts/sitemap-lastmod.mjs';
 
 /**
@@ -25,16 +24,10 @@ export default defineConfig({
   trailingSlash: 'ignore',
   integrations: [
     react(),
-    // Tell the sitemap about the language structure so it emits xhtml:link
-    // alternates. `defaultLocale` has to appear in `locales` — the integration
-    // only *strips* prefixes it knows, it never writes an /en/ URL, so English
-    // stays at `/` while every other locale lives under `/<code>/`. Pages that
-    // exist in one language only get no alternates, which is correct.
+    // English-only since the 2026-11-10 pivot to tax calculators, so no
+    // hreflang alternates. Retired converter pages are simply not built, and
+    // public/_redirects 301s them (src/data/pivot-redirects.mjs).
     sitemap({
-      i18n: {
-        defaultLocale: 'en',
-        locales: Object.fromEntries(LOCALE_CODES.map((code) => [code, code])),
-      },
       // <lastmod> = date of the last git commit that touched the page's source
       // file. Omitted (rather than faked) when it cannot be known: shallow
       // clones, dynamic routes, or no git at all.

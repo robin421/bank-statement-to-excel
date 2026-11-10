@@ -40,19 +40,18 @@ const ogHtml = `<!doctype html><html><head><meta charset="utf-8"><style>
 </style></head><body>
   <div class="band"></div>
   <div class="wrap">
-    <div class="brand">${favicon}<span>StatementToExcel</span></div>
-    <h1>Bank statement PDF<br><span class="arrow">→</span> Excel/CSV,<br>in your browser</h1>
-    <p class="sub">Free. Your statement never leaves your device.</p>
-    <ul><li>Never uploaded</li><li>No sign-up</li><li>Rows checked</li></ul>
+    <div class="brand">${favicon}<span>WattFlow</span></div>
+    <h1>No tax on tips<br>&amp; overtime<br><span class="arrow">calculators</span> 2026</h1>
+    <p class="sub">Free. Runs in your browser. IRS-sourced.</p>
+    <ul><li>W-2 code TT &amp; TP</li><li>Schedule 1-A</li><li>Phase-out</li></ul>
   </div>
   <div class="sheet">
-    <div class="head"><span>transactions.xlsx</span><span>Balance</span></div>
-    <div class="row"><span>01/04</span><span>Payroll deposit</span><span class="amt">+317.92</span><span class="ok">✓</span></div>
-    <div class="row"><span>01/06</span><span>Auto insurance</span><span class="amt">−806.84</span><span class="ok">✓</span></div>
-    <div class="row"><span>01/09</span><span>Check #1042</span><span class="amt">−88.50</span><span class="ok">✓</span></div>
-    <div class="row"><span>01/12</span><span>Grocery store</span><span class="amt">−64.18</span><span class="ok">✓</span></div>
-    <div class="row"><span>01/15</span><span>To savings</span><span class="amt">−250.00</span><span class="ok">✓</span></div>
-    <div class="foot">Every row reconciles with the running balance</div>
+    <div class="head"><span>Schedule 1-A</span><span>2026</span></div>
+    <div class="row"><span>Pt II</span><span>Tips (cap $25,000)</span><span class="amt">9,000</span><span class="ok">✓</span></div>
+    <div class="row"><span>Pt III</span><span>Overtime (TT)</span><span class="amt">2,400</span><span class="ok">✓</span></div>
+    <div class="row"><span>MAGI</span><span>Under $150,000</span><span class="amt">−0</span><span class="ok">✓</span></div>
+    <div class="row"><span>L 44</span><span>Total deduction</span><span class="amt">11,400</span><span class="ok">✓</span></div>
+    <div class="foot">Estimate only · federal income tax</div>
   </div>
   <div class="url">wattflow.net</div>
 </body></html>`;

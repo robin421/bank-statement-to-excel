@@ -1,60 +1,29 @@
 ---
 import { SITE } from '../data/site.mjs';
-import { DEFAULT_LOCALE, type LocaleCode } from '../i18n';
-import { verifiedBanks } from '../data/banks';
-
-const { locale = DEFAULT_LOCALE }: { locale?: LocaleCode } = Astro.props;
 
 const year = new Date().getFullYear();
-
-/**
- * The "By bank" column lists tested banks only.
- *
- * Linking to a bank page we have not verified would 404 — and generating one
- * anyway would be a doorway page. Until a statement from a bank reconciles
- * against its own balance, the only honest link is to the overview.
- */
-const tested = verifiedBanks();
 const badges = (SITE.featuredBadges ?? []) as string[];
-const bankLinks = tested.slice(0, 5).map((bank) => ({ href: `/banks/${bank.slug}/`, label: bank.name }));
 
 const groups = [
   {
-    heading: 'Convert',
+    heading: 'Calculators',
     links: [
-      { href: '/', label: 'Bank statement converter' },
-      { href: '/bank-statement-to-csv/', label: 'Bank statement to CSV' },
-      { href: '/pdf-bank-statement-to-excel/', label: 'PDF bank statement to Excel' },
-      { href: '/extract-transactions/', label: 'Extract transactions' },
-    ],
-  },
-  {
-    heading: 'Import into',
-    links: [
-      { href: '/quickbooks-csv/', label: 'QuickBooks Online' },
-      { href: '/xero-csv/', label: 'Xero' },
-      { href: '/ofx-qfx-to-csv/', label: 'OFX / QFX to CSV' },
-    ],
-  },
-  {
-    heading: 'By bank',
-    links: [
-      ...bankLinks,
-      { href: '/banks/', label: tested.length ? 'All tested banks' : 'Tested banks' },
-    ],
-  },
-  {
-    heading: 'Tax tools',
-    links: [
+      { href: '/', label: 'No tax on tips and overtime' },
       { href: '/no-tax-on-overtime-calculator/', label: 'No tax on overtime calculator' },
       { href: '/no-tax-on-tips-calculator/', label: 'No tax on tips calculator' },
+    ],
+  },
+  {
+    heading: 'Guides',
+    links: [
+      { href: '/schedule-1-a-guide/', label: 'Schedule 1-A line by line' },
       { href: '/w2-box-12-code-tt/', label: 'W-2 box 12 code TT' },
+      { href: '/blog/', label: 'All guides' },
     ],
   },
   {
     heading: 'Site',
     links: [
-      { href: '/blog/', label: 'Guides' },
       { href: '/about/', label: 'About' },
       { href: '/contact/', label: 'Contact' },
       { href: '/privacy/', label: 'Privacy' },
@@ -96,11 +65,11 @@ const groups = [
 
     <div class="footer-legal">
       <p>
-        <strong>Not affiliated with any bank.</strong> {SITE.name} is an independent tool. Bank names are used only to
-        describe the statement formats that have been tested. Always check the converted rows against your original
-        statement before using them for accounting, tax or lending purposes.
+        <strong>Not tax advice.</strong> {SITE.name} is an independent site and is not affiliated with the IRS or the
+        U.S. Treasury. The calculators estimate federal income tax only, from published IRS guidance; check your own
+        W-2, 1099 and the Schedule 1-A instructions, or ask a tax professional, before you file.
       </p>
-      <p>&copy; {year} {SITE.name}. Your statement is processed in your browser and is never uploaded to us.</p>
+      <p>&copy; {year} {SITE.name}. Everything you type into a calculator stays in your browser.</p>
     </div>
   </div>
 </footer>

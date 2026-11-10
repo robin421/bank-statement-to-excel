@@ -1,3 +1,9 @@
+> **2026-11-10 — site pivot.** www.wattflow.net is now a US *no tax on tips / no tax on overtime* calculator site
+> (`/`, `/no-tax-on-overtime-calculator/`, `/no-tax-on-tips-calculator/`, `/schedule-1-a-guide/`, `/w2-box-12-code-tt/`).
+> The bank-statement converter pages were removed from the build and 301 to the overtime calculator
+> (`src/data/pivot-redirects.mjs` → `public/_redirects`). The parser/exporter code under `src/lib/` and its tests are
+> kept; the history of the converter UI is in git. The description below is of the retired converter.
+
 # StatementToExcel
 
 **Convert a bank statement PDF to Excel or CSV in your browser. The file is never uploaded, and every row is checked against the statement's running balance.**

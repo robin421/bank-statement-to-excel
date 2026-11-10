@@ -1,73 +1,53 @@
 ---
 import Base from '../layouts/Base.astro';
 import RelatedLinks from '../components/RelatedLinks.astro';
-import { SITE } from '../data/site.mjs';
 
 const related = [
-  { href: '/', title: 'Bank statement to Excel', blurb: 'The converter itself.' },
-  { href: '/privacy/', title: 'Privacy', blurb: 'What is and is not collected — including what never leaves your browser.' },
-  { href: '/terms/', title: 'Terms', blurb: 'Accuracy disclaimers and the limits of the tool.' },
-  { href: '/contact/', title: 'Contact', blurb: 'Report a statement layout that did not convert correctly.' },
+  { href: '/', title: 'No tax on tips and overtime', blurb: 'Both calculators, side by side.' },
+  { href: '/schedule-1-a-guide/', title: 'Schedule 1-A line by line', blurb: 'Where the numbers go on the form.' },
+  { href: '/privacy/', title: 'Privacy', blurb: 'What is and is not collected.' },
+  { href: '/contact/', title: 'Contact', blurb: 'Report an error or an outdated rule.' },
 ];
 ---
 
 <Base
   title="About"
-  description="An independent, browser-based bank statement to Excel converter. No upload, no account, and a running-balance check on every row."
+  description="WattFlow builds free, browser-based calculators for the 2025–2028 no tax on tips and no tax on overtime deductions, sourced from IRS forms and guidance."
 >
   <section class="section">
     <div class="page prose">
       <p class="eyebrow">About</p>
-      <h1>A statement converter that shows its working</h1>
+      <h1>Tax calculators that show their sources</h1>
       <p class="lede">
-        Most tools in this category ask you to upload a bank statement to an unknown server and then tell you the result
-        is accurate. This one does the work on your device and tells you how it knows.
+        WattFlow makes free calculators and plain-English guides for the federal no tax on tips and no tax on overtime
+        deductions that apply to tax years 2025 through 2028.
       </p>
 
-      <h2>What it does</h2>
+      <h2>How the pages are written</h2>
       <p>
-        It converts text-based bank statement PDFs — the ones you download from online banking — into an Excel workbook
-        or CSV, and it converts OFX and QFX exports too. It reads the layout of the page, rebuilds the table from the
-        positions and alignments of the text, and then verifies every row against the running balance the statement
-        prints.
-      </p>
-      <p>
-        That verification is the point. A bank statement is a self-checking document: on every row, the previous balance
-        plus the amount equals the balance. If that holds from the first row to the last, the rows were read correctly.
-        If it fails, you are told exactly which rows, and why.
+        Every rule on this site comes from an IRS form, its instructions, or IRS guidance, and every page lists the
+        sources it used and the date it was last checked. Where the IRS has only published a draft — for example the 2026
+        Schedule 1-A — the page says so. When the IRS changes something, we update the page and note it in the page’s
+        changelog.
       </p>
 
-      <h2>What it does not do</h2>
+      <h2>How the calculators work</h2>
       <p>
-        It does not read scanned or photographed statements, and it will say so within a second rather than produce
-        plausible-looking rows from an image. It does not categorise your spending or guess at merchants. It does not
-        combine several statements into one. And it does not send your statement anywhere — there is no upload endpoint,
-        no storage and no queue, which is why the tool keeps working when you are offline.
+        The calculators run in your browser. There is no account, and the figures you type are not sent to us. They
+        estimate federal income tax only: they apply the deduction caps and the income phase-out exactly as the form
+        does, then compare your federal tax with and without the deduction using the published 2026 rate tables.
+      </p>
+
+      <h2>What we are not</h2>
+      <p>
+        We are not tax preparers, and no CPA or enrolled agent has reviewed these pages. Nothing here is tax advice.
+        WattFlow is independent and is not affiliated with the IRS, the U.S. Treasury or any tax software company.
       </p>
 
       <h2>How it is funded</h2>
       <p>
-        Advertising, and referrals to OCR services for the scanned statements this tool cannot read. There is no
-        subscription, no row limit and no sign-up, and the tool is not gated behind anything. If you find it useful, the
-        honest way to support it is to use the OCR referral when you genuinely need OCR.
-      </p>
-
-      <h2>Accuracy, stated honestly</h2>
-      <p>
-        This is a conversion tool, not an audit. It converts what your statement says; it does not verify your bank's
-        arithmetic or check that the statement itself is correct. Rows that could not be verified are flagged rather than
-        presented as fact, and the Excel workbook keeps the original text line behind every row so any figure can be
-        traced back to the document.
-      </p>
-      <p>
-        Always check the converted rows against your original statement before you file, reconcile or lend against them.
-      </p>
-
-      <h2>Independence</h2>
-      <p>
-        This site is not affiliated with, endorsed by or connected to any bank, and it is not affiliated with Intuit,
-        Xero or any OCR provider. Bank and product names are used only to describe the statement formats and export
-        formats the tool supports.
+        Advertising, and a link to our own Shift Work Calendar app on the overtime pages. The calculators are free and
+        not gated behind anything.
       </p>
     </div>
   </section>

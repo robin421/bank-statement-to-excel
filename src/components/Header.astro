@@ -1,48 +1,25 @@
 ---
 import { SITE } from '../data/site.mjs';
-import { DEFAULT_LOCALE, LOCALES, LOCALE_CODES, type LocaleCode } from '../i18n';
+import type { LocaleCode } from '../i18n';
 
 export interface Props {
+  /** Kept for Base.astro's signature; the tax site is English-only. */
   locale?: LocaleCode;
-  /** Same-page paths per locale, so switching language keeps you on the page. */
   translations?: Partial<Record<LocaleCode, string>>;
 }
 
-const { locale = DEFAULT_LOCALE, translations } = Astro.props;
-
-// The page's own URL, used when the switcher's current language is selected.
-const currentPath = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
-
 const links = [
-  { href: '/bank-statement-to-csv/', label: 'CSV' },
-  { href: '/quickbooks-csv/', label: 'QuickBooks' },
-  { href: '/xero-csv/', label: 'Xero' },
-  { href: '/scanned/', label: 'Scanned' },
+  { href: '/no-tax-on-overtime-calculator/', label: 'Overtime' },
+  { href: '/no-tax-on-tips-calculator/', label: 'Tips' },
+  { href: '/schedule-1-a-guide/', label: 'Schedule 1-A' },
+  { href: '/w2-box-12-code-tt/', label: 'Code TT' },
 ];
-
-/**
- * Language switcher.
- *
- * Rendered as real anchors rather than a <select>: crawlers have to be able to
- * follow the language alternates, and the switcher must work without
- * JavaScript. Each link points at the same page in that language when the page
- * exists there, and at that language's homepage when it does not — never at a
- * URL that 404s.
- */
-function targetFor(code: LocaleCode): string {
-  const explicit = translations?.[code];
-  if (explicit) return explicit;
-  // Selecting the language you are already reading must leave you on this page,
-  // not dump you on the homepage.
-  if (code === locale) return currentPath;
-  return code === DEFAULT_LOCALE ? '/' : `/${code}/`;
-}
 ---
 
 <header class="site-header">
   <div class="page site-header__inner">
-    <a class="brand" href={locale === DEFAULT_LOCALE ? '/' : `/${locale}/`}>
-      <span class="brand__mark" aria-hidden="true">XLS</span>
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">TAX</span>
       <span>{SITE.name}</span>
     </a>
     <nav class="site-nav" aria-label="Main">
@@ -50,7 +27,7 @@ function targetFor(code: LocaleCode): string {
     </nav>
     {
       /* 移动端适配规范 §5：≤720px 时主导航收进汉堡菜单（CSS 控制显隐）。
-         <details> 实现：无 JS 可用，与语言切换器"无 JS 可工作"的原则一致。 */
+         <details> 实现：无 JS 可用。 */
     }
     <details class="nav-toggle">
       <summary aria-label="Open menu">
@@ -60,19 +37,5 @@ function targetFor(code: LocaleCode): string {
         {links.map((link) => <a href={link.href}>{link.label}</a>)}
       </nav>
     </details>
-    <nav class="locale-switcher" aria-label="Language">
-      {
-        LOCALE_CODES.map((code) => (
-          <a
-            href={targetFor(code)}
-            hreflang={LOCALES[code].htmlLang}
-            title={LOCALES[code].label}
-            aria-current={code === locale ? 'page' : undefined}
-          >
-            {code.toUpperCase()}
-          </a>
-        ))
-      }
-    </nav>
   </div>
 </header>

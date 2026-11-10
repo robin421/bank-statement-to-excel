@@ -1,40 +1,28 @@
 ---
 import Base from '../layouts/Base.astro';
 import RelatedLinks from '../components/RelatedLinks.astro';
-import { LOCALE_CODES, type LocaleCode } from '../i18n';
-
-// A 404 has no URL of its own, so the canonical points at the homepage and the
-// language switcher sends every language to its own homepage rather than to a
-// path that does not exist.
-const canonicalPath = '/';
-const translations = Object.fromEntries(
-  LOCALE_CODES.map((code) => [code, code === 'en' ? '/' : `/${code}/`]),
-) as Partial<Record<LocaleCode, string>>;
 
 const related = [
-  { href: '/', title: 'Bank statement to Excel', blurb: 'Convert a text-based statement PDF.' },
-  { href: '/ofx-qfx-to-csv/', title: 'OFX / QFX to CSV', blurb: 'Structured bank exports, no layout guessing.' },
-  { href: '/scanned/', title: 'Scanned statements', blurb: 'Why a scan needs OCR, and what to use.' },
-  { href: '/blog/', title: 'Guides', blurb: 'How to convert and how to check the result.' },
+  { href: '/no-tax-on-overtime-calculator/', title: 'No tax on overtime calculator', blurb: 'W-2 code TT, caps and phase-out.' },
+  { href: '/no-tax-on-tips-calculator/', title: 'No tax on tips calculator', blurb: 'W-2 code TP, 1099 tips and the $25,000 cap.' },
+  { href: '/schedule-1-a-guide/', title: 'Schedule 1-A line by line', blurb: 'Where each number goes on the 2026 form.' },
+  { href: '/blog/', title: 'Guides', blurb: 'All tax guides.' },
 ];
 ---
 
 <Base
   title="Page Not Found"
-  description="That page does not exist. Convert a bank statement PDF to Excel or CSV from the homepage."
+  description="That page does not exist. The no tax on tips and overtime calculators are on the homepage."
   noindex
-  canonicalPath={canonicalPath}
-  translations={translations}
+  canonicalPath="/"
 >
   <section class="section">
     <div class="page prose">
       <p class="eyebrow">404</p>
       <h1>That page does not exist</h1>
-      <p class="lede">
-        The link may be old, or the address may have a typo. The converter itself is on the homepage.
-      </p>
+      <p class="lede">The link may be old, or the address may have a typo.</p>
       <p>
-        <a class="btn btn--primary" href="/">Convert a bank statement</a>
+        <a class="btn btn--primary" href="/">Go to the tax calculators</a>
       </p>
     </div>
   </section>

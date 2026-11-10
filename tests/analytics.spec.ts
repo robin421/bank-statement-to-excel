@@ -50,10 +50,9 @@ function sourceFiles(dir: string): string[] {
 describe('analytics event call sites', () => {
   const files = sourceFiles('src').filter((file) => !file.includes(`lib${path.sep}analytics`));
 
-  it('finds the funnel call sites', () => {
-    const callSites = files.filter((file) => fs.readFileSync(file, 'utf8').includes('track('));
-    expect(callSites.length, 'no track() call sites found — did the wiring disappear?').toBeGreaterThan(0);
-  });
+  // The converter funnel (the only track() call sites) was retired with the
+  // bank-statement pages on 2026-11-10. The guards below still apply to any
+  // call site added later.
 
   it('only uses the documented event names', () => {
     for (const file of files) {

@@ -1,0 +1,286 @@
+---
+import Base from '../layouts/Base.astro';
+import Faq from '../components/Faq.astro';
+import RelatedLinks from '../components/RelatedLinks.astro';
+import AdSlot from '../components/AdSlot.astro';
+import TaxSources from '../components/tax/TaxSources.astro';
+import { S1A_FAQ, SRC } from '../lib/tax/content';
+import { taxPageSchema } from '../lib/tax/schema';
+import { SITE } from '../data/site.mjs';
+
+const title = 'Schedule 1-A Instructions 2026: Line-by-Line Guide | WattFlow';
+const description =
+  'How to fill out Schedule 1-A (Form 1040) for 2026, line by line: MAGI in Part I, no tax on tips in Part II, no tax on overtime in Part III, with worked examples and IRS sources.';
+const schema = taxPageSchema({ origin: Astro.site?.href ?? SITE.url, path: '/schedule-1-a-guide/', name: 'Schedule 1-A line-by-line guide (2026)', description, app: false });
+const related = [
+  { href: '/no-tax-on-tips-calculator/', title: 'No tax on tips calculator', blurb: 'Works out Part II for you: cap, net-profit limit and phase-out.' },
+  { href: '/no-tax-on-overtime-calculator/', title: 'No tax on overtime calculator', blurb: 'Works out Part III, and the federal tax it saves.' },
+  { href: '/w2-box-12-code-tt/', title: 'W-2 box 12 code TT explained', blurb: 'The amount that goes in line 16, column (iii).' },
+];
+const S = 'max-width:48rem';
+---
+
+<Base title={title} description={description} fullTitle locale="en" schema={schema}>
+  <section class="section section--tight">
+    <div class="page" style={S}>
+      <p class="eyebrow">Tax year 2026 · Form 1040 · Schedule 1-A</p>
+      <h1>Schedule 1-A Instructions 2026: Line-by-Line Guide</h1>
+      <p class="lede">
+        Schedule 1-A, “Additional Deductions”, is where you claim no tax on tips (Part II) and no tax on overtime
+        (Part III), along with the car loan interest and senior deductions. You attach it to Form 1040, 1040-SR or
+        1040-NR, and you can use it whether you take the standard deduction or itemize.
+      </p>
+      <div class="note note--warn">
+        <strong>Based on the IRS draft.</strong> The 2026 line numbers below come from the IRS early-release draft of
+        the 2026 Schedule 1-A (created June 16, 2026, marked “DRAFT—DO NOT FILE”). The 2026 instructions have not been
+        published yet, so where this page explains a rule it relies on the 2025 Instructions for Schedule 1-A. The final
+        form can still change — match each line’s wording, not only its number. Filing a 2025 return? See the
+        <a href="#line-map">2025 line map</a>.
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="need-heading">
+    <div class="page" style={S}>
+      <h2 id="need-heading">What you need before you start</h2>
+      <ul>
+        <li><strong>Form 1040 line 11b</strong> — your adjusted gross income.</li>
+        <li><strong>Each Form W-2</strong> — box b (employer’s EIN), box 12 code <strong>TP</strong> (cash tips you reported to the employer), box 12 code <strong>TT</strong> (qualified overtime) and box 14b (Treasury Tipped Occupation Code).</li>
+        <li><strong>Form 4137</strong>, if you had tips you didn’t report to your employer.</li>
+        <li><strong>Forms 1099</strong>, if you are self-employed. On the 2026 drafts, cash tips are in 1099-NEC box 1b, 1099-MISC box 13a and 1099-K box 1c; overtime is in 1099-NEC box 1d or 1099-MISC box 14.</li>
+        <li><strong>Schedule C, E or F</strong> for any business that received tips — the net profit line and the business EIN.</li>
+        <li>Forms 2555 or 4563, or excluded Puerto Rico income, only if they apply to you.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="p1-heading">
+    <div class="page" style={S}>
+      <h2 id="p1-heading">Part I — Modified adjusted gross income (lines 1–3)</h2>
+      <p>Every income limit on the schedule uses the MAGI figured here.</p>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Line</th><th>What to enter</th></tr></thead>
+          <tbody>
+            <tr><th>1</th><td>The amount from Form 1040, 1040-SR or 1040-NR, line 11b.</td></tr>
+            <tr><th>2a–2d</th><td>Excluded Puerto Rico income (2a), Form 2555 line 45 (2b), Form 2555 line 50 (2c), Form 4563 line 15 (2d).</td></tr>
+            <tr><th>2e</th><td>Add lines 2a through 2d.</td></tr>
+            <tr><th>3</th><td>Add lines 1 and 2e. This is your MAGI.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        If you have no excluded Puerto Rico income and don’t file Form 2555 or 4563, the 2025 instructions say to put
+        your line 11b amount straight on line 3.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="p2-heading">
+    <div class="page" style={S}>
+      <h2 id="p2-heading">Part II — No tax on tips (lines 4–15)</h2>
+      <p>
+        Fill this in only if you received qualified tips in an occupation on the IRS list at IRS.gov/TippedOccupations.
+        Whoever received the tips needs a valid Social Security number, and married couples must file jointly.
+      </p>
+
+      <h3>Line 4 — tips you received as an employee (rows 4a–4e)</h3>
+      <p>One row per employer:</p>
+      <ul>
+        <li><strong>Column (i)</strong> — the employer’s name.</li>
+        <li><strong>Column (ii)</strong> — the employer’s EIN from Form W-2 box b, or Form 4137 line 1 column (b).</li>
+        <li><strong>Column (iii)</strong> — the qualified tips included in Form W-2 box 12 code TP. Tips are not qualified if box 14b shows only occupation code 000.</li>
+        <li><strong>Column (iv)</strong> — the qualified tips included on Form 4137 line 1 column (c). Enter 0 if you don’t file Form 4137.</li>
+        <li><strong>Column (v)</strong> — the larger of column (iii) or column (iv).</li>
+      </ul>
+      <p><strong>Line 5.</strong> Add column (v) of lines 4a through 4e.</p>
+
+      <h3>Line 6 — tips you received in your own business (rows 6a–6e)</h3>
+      <p>
+        For self-employed workers, such as delivery and rideshare drivers. Use one row per business:
+      </p>
+      <ul>
+        <li><strong>Columns (i)–(ii)</strong> — the business name and its EIN from Schedule C line D, Schedule E Part II line 28(d), or Schedule F line D.</li>
+        <li><strong>Column (iii)</strong> — the net profit of that business: Schedule C line 31, the total of Schedule E lines 28(g) through 28(k), or Schedule F line 34.</li>
+        <li><strong>Column (iv)</strong> — other deductions allocable to the business. The 2025 instructions list the deductible part of self-employment tax, SEP, SIMPLE and qualified plan contributions, and the self-employed health insurance deduction.</li>
+        <li><strong>Column (v)</strong> — column (iii) minus column (iv).</li>
+        <li><strong>Columns (vi)–(xi)</strong> — for up to three Forms 1099: the payer’s TIN and the qualified tips included in 1099-NEC box 1(b), 1099-MISC box 13(a) or 1099-K box 1(c).</li>
+        <li><strong>Column (xii)</strong> — add columns (vii), (ix) and (xi).</li>
+        <li><strong>Column (xiii)</strong> — the smaller of column (v) or column (xii). This is the net-income limit: tips from a business can’t be deducted beyond what that business earned.</li>
+      </ul>
+      <p><strong>Line 7.</strong> Add column (xiii) of lines 6a through 6e.</p>
+
+      <h3>Lines 8–15 — cap and income phase-out</h3>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Line</th><th>What to enter</th></tr></thead>
+          <tbody>
+            <tr><th>8</th><td>Add lines 5 and 7.</td></tr>
+            <tr><th>9</th><td>The smaller of line 8 or $25,000. The cap is the same for every filing status, including joint returns.</td></tr>
+            <tr><th>10</th><td>Your MAGI from line 3.</td></tr>
+            <tr><th>11</th><td>$150,000 ($300,000 if married filing jointly).</td></tr>
+            <tr><th>12</th><td>Line 10 minus line 11. If zero or less, skip to line 15 and enter the amount from line 9.</td></tr>
+            <tr><th>13</th><td>Line 12 ÷ $1,000, rounded <em>down</em> to a whole number (1.5 becomes 1; 0.05 becomes 0).</td></tr>
+            <tr><th>14</th><td>Line 13 × $100.</td></tr>
+            <tr><th>15</th><td><strong>Qualified tips deduction:</strong> line 9 minus line 14. If zero or less, enter 0.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Check your numbers with the <a href="/no-tax-on-tips-calculator/">no tax on tips calculator</a>.</p>
+    </div>
+  </section>
+
+  <AdSlot adSlot="tax-s1a-mid" />
+
+  <section class="section section--tight" aria-labelledby="p3-heading">
+    <div class="page" style={S}>
+      <h2 id="p3-heading">Part III — No tax on overtime (lines 16–27)</h2>
+      <p>
+        Fill this in only if you received qualified overtime compensation — the overtime premium the Fair Labor Standards
+        Act requires, usually the “half” of time-and-a-half. Whoever received it needs a valid Social Security number,
+        and married couples must file jointly.
+      </p>
+
+      <h3>Line 16 — overtime reported on Form W-2 (rows 16a–16e)</h3>
+      <ul>
+        <li><strong>Column (i)</strong> — the employer’s name.</li>
+        <li><strong>Column (ii)</strong> — the employer’s EIN from Form W-2 box b.</li>
+        <li><strong>Column (iii)</strong> — the qualified overtime included in Form W-2 box 12 code TT. For tax years after 2025 the IRS says you can’t use more than the code TT amount; if it is missing or too low, ask your employer for a Form W-2c (see <a href="/w2-box-12-code-tt/">code TT explained</a>).</li>
+      </ul>
+      <p><strong>Line 17.</strong> Add column (iii) of lines 16a through 16e.</p>
+
+      <h3>Line 18 — overtime reported on Form 1099-NEC or 1099-MISC (rows 18a–18e)</h3>
+      <p>
+        Business name and EIN (Schedule C line D, Schedule E Part II line 28(d), or Schedule F line D), the payer’s TIN,
+        and the qualified overtime included in Form 1099-NEC box 1d or Form 1099-MISC box 14.
+      </p>
+      <p><strong>Line 19.</strong> Add column (iv) of lines 18a through 18e.</p>
+
+      <h3>Lines 20–27 — cap and income phase-out</h3>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Line</th><th>What to enter</th></tr></thead>
+          <tbody>
+            <tr><th>20</th><td>Add lines 17 and 19.</td></tr>
+            <tr><th>21</th><td>The smaller of line 20 or $12,500 ($25,000 if married filing jointly). On a joint return the $25,000 is a combined limit, not per spouse.</td></tr>
+            <tr><th>22</th><td>Your MAGI from line 3.</td></tr>
+            <tr><th>23</th><td>$150,000 ($300,000 if married filing jointly).</td></tr>
+            <tr><th>24</th><td>Line 22 minus line 23. If zero or less, skip to line 27 and enter the amount from line 21.</td></tr>
+            <tr><th>25</th><td>Line 24 ÷ $1,000, rounded <em>down</em> to a whole number.</td></tr>
+            <tr><th>26</th><td>Line 25 × $100.</td></tr>
+            <tr><th>27</th><td><strong>Qualified overtime compensation deduction:</strong> line 21 minus line 26. If zero or less, enter 0.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Check your numbers with the <a href="/no-tax-on-overtime-calculator/">no tax on overtime calculator</a>.</p>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="p46-heading">
+    <div class="page" style={S}>
+      <h2 id="p46-heading">Parts IV–VI — car loan interest, seniors and the total</h2>
+      <ul>
+        <li><strong>Part IV (lines 28–36), car loan interest:</strong> up to $10,000 of qualified passenger vehicle loan interest, reduced by $200 for each $1,000 (rounded <em>up</em>) of MAGI over $100,000 ($200,000 joint).</li>
+        <li><strong>Part V (lines 37–43), enhanced deduction for seniors:</strong> $6,000 per qualifying person born before January 2, 1962, reduced by 6% of MAGI over $75,000 ($150,000 joint).</li>
+        <li><strong>Part VI, line 44:</strong> add lines 15, 27, 36 and 43. Enter the total here and on Form 1040, 1040-SR or 1040-NR, line 13a.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="ex-heading">
+    <div class="page" style={S}>
+      <h2 id="ex-heading">Worked examples</h2>
+
+      <h3>1. Server with tips and some overtime (single)</h3>
+      <p>
+        Form 1040 line 11b: $62,000. One W-2: box 12 code TP $9,000, box 14b code 102 (wait staff), box 12 code TT
+        $2,400. No Form 4137, no 1099 income.
+      </p>
+      <div style="overflow-x:auto">
+        <table>
+          <tbody>
+            <tr><th>Lines 1 and 3</th><td>$62,000 (nothing on lines 2a–2d)</td></tr>
+            <tr><th>Line 4a</th><td>(iii) $9,000 · (iv) $0 · (v) $9,000</td></tr>
+            <tr><th>Lines 5, 8, 9</th><td>$9,000</td></tr>
+            <tr><th>Line 12</th><td>$62,000 − $150,000 is below zero → line 15 = $9,000</td></tr>
+            <tr><th>Line 16a</th><td>(iii) $2,400 → lines 17, 20, 21 = $2,400</td></tr>
+            <tr><th>Line 24</th><td>Below zero → line 27 = $2,400</td></tr>
+            <tr><th>Line 44</th><td>$9,000 + $2,400 = <strong>$11,400</strong> → Form 1040 line 13a</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>2. Married couple in the phase-out (overtime only)</h3>
+      <p>MAGI $318,500. Spouse A’s W-2 code TT is $9,000; spouse B’s is $5,000.</p>
+      <div style="overflow-x:auto">
+        <table>
+          <tbody>
+            <tr><th>Lines 16a, 16b</th><td>$9,000 and $5,000 → lines 17, 20 = $14,000</td></tr>
+            <tr><th>Line 21</th><td>Smaller of $14,000 or $25,000 = $14,000</td></tr>
+            <tr><th>Line 24</th><td>$318,500 − $300,000 = $18,500</td></tr>
+            <tr><th>Lines 25, 26</th><td>18.5 → 18 → $1,800</td></tr>
+            <tr><th>Line 27</th><td>$14,000 − $1,800 = <strong>$12,200</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>3. Delivery driver on a 1099-K (single)</h3>
+      <p>
+        The 1099-K shows $3,000 of cash tips in box 1c. Schedule C line 31 net profit is $5,200, and the deductible part of
+        self-employment tax allocable to the business is about $370.
+      </p>
+      <div style="overflow-x:auto">
+        <table>
+          <tbody>
+            <tr><th>Line 6a</th><td>(iii) $5,200 · (iv) $370 · (v) $4,830 · (vii) $3,000 · (xii) $3,000 · (xiii) $3,000</td></tr>
+            <tr><th>Lines 7, 8, 9</th><td>$3,000</td></tr>
+            <tr><th>Line 15</th><td><strong>$3,000</strong> (MAGI below $150,000)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        If net profit after allocable deductions had been only $2,000, column (xiii) — and the deduction — would be $2,000.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="mistakes-heading">
+    <div class="page" style={S}>
+      <h2 id="mistakes-heading">Common mistakes</h2>
+      <ul>
+        <li><strong>Entering all overtime pay.</strong> Only the FLSA premium counts. At $20/hour and time-and-a-half, that is $10 of each $30 overtime hour.</li>
+        <li><strong>Doubling the tips cap on a joint return.</strong> $25,000 is per return. Only the overtime cap doubles.</li>
+        <li><strong>Filing separately.</strong> Married filing separately can’t take either deduction.</li>
+        <li><strong>Using 2025 line numbers on a 2026 form.</strong> Part II grew from lines 4–13 to 4–15 and Part III from 14a–21 to 16–27.</li>
+        <li><strong>Ignoring box 14b.</strong> Tips with only occupation code 000 don’t qualify.</li>
+        <li><strong>Deducting 1099 tips beyond the business’s net income.</strong> Column (xiii) caps them.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="line-map">
+    <div class="page" style={S}>
+      <h2 id="line-map">2025 vs. 2026 line numbers</h2>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Step</th><th>2025 Schedule 1-A</th><th>2026 draft</th></tr></thead>
+          <tbody>
+            <tr><th>MAGI</th><td>Line 3</td><td>Line 3</td></tr>
+            <tr><th>Employee tips</th><td>Lines 4a–4c (W-2 box 7 or Form 4137)</td><td>Lines 4a–4e and 5 (W-2 code TP or Form 4137)</td></tr>
+            <tr><th>Self-employed tips</th><td>Line 5</td><td>Lines 6a–6e and 7</td></tr>
+            <tr><th>Tips deduction</th><td>Line 13</td><td>Line 15</td></tr>
+            <tr><th>Overtime entered</th><td>Lines 14a–14c</td><td>Lines 16–20</td></tr>
+            <tr><th>Overtime deduction</th><td>Line 21</td><td>Line 27</td></tr>
+            <tr><th>Total</th><td>Line 38 → Form 1040 line 13b</td><td>Line 44 → Form 1040 line 13a</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <Faq items={S1A_FAQ} heading="Schedule 1-A FAQ" />
+
+  <RelatedLinks heading="Calculators and guides" items={related} />
+
+  <TaxSources sources={[SRC.s1a2026, SRC.s1a, SRC.i1040, SRC.f1040dft, SRC.f1099necDft, SRC.f1099miscDft, SRC.f1099kDft, SRC.iw2, SRC.fs202613, SRC.s1aNews]} />
+</Base>

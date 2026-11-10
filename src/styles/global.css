@@ -1170,3 +1170,32 @@ table.data tr.row--flagged td {
 .callout-list .icon--no {
   color: var(--danger);
 }
+
+/* ------------------------------------------------- content tables (tax pages) */
+
+main table:not(.data) {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  margin: 0.4rem 0 0.8rem;
+}
+main table:not(.data) th,
+main table:not(.data) td {
+  border-bottom: 1px solid var(--rule);
+  padding: 0.55rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+main table:not(.data) thead th {
+  background: var(--paper-sunken);
+  font-weight: 650;
+}
+main table:not(.data) tbody th {
+  font-weight: 620;
+  white-space: nowrap;
+}
+@media (max-width: 720px) {
+  main table:not(.data) tbody th {
+    white-space: normal;
+  }
+}

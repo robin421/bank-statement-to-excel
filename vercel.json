@@ -61,6 +61,116 @@
   ],
   "redirects": [
     {
+      "source": "/bank-statement-to-csv",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/pdf-bank-statement-to-excel",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/quickbooks-csv",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/xero-csv",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/ofx-qfx-to-csv",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/extract-transactions",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/scanned",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/banks",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/banks/chase",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/banks/bank-of-america",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/banks/wells-fargo",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/banks/hdfc",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/banks/icici",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/banks/hsbc",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/banks/barclays",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/de",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/es",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/fr",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/pt",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/hi",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/how-to-convert-bank-statement-to-excel",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/excel-from-pdf-bank-statement",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
       "source": "/en",
       "destination": "https://blog.wattflow.net/en",
       "permanent": true
@@ -688,6 +798,36 @@
     {
       "source": "/zh/:splat*",
       "destination": "https://blog.wattflow.net/zh/:splat",
+      "permanent": true
+    },
+    {
+      "source": "/banks/:splat*",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/de/:splat*",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/es/:splat*",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/fr/:splat*",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/pt/:splat*",
+      "destination": "/no-tax-on-overtime-calculator/",
+      "permanent": true
+    },
+    {
+      "source": "/hi/:splat*",
+      "destination": "/no-tax-on-overtime-calculator/",
       "permanent": true
     }
   ]

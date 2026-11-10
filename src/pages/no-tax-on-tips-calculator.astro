@@ -16,7 +16,7 @@ const schema = taxPageSchema({ origin: Astro.site?.href ?? SITE.url, path: '/no-
 const related = [
   { href: '/no-tax-on-overtime-calculator/', title: 'No tax on overtime calculator', blurb: 'The FLSA overtime premium, up to $12,500 ($25,000 joint).' },
   { href: '/w2-box-12-code-tt/', title: 'W-2 box 12 code TT explained', blurb: 'The overtime code on 2026 W-2s.' },
-  { href: '/bank-statement-to-csv/', title: 'Bank statement to CSV', blurb: 'Turn bank or payout statements into a spreadsheet for your tip records.' },
+  { href: '/schedule-1-a-guide/', title: 'Schedule 1-A line by line', blurb: 'Where your tips go in Part II of the 2026 form.' },
 ];
 ---
 
@@ -95,8 +95,9 @@ const related = [
       <h2 id="gig-heading">1099, DoorDash, Uber and other gig workers</h2>
       <p>
         If you’re self-employed in a listed occupation — the list includes taxi and rideshare drivers and goods delivery
-        people — enter the qualified tips included in Form 1099-NEC box 1, 1099-MISC box 3 or 1099-K box 1a. The
-        deduction can’t be more than the net profit of the business you earned the tips in.
+        people — use the qualified tips included in your Forms 1099. For 2025 they sit inside 1099-NEC box 1, 1099-MISC
+        box 3 or 1099-K box 1a; the IRS 2026 drafts add separate cash-tip boxes (1099-NEC box 1b, 1099-MISC box 13a,
+        1099-K box 1c). The deduction can’t be more than the net profit of the business you earned the tips in.
       </p>
     </div>
   </section>
@@ -134,10 +135,7 @@ const related = [
         cap and the MAGI reduction, and attach Schedule 1-A to Form 1040, 1040-SR or 1040-NR.
       </p>
       <p>
-        Keeping your own tip log? If card and app tips land in your bank account, you can
-        <a href="/pdf-bank-statement-to-excel/">convert a PDF bank statement to Excel</a> or
-        <a href="/bank-statement-to-csv/">export it to CSV</a> and total them in a spreadsheet — in your browser, without
-        uploading the statement.
+        Step by step, with the 2026 line numbers: <a href="/schedule-1-a-guide/">Schedule 1-A line-by-line guide</a>.
       </p>
       <h3>Methodology</h3>
       <p class="small">
@@ -153,5 +151,5 @@ const related = [
 
   <RelatedLinks heading="Related" items={related} />
 
-  <TaxSources sources={[SRC.fs202503, SRC.s1a, SRC.finalRegs, SRC.ttoc, SRC.n2569, SRC.iw2, SRC.fw2, SRC.rp2532]} />
+  <TaxSources sources={[SRC.fs202503, SRC.s1a, SRC.s1a2026, SRC.f1099necDft, SRC.f1099miscDft, SRC.f1099kDft, SRC.finalRegs, SRC.ttoc, SRC.n2569, SRC.iw2, SRC.fw2, SRC.rp2532]} />
 </Base>

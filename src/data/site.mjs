@@ -17,23 +17,23 @@ const fromEnv =
 export const SITE_URL = String(fromEnv).replace(/\/$/, '');
 
 export const SITE = {
-  name: 'StatementToExcel',
+  name: 'WattFlow',
   url: SITE_URL,
-  tagline: 'Convert a bank statement PDF to Excel or CSV — in your browser',
+  tagline: 'No tax on tips and overtime calculators for 2026',
   description:
-    'Free tool that converts text-based bank statement PDFs into Excel (.xlsx) or CSV. Runs entirely in your browser — your statement is never uploaded. Includes QuickBooks and Xero export presets.',
-  // TODO: point this at a real mailbox before applying to AdSense — a contact
-  // address on a reserved TLD reaches nobody, and reviewers do check.
+    'Free 2026 calculators for the federal no tax on tips and no tax on overtime deductions, plus a line-by-line Schedule 1-A guide. Runs in your browser — nothing you type is uploaded.',
   email: 'hello@wattflow.net',
   twitter: '',
   /** Default social preview image (1200x630) in public/. */
   ogImage: '/og.png',
-  ogImageAlt: 'StatementToExcel: bank statement PDF to Excel/CSV, in your browser',
+  ogImageAlt: 'WattFlow: no tax on tips and overtime calculators for 2026',
   /**
    * "Featured on" directory badges shown in every page footer (nothing renders
    * when the list is empty).
    * Each entry is a directory's embed snippet as raw HTML, rendered verbatim.
    * Add the image host to img-src in vercel.json's CSP when adding one.
+   * NOTE: these listings were earned by the retired StatementToExcel tool; kept
+   * so the directories' backlink checks keep passing.
    */
   featuredBadges: [
     // Verbatim embed snippets from each directory (Fazier, Twelve Tools, Startup Fame).

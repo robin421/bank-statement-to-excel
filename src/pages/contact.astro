@@ -5,15 +5,15 @@ import { SITE } from '../data/site.mjs';
 
 <Base
   title="Contact"
-  description="Report a bank statement layout that did not convert correctly, ask a question, or send a privacy request."
+  description="Report an error in a calculator, an outdated tax rule, or send a privacy request."
 >
   <section class="section">
     <div class="page prose">
       <p class="eyebrow">Contact</p>
       <h1>Get in touch</h1>
       <p class="lede">
-        The most useful thing you can send is a statement layout that did not convert correctly — that is what improves the
-        parser.
+        The most useful thing you can send is a rule we have wrong or out of date — with a link to the IRS source if you
+        have one.
       </p>
 
       <h2>Email</h2>
@@ -21,35 +21,27 @@ import { SITE } from '../data/site.mjs';
         <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
       </p>
 
-      <h2>Reporting a conversion problem</h2>
-      <p>Useful details, in rough order of usefulness:</p>
+      <h2>Reporting a calculator problem</h2>
       <ul>
-        <li>Which bank and which account type the statement came from.</li>
-        <li>What went wrong — a missing row, a wrong sign, a date order that looks off, or a false "needs OCR" result.</li>
-        <li>The reconcile count the tool reported in the preview, if you still have it.</li>
+        <li>Which page and which calculator mode you used.</li>
+        <li>The inputs you entered and the result you expected.</li>
         <li>
-          <strong>Please do not send the statement itself</strong> unless you are comfortable doing so. Bank statements
-          contain your account number, address and full transaction history. If a screenshot would help, redact
-          everything except the column headers and one or two transaction lines.
+          <strong>Please do not send your W-2, 1099 or tax return.</strong> Made-up numbers that reproduce the problem are
+          all we need.
         </li>
       </ul>
-      <p class="small muted">
-        We cannot recover a file you converted, because we never received it. If your download failed, re-run the
-        conversion — the original PDF is still on your device.
-      </p>
 
       <h2>Privacy requests</h2>
       <p>
-        Because the converter runs entirely in your browser, we generally hold no personal data about you to access or
-        erase. If you believe we do, email the address above and we will investigate and respond within 30 days. See the{' '}
-        <a href="/privacy/">privacy policy</a> for detail.
+        The calculators run in your browser, so we generally hold no personal data about you. If you believe we do, email
+        the address above and we will respond within 30 days. See the <a href="/privacy/">privacy policy</a>.
       </p>
 
       <h2>What we cannot help with</h2>
       <ul>
-        <li>Access to your bank account, or statements you cannot download — that is a question for your bank.</li>
-        <li>Accounting, tax or legal advice.</li>
-        <li>OCR of a scanned statement — see <a href="/scanned/">scanned statements</a> for what to use instead.</li>
+        <li>Personal tax advice or preparing your return — please use a tax professional.</li>
+        <li>Your IRS account, refunds or notices — contact the IRS directly.</li>
+        <li>Correcting your W-2 — only your employer can issue a Form W-2c.</li>
       </ul>
     </div>
   </section>
