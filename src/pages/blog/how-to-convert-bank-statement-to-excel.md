@@ -1,6 +1,7 @@
 ---
 layout: ../../layouts/Article.astro
-published: "2025-02-18"
+published: "2026-09-13"
+modified: "2026-10-19"
 readingTime: 8 min read
 title: How to Convert a Bank Statement to Excel (Without Retyping It)
 description: A practical walkthrough of converting a bank statement PDF into Excel or CSV — which file to download from your bank, how to check the result, and what to do when the numbers do not add up.

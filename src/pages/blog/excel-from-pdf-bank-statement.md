@@ -1,9 +1,10 @@
 ---
 layout: ../../layouts/Article.astro
-published: "2025-02-18"
+published: "2026-09-13"
+modified: "2026-11-10"
 readingTime: 7 min read
-title: "Excel from a PDF Bank Statement: Why It Usually Goes Wrong"
-description: Why converting a PDF bank statement into Excel produces one long column, what a PDF table actually is, and the specific tricks needed to rebuild statement rows and columns correctly.
+title: "Why PDF to Excel Puts Your Bank Statement in One Column"
+description: Why PDF-to-Excel conversion turns a bank statement into one long column (or a column per word), what a PDF table actually is, and the specific tricks needed to rebuild statement rows and columns correctly.
 ---
 
 If you have tried to get a bank statement out of a PDF and into Excel, you have probably seen one of two results: every
